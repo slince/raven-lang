@@ -36,6 +36,7 @@ type Function struct {
 	// Function arguments.
 	Arguments []*FunctionArgument
 	Blocks    []*BasicBlock
+	Alias     map[string]string
 }
 
 func (f *Function) NewBlock(name string) *BasicBlock {
@@ -44,8 +45,8 @@ func (f *Function) NewBlock(name string) *BasicBlock {
 	return block
 }
 
-func (f *Function) Alias(name string) *BasicBlock {
-
+func (f *Function) SetBlockAlias(source string, alias string) {
+	f.Alias[alias] = source
 }
 
 // NewFunction returns a new function based on the given function name, return type

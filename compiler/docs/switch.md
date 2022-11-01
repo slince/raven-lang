@@ -5,7 +5,7 @@
 
 let a = 10
 
-switch (a) {
+switch (a + 10) {
    case 1:
      console.log(1)
      break
@@ -26,6 +26,7 @@ a = 20
 
 entry:
   local a 10
+  add a1 a 10
   jmp L1
 
 L1:

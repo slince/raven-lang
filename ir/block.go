@@ -14,6 +14,9 @@ type BasicBlock struct {
 	Phis         []insts.Instruction
 	Leader       insts.Instruction
 	Terminator   insts.Instruction
+	Predecessors []*BasicBlock
+	Successors   []*BasicBlock
+	Dominators   []*BasicBlock
 }
 
 func (b *BasicBlock) block() {}
