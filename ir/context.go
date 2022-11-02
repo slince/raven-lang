@@ -6,6 +6,12 @@ type Context struct {
 	Outer      *Context
 }
 
+func (c *Context) EnterContext(b *BasicBlock) *Context {
+	var ctx = NewContext(b)
+	ctx.Outer = c
+	return ctx
+}
+
 //func (c *Context) EnterContext(b *BasicBlock) *Context {
 //	var ctx = NewContext(b)
 //	ctx.Outer = c
