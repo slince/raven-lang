@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"github.com/samber/lo"
 	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/compiler/lexer"
 	"github.com/slince/php-plus/compiler/parser"
@@ -11,7 +12,7 @@ import (
 )
 
 type Compiler struct {
-	ctx         *ir.Context
+	ctx         *ir.BlockContext
 	symbolTable *ir.SymbolTable
 	Module      *ir.Module
 	Function    *ir.Function
@@ -171,39 +172,46 @@ func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) {
 func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
 	// compile switch cases
 	var disc = c.compileExpr(node.Discriminant)
-	// jmp first case discriminant
-	c.ctx.NewJmp(ir.NewReference("switch.case.discr.0"))
 	c.enterScope()
 	var caseNum = len(node.Cases)
 	c.ctx.LeaveBlock = c.Function.NewBlock("switch.done")
+	var _, defaultIdx, _ = lo.FindIndexOf(node.Cases, func(clause *ast.SwitchCase) bool {
+		return clause.Default
+	})
 	for idx, clause := range node.Cases {
 		var caseBody = c.compileSwitchCaseBody(clause, idx, idx == caseNum-1)
-		if clause.Default {
-			c.ctx.
-		}
-		c.compileSwitchCaseDisc(disc, clause, idx, idx == caseNum-1)
+		c.compileSwitchCaseDisc(disc, caseBody, clause, idx, idx == caseNum-1, defaultIdx)
 	}
 	c.leaveScope()
+	// jmp first case discriminant
+	c.ctx.NewJmp(ir.NewReference("switch.case.discr.0"))
 }
 
-func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, node *ast.SwitchCase, idx int, last bool) *ir.BasicBlock {
+func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) *ir.BasicBlock {
 	var discBlock = c.Function.NewBlock("switch.case.disc." + strconv.Itoa(idx))
 	c.subCompileWith(discBlock, c.ctx.LeaveBlock, func() {
+		if node.Default {
+			c.ctx.NewJmp(caseBody)
+			return
+		}
 		var cond = ir.NewTemporary(nil)
 		c.ctx.NewLogicalEq(cond, disc, c.compileExpr(node.Test))
+		var leaveTarget ir.Block
 		if last {
 			// jump to default case when not match the case, if the default case is present.
-			if defaultBlock != nil {
-				c.ctx.NewCondJmp(cond, caseBody, ir.NewReference("switch.case.default"))
+			if defaultIdx > -1 {
+				leaveTarget = ir.NewReference("switch.case.disc." + strconv.Itoa(defaultIdx))
 			} else {
-				c.ctx.NewCondJmp(cond, caseBody, c.ctx.LeaveBlock)
+				leaveTarget = c.ctx.LeaveBlock
 			}
 		} else {
-			c.ctx.NewCondJmp(cond, caseBody, ir.NewReference("switch.case.disc."+strconv.Itoa(idx+1)))
+			leaveTarget = ir.NewReference("switch.case.disc." + strconv.Itoa(idx+1))
 		}
+		c.ctx.NewCondJmp(cond, caseBody, leaveTarget)
 	})
 	return discBlock
 }
+
 func (c *Compiler) compileSwitchCaseBody(node *ast.SwitchCase, idx int, last bool) *ir.BasicBlock {
 	var caseBlock = c.Function.NewBlock("switch.case." + strconv.Itoa(idx))
 	c.subCompileWith(caseBlock, c.ctx.LeaveBlock, func() {
@@ -219,42 +227,6 @@ func (c *Compiler) compileSwitchCaseBody(node *ast.SwitchCase, idx int, last boo
 		}
 	})
 	return caseBlock
-}
-
-func (c *Compiler) compileSwitchCase(discriminant ir.Operand, node *ast.SwitchCase, idx int, last bool, hasDefault bool) {
-	var caseBlockName = "switch.case." + strconv.Itoa(idx)
-	var caseBlock = c.Function.NewBlock(caseBlockName)
-	c.subCompileWith(caseBlock, c.ctx.LeaveBlock, func() {
-		c.compileSwitchCaseConsequent(node)
-		if c.ctx.Terminator == nil {
-			var leaveTarget ir.Block
-			if last {
-				leaveTarget = c.ctx.LeaveBlock
-			} else {
-				leaveTarget = ir.NewReference("switch.case." + strconv.Itoa(idx+1))
-			}
-			c.ctx.NewJmp(leaveTarget)
-		}
-	})
-	if node.Default {
-		c.Function.SetBlockAlias("switch.case.default", caseBlockName)
-		return
-	}
-	var discriminantBlock = c.Function.NewBlock("switch.case.disc." + strconv.Itoa(idx))
-	c.subCompileWith(discriminantBlock, c.ctx.LeaveBlock, func() {
-		var cond = ir.NewTemporary(nil)
-		c.ctx.NewLogicalEq(cond, discriminant, c.compileExpr(node.Test))
-		if last {
-			// jump to default case when not match the case, if the default case is present.
-			if hasDefault {
-				c.ctx.NewCondJmp(cond, caseBlock, ir.NewReference("switch.case.default"))
-			} else {
-				c.ctx.NewCondJmp(cond, caseBlock, c.ctx.LeaveBlock)
-			}
-		} else {
-			c.ctx.NewCondJmp(cond, caseBlock, ir.NewReference("switch.case.disc."+strconv.Itoa(idx+1)))
-		}
-	})
 }
 
 func (c *Compiler) compileSwitchCaseConsequent(node *ast.SwitchCase) {
@@ -297,7 +269,6 @@ func (c *Compiler) subCompileWith(block *ir.BasicBlock, leaveBlock ir.Block, exe
 	c.enterBlock(block)
 	c.ctx.LeaveBlock = leaveBlock
 	executor()
-	c.leaveBlock()
 }
 
 func (c *Compiler) enterScope() {
@@ -309,9 +280,9 @@ func (c *Compiler) leaveScope() {
 }
 
 func (c *Compiler) enterBlock(block *ir.BasicBlock) {
-	c.ctx = ir.NewContext(block, c.ctx)
+	c.ctx = ir.NewBlockContext(block, c.ctx)
 }
 
 func (c *Compiler) leaveBlock() {
-	c.ctx = c.ctx.Outer
+	c.ctx = c.ctx.Prev
 }

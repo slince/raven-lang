@@ -1,30 +1,14 @@
 package ir
 
-type Context struct {
+type BlockContext struct {
 	*BasicBlock
 	LeaveBlock Block
-	Outer      *Context
+	Prev       *BlockContext
 }
 
-func (c *Context) EnterContext(b *BasicBlock) *Context {
-	var ctx = NewContext(b)
-	ctx.Outer = c
-	return ctx
-}
-
-//func (c *Context) EnterContext(b *BasicBlock) *Context {
-//	var ctx = NewContext(b)
-//	ctx.Outer = c
-//	return ctx
-//}
-//
-//func (c *Context) LeaveContext() *Context {
-//	return c.Outer
-//}
-
-func NewContext(block *BasicBlock, outer *Context) *Context {
-	return &Context{
+func NewBlockContext(block *BasicBlock, prev *BlockContext) *BlockContext {
+	return &BlockContext{
 		BasicBlock: block,
-		Outer:      outer,
+		Prev:       prev,
 	}
 }
