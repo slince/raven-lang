@@ -47,22 +47,22 @@ type Mod struct {
 	arith
 }
 
-func NewArithAdd(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Add {
+func NewAdd(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Add {
 	return &Add{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewArithSub(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Sub {
+func NewSub(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Sub {
 	return &Sub{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewArithMul(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Mul {
+func NewMul(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Mul {
 	return &Mul{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewArithDiv(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Div {
+func NewDiv(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Div {
 	return &Div{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewArithMod(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Mod {
+func NewMod(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Mod {
 	return &Mod{Result: result, Ope1: ope1, Ope2: ope2}
 }

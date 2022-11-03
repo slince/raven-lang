@@ -1,5 +1,7 @@
 package insts
 
+import "github.com/slince/php-plus/ir"
+
 type Unary interface {
 	unary()
 }

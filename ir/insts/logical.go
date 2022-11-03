@@ -74,38 +74,38 @@ type LogicalNot struct {
 	logical
 }
 
-func NewLogicalGt(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Gt {
+func NewGt(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Gt {
 	return &Gt{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalGeq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Geq {
+func NewGeq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Geq {
 	return &Geq{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalLt(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Lt {
+func NewLt(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Lt {
 	return &Lt{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalLeq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Leq {
+func NewLeq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Leq {
 	return &Leq{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalEq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Eq {
+func NewEq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Eq {
 	return &Eq{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalNeq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Neq {
+func NewNeq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Neq {
 	return &Neq{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalAnd(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalAnd {
+func NewAnd(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalAnd {
 	return &LogicalAnd{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalOr(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalOr {
+func NewOr(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalOr {
 	return &LogicalOr{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewLogicalNot(result ir.Operand, ope ir.Operand) *LogicalNot {
+func NewNot(result ir.Operand, ope ir.Operand) *LogicalNot {
 	return &LogicalNot{Result: result, Ope: ope}
 }
