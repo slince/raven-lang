@@ -20,6 +20,7 @@ var a = 10 + 56
 
 func main() {
 
+	fmt.Println(5 >> 2)
 	var a = 10
 
 	if a > 5 {
@@ -48,7 +49,7 @@ func main() {
 	funcMain := m.NewFunc(
 		"main",
 		types.I32,
-	)                           // omit parameters
+	) // omit parameters
 	mb := funcMain.NewBlock("") // llir/llvm would give correct default name for block without name
 	mb.NewRet(mb.NewCall(funcAdd, constant.NewInt(types.I32, 1), mb.NewLoad(types.I32, globalG)))
 	println(m.String())

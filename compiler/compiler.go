@@ -116,8 +116,19 @@ func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) ir.Operand {
 	case "/":
 		c.ctx.NewAdd(result, l, r)
 	case "%":
+		c.ctx.NewMod(result, l, r)
+
+	case "&":
 		c.ctx.NewAdd(result, l, r)
-	case "-":
+	case "|":
+		c.ctx.NewAdd(result, l, r)
+	case "^":
+		c.ctx.NewAdd(result, l, r)
+	case "~":
+		c.ctx.NewAdd(result, l, r)
+	case "<<":
+		c.ctx.NewAdd(result, l, r)
+	case ">>":
 		c.ctx.NewAdd(result, l, r)
 	}
 	return result

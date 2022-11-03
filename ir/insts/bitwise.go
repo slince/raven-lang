@@ -7,28 +7,29 @@ type Bitwise interface {
 }
 
 type bitwise struct {
+	instruction
 }
 
 func (a bitwise) bitwise() {}
 
 type And struct {
 	Result ir.Operand
-	Ope1   ir.Operand
-	Ope2   ir.Operand
+	Lhs    ir.Operand
+	Rhs    ir.Operand
 	bitwise
 }
 
 type Or struct {
 	Result ir.Operand
-	Ope1   ir.Operand
-	Ope2   ir.Operand
+	Lhs    ir.Operand
+	Rhs    ir.Operand
 	bitwise
 }
 
 type Xor struct {
 	Result ir.Operand
-	Ope1   ir.Operand
-	Ope2   ir.Operand
+	Lhs    ir.Operand
+	Rhs    ir.Operand
 	bitwise
 }
 
@@ -40,38 +41,38 @@ type Not struct {
 
 type Shl struct {
 	Result ir.Operand
-	Ope1   ir.Operand
-	Ope2   ir.Operand
+	Lhs    ir.Operand
+	Rhs    ir.Operand
 	bitwise
 }
 
 type Shr struct {
 	Result ir.Operand
-	Ope1   ir.Operand
-	Ope2   ir.Operand
+	Lhs    ir.Operand
+	Rhs    ir.Operand
 	bitwise
 }
 
-func NewBitwiseAnd(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *And {
-	return &And{Result: result, Ope1: ope1, Ope2: ope2}
+func NewBitAnd(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *And {
+	return &And{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitwiseOr(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Or {
-	return &Or{Result: result, Ope1: ope1, Ope2: ope2}
+func NewBitOr(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Or {
+	return &Or{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitwiseXor(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Xor {
-	return &Xor{Result: result, Ope1: ope1, Ope2: ope2}
+func NewBitXor(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Xor {
+	return &Xor{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitwiseNot(result ir.Operand, ope ir.Operand) *Not {
+func NewBitNot(result ir.Operand, ope ir.Operand) *Not {
 	return &Not{Result: result, Ope: ope}
 }
 
-func NewBitwiseShl(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Shl {
-	return &Shl{Result: result, Ope1: ope1, Ope2: ope2}
+func NewBitShl(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Shl {
+	return &Shl{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitwiseShr(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Shr {
-	return &Shr{Result: result, Ope1: ope1, Ope2: ope2}
+func NewBitShr(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Shr {
+	return &Shr{Result: result, Lhs: lhs, Rhs: rhs}
 }

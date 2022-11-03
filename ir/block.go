@@ -29,85 +29,121 @@ func (b *BasicBlock) AddInstruction(instruction insts.Instruction) {
 	b.Instructions = append(b.Instructions, instruction)
 }
 
-func (b *BasicBlock) NewAdd(result Operand, ope1 Operand, ope2 Operand) *insts.Add {
-	var inst = insts.NewAdd(result, ope1, ope2)
+func (b *BasicBlock) NewAdd(result Operand, lhs Operand, rhs Operand) *insts.Add {
+	var inst = insts.NewAdd(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewSub(result Operand, ope1 Operand, ope2 Operand) *insts.Sub {
-	var inst = insts.NewSub(result, ope1, ope2)
+func (b *BasicBlock) NewSub(result Operand, lhs Operand, rhs Operand) *insts.Sub {
+	var inst = insts.NewSub(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
-func (b *BasicBlock) NewMul(result Operand, ope1 Operand, ope2 Operand) *insts.Mul {
-	var inst = insts.NewMul(result, ope1, ope2)
-	b.AddInstruction(inst)
-	return inst
-}
-
-func (b *BasicBlock) NewDiv(result Operand, ope1 Operand, ope2 Operand) *insts.Div {
-	var inst = insts.NewDiv(result, ope1, ope2)
+func (b *BasicBlock) NewMul(result Operand, lhs Operand, rhs Operand) *insts.Mul {
+	var inst = insts.NewMul(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewMod(result Operand, ope1 Operand, ope2 Operand) *insts.Mod {
-	var inst = insts.NewMod(result, ope1, ope2)
+func (b *BasicBlock) NewDiv(result Operand, lhs Operand, rhs Operand) *insts.Div {
+	var inst = insts.NewDiv(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewGt(result Operand, ope1 Operand, ope2 Operand) *insts.Gt {
-	var inst = insts.NewGt(result, ope1, ope2)
+func (b *BasicBlock) NewMod(result Operand, lhs Operand, rhs Operand) *insts.Mod {
+	var inst = insts.NewMod(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewGeq(result Operand, ope1 Operand, ope2 Operand) *insts.Geq {
-	var inst = insts.NewGeq(result, ope1, ope2)
+func (b *BasicBlock) NewGt(result Operand, lhs Operand, rhs Operand) *insts.Gt {
+	var inst = insts.NewGt(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLt(result Operand, ope1 Operand, ope2 Operand) *insts.Lt {
-	var inst = insts.NewLt(result, ope1, ope2)
+func (b *BasicBlock) NewGeq(result Operand, lhs Operand, rhs Operand) *insts.Geq {
+	var inst = insts.NewGeq(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLeq(result Operand, ope1 Operand, ope2 Operand) *insts.Leq {
-	var inst = insts.NewLeq(result, ope1, ope2)
+func (b *BasicBlock) NewLt(result Operand, lhs Operand, rhs Operand) *insts.Lt {
+	var inst = insts.NewLt(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewEq(result Operand, ope1 Operand, ope2 Operand) *insts.Eq {
-	var inst = insts.NewEq(result, ope1, ope2)
+func (b *BasicBlock) NewLeq(result Operand, lhs Operand, rhs Operand) *insts.Leq {
+	var inst = insts.NewLeq(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewNeq(result Operand, ope1 Operand, ope2 Operand) *insts.Neq {
-	var inst = insts.NewNeq(result, ope1, ope2)
+func (b *BasicBlock) NewEq(result Operand, lhs Operand, rhs Operand) *insts.Eq {
+	var inst = insts.NewEq(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLogicalAnd(result Operand, ope1 Operand, ope2 Operand) *insts.LogicalAnd {
-	var inst = insts.NewLogicalAnd(result, ope1, ope2)
+func (b *BasicBlock) NewNeq(result Operand, lhs Operand, rhs Operand) *insts.Neq {
+	var inst = insts.NewNeq(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLogicalOr(result Operand, ope1 Operand, ope2 Operand) *insts.LogicalOr {
-	var inst = insts.NewLogicalOr(result, ope1, ope2)
+func (b *BasicBlock) NewLogicalAnd(result Operand, lhs Operand, rhs Operand) *insts.LogicalAnd {
+	var inst = insts.NewLogicalAnd(result, lhs, rhs)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewLogicalOr(result Operand, lhs Operand, rhs Operand) *insts.LogicalOr {
+	var inst = insts.NewLogicalOr(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
 func (b *BasicBlock) NewLogicalNot(result Operand, ope Operand) *insts.LogicalNot {
 	var inst = insts.NewLogicalNot(result, ope)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewBitAnd(result Operand, lhs Operand, rhs Operand) *insts.And {
+	var inst = insts.NewBitAnd(result, lhs, rhs)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewBitOr(result Operand, lhs Operand, rhs Operand) *insts.Or {
+	var inst = insts.NewBitOr(result, lhs, rhs)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewBitXor(result Operand, lhs Operand, rhs Operand) *insts.Xor {
+	var inst = insts.NewBitXor(result, lhs, rhs)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewBitNot(result Operand, ope Operand) *insts.Not {
+	var inst = insts.NewBitNot(result, ope)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewBitShl(result Operand, lhs Operand, rhs Operand) *insts.Shl {
+	var inst = insts.NewBitShl(result, lhs, rhs)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewBitShr(result Operand, lhs Operand, rhs Operand) *insts.Shr {
+	var inst = insts.NewBitShr(result, lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
