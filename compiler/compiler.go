@@ -62,7 +62,7 @@ func (c *Compiler) compileStmt(node ast.Stmt) {
 	case *ast.BreakStmt:
 		c.compileBreakStmt(node.(*ast.BreakStmt))
 	}
-	c.enterBlock(c.ctx.LeaveBlock)
+	c.enterBlock(c.ctx.LeaveBlock, nil)
 }
 
 func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) {
@@ -83,12 +83,17 @@ func (c *Compiler) compileFunctionArgument(node *ast.FunctionArgument) *ir.Funct
 }
 
 func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.BasicBlock {
-	var block = ir.NewBlock(label)
-	c.subCompile(block, func() {
+	c.enterScope()
+	var block = c.Function.NewBlock(label)
+	c.compileBlock(block, func() {
 		for _, stmt := range node.Body {
 			c.compileStmt(stmt)
 		}
+		if c.ctx.Terminator != nil {
+			c.ctx.NewJmp(c.ctx.LeaveBlock)
+		}
 	})
+	c.leaveScope()
 	return block
 }
 
@@ -137,43 +142,42 @@ func (c *Compiler) compileBreakStmt(node *ast.BreakStmt) {
 	c.ctx.NewJmp(c.ctx.LeaveBlock)
 }
 
-func (c *Compiler) compileIfStmt(node *ast.IfStmt) {
-	var ifThen = c.compileBlockStmt(node.Consequent, "if.then")
-	var ifElse *ir.BasicBlock
+func (c *Compiler) compileIfStmt(node *ast.IfStmt) *ir.BasicBlock {
+	c.ctx.LeaveBlock = c.Function.NewBlock("if.done")
+	var test = c.Function.NewBlock("if.test")
+	var consequent = c.compileBlockStmt(node.Consequent, "if.then")
+	var ifElse ir.Block = c.ctx.LeaveBlock
 	if node.Alternate != nil {
 		if alternate, ok := node.Alternate.(*ast.BlockStmt); ok {
 			ifElse = c.compileBlockStmt(alternate, "if.else")
+		} else if alternate, ok := node.Alternate.(*ast.IfStmt); ok {
+			ifElse = c.compileIfStmt(alternate)
 		}
 	}
-	c.ctx.NewCondJmp(c.compileExpr(node.Test), ifThen, ifElse)
+	c.compileBlock(test, func() {
+		c.ctx.NewCondJmp(c.compileExpr(node.Test), consequent, ifElse)
+	})
+	return test
 }
 
 func (c *Compiler) compileDoWhileStmt(node *ast.DoWhileStmt) {
-	var whileBody = c.Function.NewBlock("do.while.body")
-	c.ctx.NewJmp(whileBody)
-	var leaveBlock = c.Function.NewBlock("leave.do.while")
-	c.subCompile(whileBody, func() {
-		c.compileStmt(node.Body)
-		c.ctx.NewCondJmp(c.compileExpr(node.Test), whileBody, leaveBlock)
+	c.ctx.LeaveBlock = c.Function.NewBlock("do.while.done")
+	var body = c.compileBlockStmt(node.Body, "do.while.body")
+	var test = c.Function.NewBlock("do.while.test")
+	c.compileBlock(test, func() {
+		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
 	})
+	c.ctx.NewJmp(body)
 }
 
 func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) {
-	var test = c.Function.NewBlock("while.test")
-	var body = c.Function.NewBlock("while.body")
-
 	c.ctx.LeaveBlock = c.Function.NewBlock("while.done")
-	c.subCompile(test, func() {
+	var body = c.compileBlockStmt(node.Body, "while.body")
+	var test = c.Function.NewBlock("while.test")
+	c.compileBlock(test, func() {
 		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
 	})
-	c.enterScope()
-	c.subCompile(body, func() {
-		c.compileStmt(node.Body)
-		if c.ctx.Terminator == nil {
-			c.ctx.NewJmp(c.ctx.LeaveBlock)
-		}
-	})
-	c.leaveScope()
+	c.ctx.NewJmp(test)
 }
 
 func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
@@ -196,7 +200,7 @@ func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
 
 func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) *ir.BasicBlock {
 	var discBlock = c.Function.NewBlock("switch.case.disc." + strconv.Itoa(idx))
-	c.subCompileWith(discBlock, c.ctx.LeaveBlock, func() {
+	c.compileBlock(discBlock, func() {
 		if node.Default {
 			c.ctx.NewJmp(caseBody)
 			return
@@ -226,7 +230,7 @@ func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBloc
 
 func (c *Compiler) compileSwitchCaseBody(node *ast.SwitchCase, idx int, last bool) *ir.BasicBlock {
 	var caseBlock = c.Function.NewBlock("switch.case." + strconv.Itoa(idx))
-	c.subCompileWith(caseBlock, c.ctx.LeaveBlock, func() {
+	c.compileBlock(caseBlock, func() {
 		c.compileSwitchCaseConsequent(node)
 		if c.ctx.Terminator == nil {
 			var leaveTarget ir.Block
@@ -271,13 +275,12 @@ func (c *Compiler) compileType(node *ast.Identifier) types.Type {
 	return _type
 }
 
-func (c *Compiler) subCompile(b *ir.BasicBlock, executor func()) {
-	c.subCompileWith(b, c.ctx.LeaveBlock, executor)
+func (c *Compiler) compileBlock(b *ir.BasicBlock, executor func()) {
+	c.compileBlockWith(b, c.ctx.LeaveBlock, executor)
 }
 
-func (c *Compiler) subCompileWith(block *ir.BasicBlock, leaveBlock *ir.BasicBlock, executor func()) {
-	c.enterBlock(block)
-	c.ctx.LeaveBlock = leaveBlock
+func (c *Compiler) compileBlockWith(block *ir.BasicBlock, leave *ir.BasicBlock, executor func()) {
+	c.enterBlock(block, leave)
 	executor()
 	c.leaveBlock()
 }
@@ -290,8 +293,9 @@ func (c *Compiler) leaveScope() {
 	c.symbolTable = c.symbolTable.Outer
 }
 
-func (c *Compiler) enterBlock(block *ir.BasicBlock) {
+func (c *Compiler) enterBlock(block *ir.BasicBlock, leave *ir.BasicBlock) {
 	c.ctx = ir.NewBlockContext(block, c.ctx)
+	c.ctx.LeaveBlock = leave
 }
 
 func (c *Compiler) leaveBlock() {

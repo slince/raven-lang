@@ -89,13 +89,13 @@ type SwitchStmt struct {
 
 type WhileStmt struct {
 	Test Expr
-	Body Stmt
+	Body *BlockStmt
 	stmt
 }
 
 type DoWhileStmt struct {
 	Test Expr
-	Body Stmt
+	Body *BlockStmt
 	stmt
 }
 
@@ -215,7 +215,7 @@ func NewContinueStmt(pos *token.Position) *ContinueStmt {
 	return smt
 }
 
-func NewWhileStmt(test Expr, body Stmt, pos *token.Position) *WhileStmt {
+func NewWhileStmt(test Expr, body *BlockStmt, pos *token.Position) *WhileStmt {
 	var smt = &WhileStmt{
 		Test: test,
 		Body: body,
@@ -224,7 +224,7 @@ func NewWhileStmt(test Expr, body Stmt, pos *token.Position) *WhileStmt {
 	return smt
 }
 
-func NewDoWhileStmt(test Expr, body Stmt, pos *token.Position) *DoWhileStmt {
+func NewDoWhileStmt(test Expr, body *BlockStmt, pos *token.Position) *DoWhileStmt {
 	var smt = &DoWhileStmt{
 		Test: test,
 		Body: body,
