@@ -2,7 +2,7 @@ package ir
 
 type BlockContext struct {
 	*BasicBlock
-	LeaveBlock Block
+	LeaveBlock *BasicBlock
 	Prev       *BlockContext
 }
 

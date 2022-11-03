@@ -20,6 +20,11 @@ type BasicBlock struct {
 }
 
 func (b *BasicBlock) block() {}
+
+func (b *BasicBlock) HasTerminator() bool {
+	return b.Terminator != nil
+}
+
 func (b *BasicBlock) AddInstruction(instruction insts.Instruction) {
 	b.Instructions = append(b.Instructions, instruction)
 }

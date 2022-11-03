@@ -2,12 +2,14 @@ module github.com/slince/php-plus
 
 go 1.17
 
-require github.com/llir/llvm v0.3.4
+require (
+	github.com/llir/llvm v0.3.4
+	github.com/samber/lo v1.33.0
+)
 
 require (
 	github.com/mewmew/float v0.0.0-20201204173432-505706aa38fa // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/samber/lo v1.33.0 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
 	golang.org/x/sys v0.0.0-20211019181941-9d821ace8654 // indirect

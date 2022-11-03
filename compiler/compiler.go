@@ -62,6 +62,7 @@ func (c *Compiler) compileStmt(node ast.Stmt) {
 	case *ast.BreakStmt:
 		c.compileBreakStmt(node.(*ast.BreakStmt))
 	}
+	c.enterBlock(c.ctx.LeaveBlock)
 }
 
 func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) {
@@ -158,23 +159,29 @@ func (c *Compiler) compileDoWhileStmt(node *ast.DoWhileStmt) {
 }
 
 func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) {
-	var whileBody = c.Function.NewBlock("while.body")
-	var leaveBlock = c.Function.NewBlock("leave.while")
+	var test = c.Function.NewBlock("while.test")
+	var body = c.Function.NewBlock("while.body")
 
-	c.ctx.NewCondJmp(c.compileExpr(node.Test), whileBody, leaveBlock)
-
-	c.subCompile(whileBody, func() {
-		c.compileStmt(node.Body)
-		c.ctx.NewCondJmp(c.compileExpr(node.Test), whileBody, leaveBlock)
+	c.ctx.LeaveBlock = c.Function.NewBlock("while.done")
+	c.subCompile(test, func() {
+		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
 	})
+	c.enterScope()
+	c.subCompile(body, func() {
+		c.compileStmt(node.Body)
+		if c.ctx.Terminator == nil {
+			c.ctx.NewJmp(c.ctx.LeaveBlock)
+		}
+	})
+	c.leaveScope()
 }
 
 func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
 	// compile switch cases
 	var disc = c.compileExpr(node.Discriminant)
+	c.ctx.LeaveBlock = c.Function.NewBlock("switch.done")
 	c.enterScope()
 	var caseNum = len(node.Cases)
-	c.ctx.LeaveBlock = c.Function.NewBlock("switch.done")
 	var _, defaultIdx, _ = lo.FindIndexOf(node.Cases, func(clause *ast.SwitchCase) bool {
 		return clause.Default
 	})
@@ -184,7 +191,7 @@ func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
 	}
 	c.leaveScope()
 	// jmp first case discriminant
-	c.ctx.NewJmp(ir.NewReference("switch.case.discr.0"))
+	c.ctx.NewJmp(ir.NewReference("switch.case.disc.0"))
 }
 
 func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) *ir.BasicBlock {
@@ -205,7 +212,12 @@ func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBloc
 				leaveTarget = c.ctx.LeaveBlock
 			}
 		} else {
-			leaveTarget = ir.NewReference("switch.case.disc." + strconv.Itoa(idx+1))
+			// Skip default branch
+			if defaultIdx == idx+1 {
+				leaveTarget = ir.NewReference("switch.case.disc." + strconv.Itoa(idx+1))
+			} else {
+				leaveTarget = ir.NewReference("switch.case.disc." + strconv.Itoa(idx+2))
+			}
 		}
 		c.ctx.NewCondJmp(cond, caseBody, leaveTarget)
 	})
@@ -260,15 +272,14 @@ func (c *Compiler) compileType(node *ast.Identifier) types.Type {
 }
 
 func (c *Compiler) subCompile(b *ir.BasicBlock, executor func()) {
-	c.enterBlock(b)
-	executor()
-	c.leaveBlock()
+	c.subCompileWith(b, c.ctx.LeaveBlock, executor)
 }
 
-func (c *Compiler) subCompileWith(block *ir.BasicBlock, leaveBlock ir.Block, executor func()) {
+func (c *Compiler) subCompileWith(block *ir.BasicBlock, leaveBlock *ir.BasicBlock, executor func()) {
 	c.enterBlock(block)
 	c.ctx.LeaveBlock = leaveBlock
 	executor()
+	c.leaveBlock()
 }
 
 func (c *Compiler) enterScope() {

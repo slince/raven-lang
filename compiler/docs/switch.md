@@ -31,11 +31,11 @@ entry:
 
 L1:
   equals tmp1 a 1 
-  jmp tmp1 case1 l2
+  cjmp tmp1 case1 l2
 
 L2:
   equals tmp2 a 2 
-  jmp tmp2  default
+  cjmp tmp2  default
 
 case1:
    arg 1
