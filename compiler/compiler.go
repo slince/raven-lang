@@ -95,12 +95,22 @@ func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.Basic
 }
 
 func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
-	switch node.(type) {
-	//case *ast.Literal:
-	//	return c.compileLiteral(node.(*ast.Literal))
-	//case *ast.Identifier:
-	//	return c.compileIdentifier(node.(*ast.Identifier))
+	switch expr := node.(type) {
+	case *ast.BinaryExpr:
+		return c.ctx.NewArithAdd(l, r)
+	case *ast.Identifier:
+		return c.compileIdentifier(node.(*ast.Identifier))
 	}
+}
+
+func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) ir.Operand {
+	var l, r = c.compileExpr(expr.Left), c.compileExpr(expr.Right)
+	var result ir.Operand
+	switch expr.Operator {
+	case "+":
+		result = c.ctx.NewArithAdd(l, r)
+	}
+	return result
 }
 
 func (c *Compiler) compileIdentifier(node *ast.Identifier) string {
@@ -141,8 +151,10 @@ func (c *Compiler) compileBreakStmt(node *ast.BreakStmt) {
 
 func (c *Compiler) compileIfStmt(node *ast.IfStmt) *ir.BasicBlock {
 	c.ctx.LeaveBlock = c.Function.NewBlock("if.done")
-	var test = c.Function.NewBlock("if.test")
 	var consequent = c.compileBlockStmt(node.Consequent, "if.then")
+	if consequent.Terminator == nil {
+		consequent.NewJmp(c.ctx.LeaveBlock)
+	}
 	var ifElse ir.Block = c.ctx.LeaveBlock
 	if node.Alternate != nil {
 		if alternate, ok := node.Alternate.(*ast.BlockStmt); ok {
@@ -151,6 +163,7 @@ func (c *Compiler) compileIfStmt(node *ast.IfStmt) *ir.BasicBlock {
 			ifElse = c.compileIfStmt(alternate)
 		}
 	}
+	var test = c.Function.NewBlock("if.test")
 	c.compileBlock(test, func() {
 		c.ctx.NewCondJmp(c.compileExpr(node.Test), consequent, ifElse)
 	})
