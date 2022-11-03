@@ -89,9 +89,6 @@ func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.Basic
 		for _, stmt := range node.Body {
 			c.compileStmt(stmt)
 		}
-		if c.ctx.Terminator != nil {
-			c.ctx.NewJmp(c.ctx.LeaveBlock)
-		}
 	})
 	c.leaveScope()
 	return block
@@ -167,6 +164,9 @@ func (c *Compiler) compileDoWhileStmt(node *ast.DoWhileStmt) {
 	c.compileBlock(test, func() {
 		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
 	})
+	if body.Terminator == nil {
+		body.NewJmp(test)
+	}
 	c.ctx.NewJmp(body)
 }
 
@@ -177,6 +177,9 @@ func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) {
 	c.compileBlock(test, func() {
 		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
 	})
+	if body.Terminator == nil {
+		body.NewJmp(test)
+	}
 	c.ctx.NewJmp(test)
 }
 
