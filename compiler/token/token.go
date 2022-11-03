@@ -23,12 +23,13 @@ const (
 	DIV // /
 	MOD // %
 
-	AND // &
-	OR  // |
-	XOR // ^
-	NOT // ~
-	SHL // <<
-	SHR // >>
+	AND     // &
+	OR      // |
+	XOR     // ^
+	NOT     // ~
+	SHL     // <<
+	SHR     // >>
+	AND_NOT // &^
 
 	assign_begin
 	ASSIGN     // =
@@ -105,13 +106,11 @@ const (
 	CATCH   // catch
 	FINALLY // finally
 
-	//INT     // int
-	//FLOAT   // float
-	//STRING  // string
-	//ARRAY   // array
-	//OBJECT  // object
-	//BOOL    // bool
-	//BOOLEAN // boolean
+	T_INT // int
+	T_LONG
+	T_FLOAT  // float
+	T_STRING // string
+	T_BOOL   // bool
 
 	NAMESPACE // namespace
 	USE       // use

@@ -451,7 +451,7 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 	// unary operator
 	case token.INC, token.DEC:
 		exp = p.parseUpdateExpr(true, nil)
-	case token.LOGIC_NOT, token.ADD, token.SUB:
+	case token.LOGIC_NOT, token.NOT, token.ADD, token.SUB:
 		exp = p.parseUnaryExpr()
 	default:
 		p.unexpect(tok)

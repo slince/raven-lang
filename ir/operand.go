@@ -2,6 +2,11 @@ package ir
 
 import "github.com/slince/php-plus/ir/types"
 
+var (
+	Zero = NewLiteral(0, types.I1)
+	One  = NewLiteral(1, types.I1)
+)
+
 type Operand interface {
 	operand()
 }
