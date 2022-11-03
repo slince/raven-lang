@@ -94,20 +94,20 @@ func (b *BasicBlock) NewNeq(result Operand, ope1 Operand, ope2 Operand) *insts.N
 	return inst
 }
 
-func (b *BasicBlock) NewAnd(result Operand, ope1 Operand, ope2 Operand) *insts.LogicalAnd {
-	var inst = insts.NewAnd(result, ope1, ope2)
+func (b *BasicBlock) NewLogicalAnd(result Operand, ope1 Operand, ope2 Operand) *insts.LogicalAnd {
+	var inst = insts.NewLogicalAnd(result, ope1, ope2)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewOr(result Operand, ope1 Operand, ope2 Operand) *insts.LogicalOr {
-	var inst = insts.NewOr(result, ope1, ope2)
+func (b *BasicBlock) NewLogicalOr(result Operand, ope1 Operand, ope2 Operand) *insts.LogicalOr {
+	var inst = insts.NewLogicalOr(result, ope1, ope2)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewNot(result Operand, ope Operand) *insts.LogicalNot {
-	var inst = insts.NewNot(result, ope)
+func (b *BasicBlock) NewLogicalNot(result Operand, ope Operand) *insts.LogicalNot {
+	var inst = insts.NewLogicalNot(result, ope)
 	b.AddInstruction(inst)
 	return inst
 }

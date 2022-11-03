@@ -98,14 +98,14 @@ func NewNeq(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *Neq {
 	return &Neq{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewAnd(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalAnd {
+func NewLogicalAnd(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalAnd {
 	return &LogicalAnd{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewOr(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalOr {
+func NewLogicalOr(result ir.Operand, ope1 ir.Operand, ope2 ir.Operand) *LogicalOr {
 	return &LogicalOr{Result: result, Ope1: ope1, Ope2: ope2}
 }
 
-func NewNot(result ir.Operand, ope ir.Operand) *LogicalNot {
+func NewLogicalNot(result ir.Operand, ope ir.Operand) *LogicalNot {
 	return &LogicalNot{Result: result, Ope: ope}
 }
