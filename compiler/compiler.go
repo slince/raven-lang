@@ -97,7 +97,7 @@ func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.Basic
 func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
 	switch expr := node.(type) {
 	case *ast.BinaryExpr:
-		return c.ctx.NewArithAdd(l, r)
+		return c.ctx.NewAdd(l, r)
 	case *ast.Identifier:
 		return c.compileIdentifier(node.(*ast.Identifier))
 	}
@@ -105,10 +105,20 @@ func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
 
 func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) ir.Operand {
 	var l, r = c.compileExpr(expr.Left), c.compileExpr(expr.Right)
-	var result ir.Operand
+	var result = ir.NewTemporary(nil)
 	switch expr.Operator {
 	case "+":
-		result = c.ctx.NewArithAdd(l, r)
+		c.ctx.NewAdd(result, l, r)
+	case "-":
+		c.ctx.NewAdd(result, l, r)
+	case "*":
+		c.ctx.NewAdd(result, l, r)
+	case "/":
+		c.ctx.NewAdd(result, l, r)
+	case "%":
+		c.ctx.NewAdd(result, l, r)
+	case "-":
+		c.ctx.NewAdd(result, l, r)
 	}
 	return result
 }
