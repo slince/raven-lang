@@ -33,7 +33,7 @@ func (p *Parser) parseModule() *ast.Module {
 func (p *Parser) parseStmt() ast.Stmt {
 	var tok = p.tokens.Current()
 	var smt ast.Stmt
-	switch tok.Type {
+	switch tok.Kind {
 	// variable declaration
 	case token.LET, token.CONST:
 		smt = p.parseVariableDeclaration()
@@ -199,7 +199,7 @@ func (p *Parser) parseSwitchStmt() *ast.SwitchStmt {
 	for p.tokens.Current().Test(token.CASE, token.DEFAULT) {
 		var tok = p.tokens.Current()
 		p.tokens.Next()
-		var isCase = tok.Type == token.CASE
+		var isCase = tok.Kind == token.CASE
 		if !isCase {
 			if hasDefault {
 				p.error(token.NewSyntaxError("Multiple default clauses", tok.Position))
@@ -357,7 +357,7 @@ func (p *Parser) parseClassBody() *ast.ClassBody {
 			var err error
 			var end = false
 			var cur = p.tokens.Current()
-			switch cur.Type {
+			switch cur.Kind {
 			case token.PUBLIC, token.PROTECTED, token.PRIVATE:
 				err = context.setVisibility(p.parseClassMemberModifier())
 			case token.STATIC:
@@ -405,7 +405,7 @@ func (p *Parser) parseClassMemberModifier() *ast.MemberModifier {
 }
 func (p *Parser) parseExpr() ast.Expr {
 	var exp = p.parsePrimaryExpr()
-	if token.IsOperator(p.tokens.Current().Type) {
+	if token.IsOperator(p.tokens.Current().Kind) {
 		exp = p.parseBinaryExpr(exp)
 	}
 	return exp
@@ -420,7 +420,7 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 	var tok = p.tokens.Current()
 	var exp ast.Expr
 
-	switch tok.Type {
+	switch tok.Kind {
 	// constant
 	case token.INT:
 		num, _ := strconv.ParseInt(tok.Literal, 10, 64)
@@ -464,7 +464,7 @@ func (p *Parser) parsePosixExpr(exp ast.Expr) ast.Expr {
 	for !p.tokens.Eof() {
 		var tok = p.tokens.Current()
 		var end = false
-		switch tok.Type {
+		switch tok.Kind {
 		case token.LPAREN:
 			exp = ast.NewCallExpr(exp, p.parseArguments(), exp.Position())
 		case token.DOT:
@@ -651,7 +651,7 @@ func (p *Parser) parseClassExpr() *ast.ClassExpr {
 }
 
 func (p *Parser) unexpect(tok *token.Token) {
-	p.error(token.NewSyntaxError(fmt.Sprintf("Unexpected token \"%d\" of value \"%s\"", tok.Type, tok.Literal), tok.Position))
+	p.error(token.NewSyntaxError(fmt.Sprintf("Unexpected token \"%d\" of value \"%s\"", tok.Kind, tok.Literal), tok.Position))
 }
 
 func (p *Parser) error(err token.SyntaxError) {

@@ -36,18 +36,18 @@ func (s *Stream) Eof() bool {
 	return s.Current().Test(EOF)
 }
 
-func (s *Stream) Test(kind ...Type) bool {
+func (s *Stream) Test(kind ...Kind) bool {
 	return s.Current().Test(kind...)
 }
 
-func (s *Stream) Expect(kind ...Type) *Token {
+func (s *Stream) Expect(kind ...Kind) *Token {
 	tok, err := s.expect(kind...)
 	if err != nil {
 		panic(err)
 	}
 	return tok
 }
-func (s *Stream) ExpectWithMsg(msg string, kind ...Type) *Token {
+func (s *Stream) ExpectWithMsg(msg string, kind ...Kind) *Token {
 	var tok, err = s.expect(kind...)
 	err = NewSyntaxError(msg+err.Error(), tok.Position)
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *Stream) ExpectWithMsg(msg string, kind ...Type) *Token {
 	return tok
 }
 
-func (s *Stream) expect(kind ...Type) (tok *Token, err error) {
+func (s *Stream) expect(kind ...Kind) (tok *Token, err error) {
 	tok = s.Current()
 	if !tok.Test(kind...) {
 		var expected = make([]string, 0)

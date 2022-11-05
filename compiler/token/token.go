@@ -1,9 +1,9 @@
 package token
 
-type Type uint8
+type Kind uint8
 
 const (
-	ILLEGAL Type = iota
+	ILLEGAL Kind = iota
 
 	literal_begin
 	ID    // foo
@@ -136,7 +136,7 @@ const (
 	EOF // eof
 )
 
-var tokens = map[Type]string{
+var tokens = map[Kind]string{
 	ID:    "identifier",
 	NULL:  "null",
 	TRUE:  "true",
@@ -267,75 +267,75 @@ var tokens = map[Type]string{
 }
 
 // keywords
-var keywords map[string]Type
+var keywords map[string]Kind
 
 func init() {
-	keywords = make(map[string]Type)
+	keywords = make(map[string]Kind)
 	for i := keyword_begin; i <= keyword_end; i++ {
 		keywords[tokens[i]] = i
 	}
 }
 
 // assignment
-var Assigns []Type
+var Assigns []Kind
 
 func init() {
-	Assigns = make([]Type, 0)
+	Assigns = make([]Kind, 0)
 	for i := assign_begin; i <= assign_end; i++ {
 		Assigns = append(Assigns, i)
 	}
 }
 
 type Token struct {
-	Type     Type
-	Literal  string
+	Kind    Kind
+	Literal string
 	Position *Position
 }
 
-func (t Token) Test(kind ...Type) bool {
-	return IndexOf(kind, t.Type) > -1
+func (t Token) Test(kind ...Kind) bool {
+	return IndexOf(kind, t.Kind) > -1
 }
 
 func (t Token) IsBinaryOperator() bool {
-	return IsOperator(t.Type)
+	return IsOperator(t.Kind)
 }
 
-func ValueOf(kind Type) string {
+func ValueOf(kind Kind) string {
 	return tokens[kind]
 }
 
-func IsKeyword(kind Type) bool {
+func IsKeyword(kind Kind) bool {
 	return keyword_begin < kind && kind < keyword_end
 }
 
-func IsOperator(kind Type) bool {
+func IsOperator(kind Kind) bool {
 	return operator_begin < kind && kind < operator_end
 }
 
-func IsLiteral(kind Type) bool {
+func IsLiteral(kind Kind) bool {
 	return literal_begin < kind && kind < literal_end
 }
 
-func IsAssign(kind Type) bool {
+func IsAssign(kind Kind) bool {
 	return assign_begin < kind && kind < assign_end
 }
 
-func NewToken(kind Type, literal string, position *Position) *Token {
+func NewToken(kind Kind, literal string, position *Position) *Token {
 	return &Token{
-		Type:     kind,
+		Kind:     kind,
 		Literal:  literal,
 		Position: position,
 	}
 }
 
-func Lookup(name string) Type {
+func Lookup(name string) Kind {
 	if kind, ok := keywords[name]; ok {
 		return kind
 	}
 	return ID
 }
 
-func IndexOf(haystack []Type, needle Type) int {
+func IndexOf(haystack []Kind, needle Kind) int {
 	for key, value := range haystack {
 		if value == needle {
 			return key

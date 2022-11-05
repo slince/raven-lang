@@ -36,7 +36,7 @@ func (l *Lexer) NextToken() *token.Token {
 	var ch = l.current()
 
 	var tok *token.Token
-	var kind token.Type
+	var kind token.Kind
 
 	// parse source string.
 	switch {
@@ -66,7 +66,7 @@ func (l *Lexer) skipWhitespace() {
 }
 
 func (l *Lexer) lexPunctuation() *token.Token {
-	var kind token.Type
+	var kind token.Kind
 	var ch = l.current()
 	var next = l.look()
 	switch ch {
