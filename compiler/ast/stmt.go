@@ -6,12 +6,12 @@ import (
 
 type Stmt interface {
 	Node
-	Stmt()
+	stmt()
 }
 
 type stmt struct{ node }
 
-func (smt stmt) Stmt() {}
+func (smt stmt) stmt() {}
 
 type Program struct {
 	Modules []*Module

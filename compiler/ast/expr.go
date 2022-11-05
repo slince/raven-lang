@@ -6,12 +6,12 @@ import (
 
 type Expr interface {
 	Node
-	Expr()
+	expr()
 }
 
 type expr struct{ node }
 
-func (exp expr) Expr() {}
+func (exp expr) expr() {}
 
 type Literal struct {
 	Raw   string
@@ -66,7 +66,7 @@ type ClassExpr struct {
 func (exp ClassExpr) Position() *token.Position {
 	return exp.Class.Position()
 }
-func (exp ClassExpr) Expr() {}
+func (exp ClassExpr) expr() {}
 
 type FunctionExpr struct {
 	*Function
@@ -75,7 +75,7 @@ type FunctionExpr struct {
 func (exp FunctionExpr) Position() *token.Position {
 	return exp.Function.Position()
 }
-func (exp FunctionExpr) Expr() {}
+func (exp FunctionExpr) expr() {}
 
 type MapExpr struct {
 	Elements map[Expr]Expr

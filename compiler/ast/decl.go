@@ -4,12 +4,12 @@ import "github.com/slince/php-plus/compiler/token"
 
 type Decl interface {
 	Stmt
-	Decl()
+	decl()
 }
 
 type decl struct{ stmt }
 
-func (dec decl) Decl() {}
+func (dec decl) decl() {}
 
 type VariableDeclarator struct {
 	Id   *Identifier
@@ -92,7 +92,6 @@ func NewFunctionDeclaration(function *Function) *FunctionDeclaration {
 	}
 }
 
-// Class ast collection
 type MemberModifier struct {
 	Value string
 	node

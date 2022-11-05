@@ -39,7 +39,7 @@ func (c *Compiler) compileIdentifier(node *ast.Identifier) string {
 func (c *Compiler) Compile(source string) *ir.Program {
 	var lex = lexer.NewLexer(source)
 	var tokens = lex.Lex()
-	p := parser.NewParser(tokens)
+	var p = parser.NewParser(tokens)
 	var program = p.Parse()
 	return c.compileProgram(program)
 }
