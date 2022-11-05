@@ -10,12 +10,6 @@ type Literal struct {
 	expr
 }
 
-// Identifier for  constants and literal
-type Identifier struct {
-	Value string
-	expr
-}
-
 // array list expression.
 type ArrayExpr struct {
 	Elements []Expr
@@ -105,19 +99,13 @@ type VariableExpr struct {
 	expr
 }
 
-func NewLiteral(value interface{}, raw string, pos *token.Position) Literal {
-	var exp = Literal{
+func NewLiteral(value interface{}, raw string, pos *token.Position) *Literal {
+	var exp = &Literal{
 		Raw:   raw,
 		Value: value,
 	}
 	exp.pos = pos
 	return exp
-}
-
-func NewIdentifier(value string, pos *token.Position) *Identifier {
-	var ident = &Identifier{Value: value}
-	ident.pos = pos
-	return ident
 }
 
 func NewArrayExpr(elements []Expr, pos *token.Position) *ArrayExpr {
