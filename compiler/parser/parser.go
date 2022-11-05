@@ -418,10 +418,10 @@ func (p *Parser) parseIdentifier() *ast.Identifier {
 	return ast.NewIdentifier(tok.Literal, tok.Position)
 }
 
-func (p *Parser) parseLiteral() *ast.Literal {
-	var tok = p.tokens.Expect(token.ID)
-	return ast.NewIdentifier(tok.Literal, tok.Position)
-}
+//func (p *Parser) parseLiteral() *ast.Literal {
+//	var tok = p.tokens.Expect(token.ID)
+//	return ast.NewIdentifier(tok.Literal, tok.Position)
+//}
 
 func (p *Parser) parsePrimaryExpr() ast.Expr {
 	var tok = p.tokens.Current()
