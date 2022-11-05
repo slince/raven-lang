@@ -61,7 +61,7 @@ func (s *Stream) expect(kind ...Kind) (tok *Token, err error) {
 	if !tok.Test(kind...) {
 		var expected = make([]string, 0)
 		for _, item := range kind {
-			expected = append(expected, ValueOf(item))
+			expected = append(expected, Literal(item))
 		}
 		var msg = fmt.Sprintf("Unexpected token \"%s\" (expected \"%s\")", tok.Literal, strings.Join(expected, ","))
 		err = NewSyntaxError(msg, tok.Position)

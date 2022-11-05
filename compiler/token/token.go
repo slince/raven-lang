@@ -136,6 +136,7 @@ const (
 	EOF // eof
 )
 
+// Well known token literals
 var tokens = map[Kind]string{
 	ID:    "identifier",
 	NULL:  "null",
@@ -292,15 +293,24 @@ type Token struct {
 	Position *Position
 }
 
-func (t Token) Test(kind ...Kind) bool {
-	return IndexOf(kind, t.Kind) > -1
+func (t Token) Test(kinds ...Kind) bool {
+	for _, kind := range kinds {
+		if kind == t.Kind {
+			return true
+		}
+	}
+	return false
 }
 
-func (t Token) IsBinaryOperator() bool {
-	return IsOperator(t.Kind)
+func NewToken(kind Kind, literal string, position *Position) *Token {
+	return &Token{
+		Kind:     kind,
+		Literal:  literal,
+		Position: position,
+	}
 }
 
-func ValueOf(kind Kind) string {
+func Literal(kind Kind) string {
 	return tokens[kind]
 }
 
@@ -320,16 +330,8 @@ func IsAssign(kind Kind) bool {
 	return assign_begin < kind && kind < assign_end
 }
 
-func NewToken(kind Kind, literal string, position *Position) *Token {
-	return &Token{
-		Kind:     kind,
-		Literal:  literal,
-		Position: position,
-	}
-}
-
-func Lookup(name string) Kind {
-	if kind, ok := keywords[name]; ok {
+func LookupIdentifier(identifier string) Kind {
+	if kind, ok := keywords[identifier]; ok {
 		return kind
 	}
 	return ID

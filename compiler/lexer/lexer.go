@@ -30,7 +30,7 @@ func (l *Lexer) NextToken() *token.Token {
 	// skip blank char
 	l.skipWhitespace()
 	if l.eof() {
-		return token.NewToken(token.EOF, token.ValueOf(token.EOF), l.position())
+		return token.NewToken(token.EOF, token.Literal(token.EOF), l.position())
 	}
 
 	var ch = l.current()
@@ -49,7 +49,7 @@ func (l *Lexer) NextToken() *token.Token {
 		tok = token.NewToken(kind, value, l.position())
 	case utils.IsLetter(ch):
 		identifier := l.readIdentifier()
-		kind = token.Lookup(identifier)
+		kind = token.LookupIdentifier(identifier)
 		tok = token.NewToken(kind, identifier, l.position())
 	case ch == '\'' || ch == '"':
 		tok = token.NewToken(token.STR, l.readString(ch), l.position())
@@ -153,7 +153,7 @@ func (l *Lexer) lexPunctuation() *token.Token {
 		l.unexpect(ch, l.position())
 	}
 	l.next()
-	return token.NewToken(kind, token.ValueOf(kind), l.position())
+	return token.NewToken(kind, token.Literal(kind), l.position())
 }
 
 func (l *Lexer) readNumber() (string, bool) {
