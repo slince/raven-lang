@@ -9,7 +9,34 @@ type Node interface {
 	node()
 }
 
+type Expr interface {
+	Node
+	expr()
+}
+
+type Stmt interface {
+	Node
+	stmt()
+}
+
+type Decl interface {
+	Stmt
+	decl()
+}
+
 type node struct{ pos *token.Position }
 
 func (n node) Position() *token.Position { return n.pos }
 func (n node) node()                     {}
+
+type expr struct{ node }
+
+func (exp expr) expr() {}
+
+type stmt struct{ node }
+
+func (smt stmt) stmt() {}
+
+type decl struct{ stmt }
+
+func (dec decl) decl() {}

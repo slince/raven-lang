@@ -4,15 +4,6 @@ import (
 	"github.com/slince/php-plus/compiler/token"
 )
 
-type Expr interface {
-	Node
-	expr()
-}
-
-type expr struct{ node }
-
-func (exp expr) expr() {}
-
 type Literal struct {
 	Raw   string
 	Value interface{}

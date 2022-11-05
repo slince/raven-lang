@@ -4,15 +4,6 @@ import (
 	"github.com/slince/php-plus/compiler/token"
 )
 
-type Stmt interface {
-	Node
-	stmt()
-}
-
-type stmt struct{ node }
-
-func (smt stmt) stmt() {}
-
 type Program struct {
 	Modules []*Module
 	stmt

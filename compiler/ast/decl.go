@@ -2,15 +2,6 @@ package ast
 
 import "github.com/slince/php-plus/compiler/token"
 
-type Decl interface {
-	Stmt
-	decl()
-}
-
-type decl struct{ stmt }
-
-func (dec decl) decl() {}
-
 type VariableDeclarator struct {
 	Id   *Identifier
 	Kind *Identifier
