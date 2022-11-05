@@ -63,7 +63,7 @@ func (s *Stream) expect(kind ...Type) (tok *Token, err error) {
 		for _, item := range kind {
 			expected = append(expected, ValueOf(item))
 		}
-		var msg = fmt.Sprintf("Unexpected token \"%s\" (expected \"%s\")", tok.Value, strings.Join(expected, ","))
+		var msg = fmt.Sprintf("Unexpected token \"%s\" (expected \"%s\")", tok.Literal, strings.Join(expected, ","))
 		err = NewSyntaxError(msg, tok.Position)
 		return
 	}
@@ -75,7 +75,7 @@ func (s *Stream) Dump() []string {
 	s.index = 0
 	var toks = make([]string, len(s.Tokens))
 	for _, tok := range s.Tokens {
-		toks = append(toks, tok.Value)
+		toks = append(toks, tok.Literal)
 	}
 	return toks
 }

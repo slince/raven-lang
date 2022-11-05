@@ -288,7 +288,7 @@ func init() {
 
 type Token struct {
 	Type     Type
-	Value    string
+	Literal  string
 	Position *Position
 }
 
@@ -320,10 +320,10 @@ func IsAssign(kind Type) bool {
 	return assign_begin < kind && kind < assign_end
 }
 
-func NewToken(kind Type, value string, position *Position) *Token {
+func NewToken(kind Type, literal string, position *Position) *Token {
 	return &Token{
 		Type:     kind,
-		Value:    value,
+		Literal:  literal,
 		Position: position,
 	}
 }

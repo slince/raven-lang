@@ -101,7 +101,7 @@ func (p *Parser) parseVariableDeclaration() *ast.VariableDeclaration {
 		}
 		break
 	}
-	return ast.NewVariableDeclaration(tok.Value, declarators, tok.Position)
+	return ast.NewVariableDeclaration(tok.Literal, declarators, tok.Position)
 }
 
 func (p *Parser) parseVariableDeclarator() *ast.VariableDeclarator {
@@ -278,12 +278,12 @@ func (p *Parser) parseForeachStmt() *ast.ForeachStmt {
 	p.tokens.Expect(token.AS)
 	var key ast.Expr
 	var cur = p.tokens.Expect(token.ID)
-	var value = ast.NewIdentifier(cur.Value, cur.Position)
+	var value = ast.NewIdentifier(cur.Literal, cur.Position)
 	if p.tokens.Current().Test(token.DOUBLE_ARROW) {
 		key = value
 		p.tokens.Next()
 		cur = p.tokens.Expect(token.ID)
-		value = ast.NewIdentifier(cur.Value, cur.Position)
+		value = ast.NewIdentifier(cur.Literal, cur.Position)
 	}
 	p.tokens.Expect(token.RPAREN)
 	return ast.NewForeachStmt(source, key, value, p.parseBlockStmt(), tok.Position)
@@ -369,7 +369,7 @@ func (p *Parser) parseClassBody() *ast.ClassBody {
 			case token.CONST:
 				p.tokens.Next()
 				var variable = p.parseVariableDeclarator()
-				prop = ast.NewPropertyDefinition(context.visibility, context.static, cur.Value, variable, tok.Position)
+				prop = ast.NewPropertyDefinition(context.visibility, context.static, cur.Literal, variable, tok.Position)
 				end = true
 			case token.ID:
 				var variable = p.parseVariableDeclarator()
@@ -401,7 +401,7 @@ func (p *Parser) parseClassBody() *ast.ClassBody {
 func (p *Parser) parseClassMemberModifier() *ast.MemberModifier {
 	var tok = p.tokens.Current()
 	p.tokens.Next()
-	return ast.NewModifier(tok.Value, tok.Position)
+	return ast.NewModifier(tok.Literal, tok.Position)
 }
 func (p *Parser) parseExpr() ast.Expr {
 	var exp = p.parsePrimaryExpr()
@@ -413,7 +413,7 @@ func (p *Parser) parseExpr() ast.Expr {
 
 func (p *Parser) parseIdentifier() *ast.Identifier {
 	var tok = p.tokens.Expect(token.ID)
-	return ast.NewIdentifier(tok.Value, tok.Position)
+	return ast.NewIdentifier(tok.Literal, tok.Position)
 }
 
 func (p *Parser) parsePrimaryExpr() ast.Expr {
@@ -423,15 +423,15 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 	switch tok.Type {
 	// constant
 	case token.INT:
-		num, _ := strconv.ParseInt(tok.Value, 10, 64)
-		exp = ast.NewLiteral(num, tok.Value, tok.Position)
+		num, _ := strconv.ParseInt(tok.Literal, 10, 64)
+		exp = ast.NewLiteral(num, tok.Literal, tok.Position)
 		p.tokens.Next()
 	case token.FLOAT:
-		num, _ := strconv.ParseFloat(tok.Value, 64)
-		exp = ast.NewLiteral(num, tok.Value, tok.Position)
+		num, _ := strconv.ParseFloat(tok.Literal, 64)
+		exp = ast.NewLiteral(num, tok.Literal, tok.Position)
 		p.tokens.Next()
 	case token.STR:
-		exp = ast.NewLiteral(tok.Value, tok.Value, tok.Position)
+		exp = ast.NewLiteral(tok.Literal, tok.Literal, tok.Position)
 		p.tokens.Next()
 	// identifier
 	case token.ID:
@@ -494,24 +494,24 @@ func (p *Parser) parseAssignmentExpr(lhs ast.Expr) *ast.AssignmentExpr {
 	}
 	var tok = p.tokens.Expect(token.Assigns...)
 	var rhs = p.parseExpr()
-	return ast.NewAssignmentExpr(converted, tok.Value, rhs, lhs.Position())
+	return ast.NewAssignmentExpr(converted, tok.Literal, rhs, lhs.Position())
 }
 
 func (p *Parser) parseIdentifierExpr() ast.Expr {
 	var tok = p.tokens.Current()
 	var exp ast.Expr
-	switch tok.Value {
+	switch tok.Literal {
 	case "true":
 	case "TRUE":
-		exp = ast.NewLiteral(true, tok.Value, tok.Position)
+		exp = ast.NewLiteral(true, tok.Literal, tok.Position)
 	case "false":
 	case "FALSE":
-		exp = ast.NewLiteral(false, tok.Value, tok.Position)
+		exp = ast.NewLiteral(false, tok.Literal, tok.Position)
 	case "null":
 	case "NULL":
-		exp = ast.NewLiteral(nil, tok.Value, tok.Position)
+		exp = ast.NewLiteral(nil, tok.Literal, tok.Position)
 	default:
-		exp = ast.NewIdentifier(tok.Value, tok.Position)
+		exp = ast.NewIdentifier(tok.Literal, tok.Position)
 	}
 	p.tokens.Next()
 	return exp
@@ -520,7 +520,7 @@ func (p *Parser) parseIdentifierExpr() ast.Expr {
 func (p *Parser) parseObjectAccessExpr(object ast.Expr) ast.Expr {
 	p.tokens.Expect(token.DOT)
 	var tok = p.tokens.Expect(token.ID)
-	var property = ast.NewIdentifier(tok.Value, tok.Position)
+	var property = ast.NewIdentifier(tok.Literal, tok.Position)
 	var exp ast.Expr = ast.NewMemberExpr(object, property, object.Position())
 	if p.tokens.Current().Test(token.LPAREN) {
 		exp = ast.NewCallExpr(exp, p.parseArguments(), exp.Position())
@@ -572,7 +572,7 @@ func (p *Parser) parseParenExpr() ast.Expr {
 
 func (p *Parser) parseUnaryExpr() *ast.UnaryExpr {
 	var tok = p.tokens.Current()
-	var operator = tok.Value
+	var operator = tok.Literal
 	p.tokens.Next()
 	var target = p.parsePrimaryExpr()
 	return ast.NewUnaryExpr(operator, target, tok.Position)
@@ -593,22 +593,22 @@ func (p *Parser) parseUpdateExpr(prefix bool, argument ast.Expr) *ast.UpdateExpr
 		}
 		p.error(token.NewSyntaxError(msg, argument.Position()))
 	}
-	return ast.NewUpdateExpr(tok.Value, argument, prefix, tok.Position)
+	return ast.NewUpdateExpr(tok.Literal, argument, prefix, tok.Position)
 }
 
 func (p *Parser) parseBinaryExpr(exp ast.Expr) *ast.BinaryExpr {
 	// a + b * c / d
 	// a * b + c
-	for IsBinaryOperator(p.tokens.Current().Value) {
+	for IsBinaryOperator(p.tokens.Current().Literal) {
 		exp = p.doParseBinary(exp, defaultOperatorPrecedence)
 	}
 	return exp.(*ast.BinaryExpr)
 }
 
 func (p *Parser) doParseBinary(lhs ast.Expr, prevPrecedence OperatorPrecedence) *ast.BinaryExpr {
-	for IsBinaryOperator(p.tokens.Current().Value) {
+	for IsBinaryOperator(p.tokens.Current().Literal) {
 		var tok = p.tokens.Current()
-		var operator = tok.Value
+		var operator = tok.Literal
 		var currentPrecedence = BinaryPrecedence(operator)
 
 		// if the current less than prev, don't consume token.
@@ -618,7 +618,7 @@ func (p *Parser) doParseBinary(lhs ast.Expr, prevPrecedence OperatorPrecedence) 
 		// rhs
 		p.tokens.Next()
 		var rhs = p.parsePrimaryExpr()
-		var nextPrecedence = BinaryPrecedence(p.tokens.Current().Value)
+		var nextPrecedence = BinaryPrecedence(p.tokens.Current().Literal)
 		if currentPrecedence.Precedence < nextPrecedence.Precedence {
 			rhs = p.doParseBinary(rhs, currentPrecedence)
 		}
@@ -651,7 +651,7 @@ func (p *Parser) parseClassExpr() *ast.ClassExpr {
 }
 
 func (p *Parser) unexpect(tok *token.Token) {
-	p.error(token.NewSyntaxError(fmt.Sprintf("Unexpected token \"%d\" of value \"%s\"", tok.Type, tok.Value), tok.Position))
+	p.error(token.NewSyntaxError(fmt.Sprintf("Unexpected token \"%d\" of value \"%s\"", tok.Type, tok.Literal), tok.Position))
 }
 
 func (p *Parser) error(err token.SyntaxError) {
