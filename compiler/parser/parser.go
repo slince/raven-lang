@@ -398,11 +398,13 @@ func (p *Parser) parseClassBody() *ast.ClassBody {
 	p.tokens.Expect(token.RBRACE)
 	return ast.NewClassBody(props, methods, tok.Position)
 }
+
 func (p *Parser) parseClassMemberModifier() *ast.MemberModifier {
 	var tok = p.tokens.Current()
 	p.tokens.Next()
 	return ast.NewModifier(tok.Literal, tok.Position)
 }
+
 func (p *Parser) parseExpr() ast.Expr {
 	var exp = p.parsePrimaryExpr()
 	if token.IsOperator(p.tokens.Current().Kind) {
@@ -412,6 +414,11 @@ func (p *Parser) parseExpr() ast.Expr {
 }
 
 func (p *Parser) parseIdentifier() *ast.Identifier {
+	var tok = p.tokens.Expect(token.ID)
+	return ast.NewIdentifier(tok.Literal, tok.Position)
+}
+
+func (p *Parser) parseLiteral() *ast.Literal {
 	var tok = p.tokens.Expect(token.ID)
 	return ast.NewIdentifier(tok.Literal, tok.Position)
 }
