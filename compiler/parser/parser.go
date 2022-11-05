@@ -83,7 +83,7 @@ func (p *Parser) parseStmt() ast.Stmt {
 	}
 	//p.tokens.Expect(token.SEMICOLON)
 	// ignore semicolon
-	for p.tokens.Current().Test(token.SEMICOLON) {
+	for p.tokens.Test(token.SEMICOLON) {
 		p.tokens.Next()
 	}
 	return smt
@@ -95,7 +95,7 @@ func (p *Parser) parseVariableDeclaration() *ast.VariableDeclaration {
 
 	for {
 		declarators = append(declarators, p.parseVariableDeclarator())
-		if p.tokens.Current().Test(token.COMMA) { // if comma and go on
+		if p.tokens.Test(token.COMMA) { // if comma and go on
 			p.tokens.Next()
 			continue
 		}
@@ -110,11 +110,11 @@ func (p *Parser) parseVariableDeclarator() *ast.VariableDeclarator {
 	var init ast.Expr
 
 	// parse variable type
-	if p.tokens.Current().Test(token.COLON) { // let a: string
+	if p.tokens.Test(token.COLON) { // let a: string
 		p.tokens.Next()
 		kind = p.parseIdentifier()
 		// parse variable init
-		if p.tokens.Current().Test(token.ASSIGN) { // variable init
+		if p.tokens.Test(token.ASSIGN) { // variable init
 			p.tokens.Next()
 			init = p.parseExpr()
 		}
@@ -132,12 +132,12 @@ func (p *Parser) parseFunctionDeclaration() *ast.FunctionDeclaration {
 func (p *Parser) parseFunction() *ast.Function {
 	var tok = p.tokens.Expect(token.FUNCTION)
 	var id *ast.Identifier // optional
-	if p.tokens.Current().Test(token.ID) {
+	if p.tokens.Test(token.ID) {
 		id = p.parseIdentifier()
 	}
 	var args = make([]*ast.FunctionArgument, 0)
 	p.tokens.Expect(token.LPAREN)
-	for !p.tokens.Current().Test(token.RPAREN) {
+	for !p.tokens.Test(token.RPAREN) {
 		if len(args) > 0 {
 			p.tokens.Expect(token.COMMA)
 		}
@@ -146,7 +146,7 @@ func (p *Parser) parseFunction() *ast.Function {
 	p.tokens.Expect(token.RPAREN)
 	// function return type is optional.
 	var kind *ast.Identifier // optional
-	if p.tokens.Current().Test(token.COLON) {
+	if p.tokens.Test(token.COLON) {
 		p.tokens.Next()
 		kind = p.parseIdentifier()
 	}
@@ -164,7 +164,7 @@ func (p *Parser) parseFunctionArgument() *ast.FunctionArgument {
 func (p *Parser) parseBlockStmt() *ast.BlockStmt {
 	var tok = p.tokens.Expect(token.LBRACE)
 	var stmts = make([]ast.Stmt, 0)
-	for !p.tokens.Current().Test(token.RBRACE) {
+	for !p.tokens.Test(token.RBRACE) {
 		stmts = append(stmts, p.parseStmt())
 	}
 	p.tokens.Expect(token.RBRACE)
@@ -196,7 +196,7 @@ func (p *Parser) parseSwitchStmt() *ast.SwitchStmt {
 	var cases = make([]*ast.SwitchCase, 0)
 	var hasDefault = false
 	p.tokens.Expect(token.LBRACE)
-	for p.tokens.Current().Test(token.CASE, token.DEFAULT) {
+	for p.tokens.Test(token.CASE, token.DEFAULT) {
 		var tok = p.tokens.Current()
 		p.tokens.Next()
 		var isCase = tok.Kind == token.CASE
@@ -214,7 +214,7 @@ func (p *Parser) parseSwitchStmt() *ast.SwitchStmt {
 		}
 		p.tokens.Expect(token.COLON)
 		var consequent = make([]ast.Stmt, 0)
-		for !p.tokens.Current().Test(token.CASE, token.DEFAULT, token.RBRACE) {
+		for !p.tokens.Test(token.CASE, token.DEFAULT, token.RBRACE) {
 			consequent = append(consequent, p.parseStmt())
 		}
 		var _case = ast.NewSwitchCase(test, consequent, !isCase, tok.Position)
@@ -237,13 +237,13 @@ func (p *Parser) parseForStmt() *ast.ForStmt {
 	p.tokens.Expect(token.SEMICOLON)
 	// parse test
 	var test ast.Expr
-	if !p.tokens.Current().Test(token.SEMICOLON) {
+	if !p.tokens.Test(token.SEMICOLON) {
 		test = p.parseExpr()
 	}
 	p.tokens.Expect(token.SEMICOLON)
 	// parse update
 	var update ast.Expr
-	if !p.tokens.Current().Test(token.RPAREN) {
+	if !p.tokens.Test(token.RPAREN) {
 		update = p.parseExpr()
 	}
 	p.tokens.Expect(token.RPAREN)
@@ -279,7 +279,7 @@ func (p *Parser) parseForeachStmt() *ast.ForeachStmt {
 	var key ast.Expr
 	var cur = p.tokens.Expect(token.ID)
 	var value = ast.NewIdentifier(cur.Literal, cur.Position)
-	if p.tokens.Current().Test(token.DOUBLE_ARROW) {
+	if p.tokens.Test(token.DOUBLE_ARROW) {
 		key = value
 		p.tokens.Next()
 		cur = p.tokens.Expect(token.ID)
@@ -293,7 +293,7 @@ func (p *Parser) parseTryStmt() *ast.TryStmt {
 	var tok = p.tokens.Expect(token.TRY)
 	var body = p.parseBlockStmt()
 	var catches = make([]*ast.CatchClause, 0)
-	for p.tokens.Current().Test(token.CATCH) {
+	for p.tokens.Test(token.CATCH) {
 		var tok = p.tokens.Current()
 		p.tokens.Next()
 		p.tokens.Expect(token.LPAREN)
@@ -305,7 +305,7 @@ func (p *Parser) parseTryStmt() *ast.TryStmt {
 		catches = append(catches, ast.NewCatchClause(variable, kind, body, tok.Position))
 	}
 	var finalizer *ast.BlockStmt
-	if p.tokens.Current().Test(token.FINALLY) {
+	if p.tokens.Test(token.FINALLY) {
 		p.tokens.Next()
 		finalizer = p.parseBlockStmt()
 	}
@@ -321,18 +321,18 @@ func (p *Parser) parseClass() *ast.Class {
 	var id *ast.Identifier
 	var extends *ast.Identifier
 	var impls = make([]*ast.Identifier, 0)
-	if p.tokens.Current().Test(token.ID) {
+	if p.tokens.Test(token.ID) {
 		id = p.parseIdentifier()
 	}
 
-	if p.tokens.Current().Test(token.EXTENDS) {
+	if p.tokens.Test(token.EXTENDS) {
 		p.tokens.Next()
 		extends = p.parseIdentifier()
 	}
 
-	if p.tokens.Current().Test(token.IMPLEMENTS) {
+	if p.tokens.Test(token.IMPLEMENTS) {
 		p.tokens.Next()
-		for !p.tokens.Current().Test(token.LBRACE) {
+		for !p.tokens.Test(token.LBRACE) {
 			if len(impls) > 0 {
 				p.tokens.Expect(token.COMMA)
 			}
@@ -348,7 +348,7 @@ func (p *Parser) parseClassBody() *ast.ClassBody {
 	var props = make([]*ast.PropertyDefinition, 0)
 	var methods = make([]*ast.MethodDefinition, 0)
 
-	for !p.tokens.Current().Test(token.RBRACE) {
+	for !p.tokens.Test(token.RBRACE) {
 		var tok = p.tokens.Current()
 		var context = NewClassPropertyContext()
 		var prop *ast.PropertyDefinition
@@ -522,7 +522,7 @@ func (p *Parser) parseObjectAccessExpr(object ast.Expr) ast.Expr {
 	var tok = p.tokens.Expect(token.ID)
 	var property = ast.NewIdentifier(tok.Literal, tok.Position)
 	var exp ast.Expr = ast.NewMemberExpr(object, property, object.Position())
-	if p.tokens.Current().Test(token.LPAREN) {
+	if p.tokens.Test(token.LPAREN) {
 		exp = ast.NewCallExpr(exp, p.parseArguments(), exp.Position())
 	}
 	return exp
@@ -538,7 +538,7 @@ func (p *Parser) parseAccessExpr(object ast.Expr) *ast.MemberExpr {
 func (p *Parser) parseArrayExpr() *ast.ArrayExpr {
 	var tok = p.tokens.Expect(token.LBRACKET)
 	var exp = ast.NewArrayExpr(make([]ast.Expr, 0), tok.Position)
-	for !p.tokens.Current().Test(token.RBRACKET) {
+	for !p.tokens.Test(token.RBRACKET) {
 		if !exp.IsEmpty() {
 			p.tokens.Expect(token.COMMA)
 		}
@@ -551,7 +551,7 @@ func (p *Parser) parseArrayExpr() *ast.ArrayExpr {
 func (p *Parser) parseMapExpr() *ast.MapExpr {
 	var tok = p.tokens.Expect(token.LBRACE)
 	var exp = ast.NewMapExpr(make(map[ast.Expr]ast.Expr), tok.Position)
-	for p.tokens.Current().Test(token.RBRACE) {
+	for p.tokens.Test(token.RBRACE) {
 		if !exp.IsEmpty() {
 			p.tokens.Expect(token.COMMA)
 		}
@@ -632,7 +632,7 @@ func (p *Parser) parseArguments() []ast.Expr {
 	// the_foo_func(1, "foo")
 	var args = make([]ast.Expr, 0)
 	p.tokens.Expect(token.LPAREN)
-	for !p.tokens.Current().Test(token.RPAREN) {
+	for !p.tokens.Test(token.RPAREN) {
 		if len(args) > 0 {
 			p.tokens.Expect(token.COMMA)
 		}

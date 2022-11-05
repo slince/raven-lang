@@ -36,31 +36,32 @@ func (s *Stream) Eof() bool {
 	return s.Current().Test(EOF)
 }
 
-func (s *Stream) Test(kind ...Kind) bool {
-	return s.Current().Test(kind...)
+func (s *Stream) Test(kinds ...Kind) bool {
+	return s.Current().Test(kinds...)
 }
 
-func (s *Stream) Expect(kind ...Kind) *Token {
-	tok, err := s.expect(kind...)
-	if err != nil {
-		panic(err)
-	}
-	return tok
-}
-func (s *Stream) ExpectWithMsg(msg string, kind ...Kind) *Token {
-	var tok, err = s.expect(kind...)
-	err = NewSyntaxError(msg+err.Error(), tok.Position)
+func (s *Stream) Expect(kinds ...Kind) *Token {
+	tok, err := s.expect(kinds...)
 	if err != nil {
 		panic(err)
 	}
 	return tok
 }
 
-func (s *Stream) expect(kind ...Kind) (tok *Token, err error) {
+func (s *Stream) SkipIfTest(kinds ...Kind) *Token {
+	tok := s.Current()
+	if tok.Test(kinds...) {
+		s.Next()
+		return tok
+	}
+	return nil
+}
+
+func (s *Stream) expect(kinds ...Kind) (tok *Token, err error) {
 	tok = s.Current()
-	if !tok.Test(kind...) {
+	if !tok.Test(kinds...) {
 		var expected = make([]string, 0)
-		for _, item := range kind {
+		for _, item := range kinds {
 			expected = append(expected, Literal(item))
 		}
 		var msg = fmt.Sprintf("Unexpected token \"%s\" (expected \"%s\")", tok.Literal, strings.Join(expected, ","))
