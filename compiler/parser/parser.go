@@ -276,7 +276,7 @@ func (p *Parser) parseForeachStmt() *ast.ForeachStmt {
 	p.tokens.Expect(token.LPAREN)
 	var source = p.parseExpr()
 	p.tokens.Expect(token.AS)
-	var key ast.Expr
+	var key *ast.Identifier
 	var cur = p.tokens.Expect(token.ID)
 	var value = ast.NewIdentifier(cur.Literal, cur.Position)
 	if p.tokens.Test(token.DOUBLE_ARROW) {

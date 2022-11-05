@@ -51,7 +51,7 @@ type ClassExpr struct {
 func (exp ClassExpr) Position() *token.Position {
 	return exp.Class.Position()
 }
-func (exp ClassExpr) expr() {}
+func (exp ClassExpr) Expr() {}
 
 type FunctionExpr struct {
 	*Function
@@ -60,7 +60,7 @@ type FunctionExpr struct {
 func (exp FunctionExpr) Position() *token.Position {
 	return exp.Function.Position()
 }
-func (exp FunctionExpr) expr() {}
+func (exp FunctionExpr) Expr() {}
 
 type MapExpr struct {
 	Elements map[Expr]Expr

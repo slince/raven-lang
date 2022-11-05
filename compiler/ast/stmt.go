@@ -51,9 +51,9 @@ type ForStmt struct {
 }
 
 type ForeachStmt struct {
-	Source Expr // VariableDeclaration | Expr
-	Key    Expr
-	Value  Expr
+	Source Expr // Expr
+	Key    *Identifier
+	Value  *Identifier
 	Body   Stmt
 	stmt
 }
@@ -140,7 +140,7 @@ func NewForStmt(init Node, test Expr, update Expr, body Stmt, pos *token.Positio
 	return smt
 }
 
-func NewForeachStmt(source Expr, key Expr, value Expr, body Stmt, pos *token.Position) *ForeachStmt {
+func NewForeachStmt(source Expr, key *Identifier, value *Identifier, body Stmt, pos *token.Position) *ForeachStmt {
 	var smt = &ForeachStmt{
 		Source: source,
 		Key:    key,

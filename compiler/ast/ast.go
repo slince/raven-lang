@@ -6,40 +6,40 @@ import (
 
 type Node interface {
 	Position() *token.Position
-	node()
+	Node()
 }
 
 type Expr interface {
 	Node
-	expr()
+	Expr()
 }
 
 type Stmt interface {
 	Node
-	stmt()
+	Stmt()
 }
 
 type Decl interface {
 	Stmt
-	decl()
+	Decl()
 }
 
 type node struct{ pos *token.Position }
 
 func (n node) Position() *token.Position { return n.pos }
-func (n node) node()                     {}
+func (n node) Node()                     {}
 
 type expr struct{ node }
 
-func (exp expr) expr() {}
+func (exp expr) Expr() {}
 
 type stmt struct{ node }
 
-func (smt stmt) stmt() {}
+func (smt stmt) Stmt() {}
 
 type decl struct{ stmt }
 
-func (dec decl) decl() {}
+func (dec decl) Decl() {}
 
 // Identifier represents an identifier.
 type Identifier struct {
