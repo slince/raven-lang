@@ -40,6 +40,8 @@ if (c > d) {
    v = 10
 }
 
+let f = 10 + 20 * 30 * (50 + 60)
+
 switch (a){
 	case 1:
 		break;

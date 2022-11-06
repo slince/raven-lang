@@ -11,6 +11,7 @@ func (p *Parser) parseExpr(precedence int) ast.Expr {
 	var cur = p.tokens.Current()
 	for token.IsOperator(cur.Kind) && isBinaryOperator(cur.Literal) && getBinaryPrecedence(cur.Literal).precedence > precedence {
 		var op = getBinaryPrecedence(p.tokens.Current().Literal)
+		p.tokens.Next()
 		var expr2 = p.parseExpr(op.precedence)
 		expr = ast.NewBinaryExpr(expr, cur.Literal, expr2, expr.Position())
 		cur = p.tokens.Current()
