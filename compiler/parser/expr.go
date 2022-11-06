@@ -198,38 +198,6 @@ func (p *Parser) parseUpdateExpr(prefix bool, argument ast.Expr) *ast.UpdateExpr
 	return ast.NewUpdateExpr(tok.Literal, argument, prefix, tok.Position)
 }
 
-func (p *Parser) parseBinaryExpr(exp ast.Expr) *ast.BinaryExpr {
-	// a + b * c / d
-	// a * b + c
-	for isBinaryOperator(p.tokens.Current().Literal) {
-		exp = p.doParseBinary(exp, defaultOperatorPrecedence)
-	}
-	return exp.(*ast.BinaryExpr)
-}
-
-func (p *Parser) doParseBinary(lhs ast.Expr, prevPrecedence OperatorPrecedence) *ast.BinaryExpr {
-	for isBinaryOperator(p.tokens.Current().Literal) {
-		var tok = p.tokens.Current()
-		var operator = tok.Literal
-		var currentPrecedence = getBinaryPrecedence(operator)
-
-		// if the current less than prev, don't consume token.
-		if currentPrecedence.precedence < prevPrecedence.precedence {
-			break
-		}
-		// rhs
-		p.tokens.Next()
-		var rhs = p.parsePrimaryExpr()
-		var nextPrecedence = getBinaryPrecedence(p.tokens.Current().Literal)
-		if currentPrecedence.precedence < nextPrecedence.precedence {
-			rhs = p.doParseBinary(rhs, currentPrecedence)
-		}
-		prevPrecedence = currentPrecedence
-		lhs = ast.NewBinaryExpr(lhs, operator, rhs, lhs.Position())
-	}
-	return lhs.(*ast.BinaryExpr)
-}
-
 func (p *Parser) parseFunctionExpr() *ast.FunctionExpr {
 	return ast.NewFunctionExpr(p.parseFunction())
 }
