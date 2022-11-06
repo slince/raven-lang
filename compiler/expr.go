@@ -24,7 +24,7 @@ func (c *Compiler) compileLiteral(node *ast.Literal) *ir.Const {
 	case string:
 		kind = types.String
 	}
-	return ir.NewLiteral(node.Value, kind)
+	return ir.NewConst(node.Value, kind)
 }
 
 func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
@@ -35,6 +35,8 @@ func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
 		return c.compileUnaryExpr(expr)
 	case *ast.UpdateExpr:
 		return c.compileUpdateExpr(expr)
+	case *ast.ArrayExpr:
+
 	}
 }
 
@@ -43,9 +45,9 @@ func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) ir.Operand {
 	var result = ir.NewTemporary(nil)
 	switch expr.Operator {
 	case "++":
-		c.ctx.NewAdd(result, target, ir.NewLiteral(1, c.compileType(expr.Target)))
+		c.ctx.NewAdd(result, target, ir.NewConst(1, target.Type()))
 	case "--":
-		c.ctx.NewBitNot(result, target)
+		c.ctx.NewSub(result, target, ir.NewConst(1, target.Type()))
 	}
 	return result
 }

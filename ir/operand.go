@@ -3,12 +3,13 @@ package ir
 import "github.com/slince/php-plus/ir/types"
 
 var (
-	Zero = NewLiteral(0, types.I1)
-	One  = NewLiteral(1, types.I1)
+	Zero = NewConst(0, types.I1)
+	One  = NewConst(1, types.I1)
 )
 
 type Operand interface {
 	operand()
+	Type() types.Type
 }
 
 type operand struct {
@@ -22,7 +23,11 @@ type Const struct {
 	operand
 }
 
-func NewLiteral(value interface{}, kind types.Type) *Const {
+func (c *Const) Type() types.Type {
+	return c.Kind
+}
+
+func NewConst(value interface{}, kind types.Type) *Const {
 	return &Const{
 		Value: value,
 		Kind:  kind,
@@ -38,6 +43,10 @@ type Variable struct {
 	operand
 }
 
+func (v *Variable) Type() types.Type {
+	return v.Kind
+}
+
 func NewVariable(name string, kind types.Type) *Variable {
 	return &Variable{
 		Name: name,
@@ -49,6 +58,13 @@ func NewVariable(name string, kind types.Type) *Variable {
 type Temporary struct {
 	Original *Variable
 	operand
+}
+
+func (v *Temporary) Type() types.Type {
+	if v.Original != nil {
+		return v.Original.Type()
+	}
+	return nil
 }
 
 func NewTemporary(variable *Variable) *Temporary {
