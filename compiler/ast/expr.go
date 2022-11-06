@@ -4,6 +4,12 @@ import (
 	"github.com/slince/php-plus/compiler/token"
 )
 
+// Identifier represents an identifier.
+type Identifier struct {
+	Value string
+	expr
+}
+
 type Literal struct {
 	Raw   string
 	Value interface{}
@@ -97,6 +103,12 @@ type UpdateExpr struct {
 type VariableExpr struct {
 	Value string
 	expr
+}
+
+func NewIdentifier(value string, pos *token.Position) *Identifier {
+	var ident = &Identifier{Value: value}
+	ident.pos = pos
+	return ident
 }
 
 func NewLiteral(value interface{}, raw string, pos *token.Position) *Literal {

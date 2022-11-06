@@ -40,15 +40,3 @@ func (smt stmt) Stmt() {}
 type decl struct{ stmt }
 
 func (dec decl) Decl() {}
-
-// Identifier represents an identifier.
-type Identifier struct {
-	Value string
-	node
-}
-
-func NewIdentifier(value string, pos *token.Position) *Identifier {
-	var ident = &Identifier{Value: value}
-	ident.pos = pos
-	return ident
-}
