@@ -8,69 +8,69 @@ const (
 )
 
 type OperatorPrecedence struct {
-	Precedence int
-	Assoc      OperatorAssoc
+	precedence int
+	assoc      OperatorAssoc
 }
 
 var defaultOperatorPrecedence = OperatorPrecedence{
-	Precedence: -1,
+	precedence: -1,
 }
 
 var binaryOperators = map[string]OperatorPrecedence{
-	"or":  {Precedence: 10, Assoc: ASSOC_LEFT},
-	"||":  {Precedence: 10, Assoc: ASSOC_LEFT},
-	"and": {Precedence: 15, Assoc: ASSOC_LEFT},
-	"&&":  {Precedence: 15, Assoc: ASSOC_LEFT},
-	"|":   {Precedence: 16, Assoc: ASSOC_LEFT},
-	"^":   {Precedence: 17, Assoc: ASSOC_LEFT},
-	"&":   {Precedence: 18, Assoc: ASSOC_LEFT},
-	"==":  {Precedence: 20, Assoc: ASSOC_LEFT},
-	"===": {Precedence: 20, Assoc: ASSOC_LEFT},
-	"is":  {Precedence: 20, Assoc: ASSOC_LEFT},
-	"!=":  {Precedence: 20, Assoc: ASSOC_LEFT},
-	"!==": {Precedence: 20, Assoc: ASSOC_LEFT},
-	"<":   {Precedence: 20, Assoc: ASSOC_LEFT},
-	">":   {Precedence: 20, Assoc: ASSOC_LEFT},
-	">=":  {Precedence: 20, Assoc: ASSOC_LEFT},
-	"<=":  {Precedence: 20, Assoc: ASSOC_LEFT},
-	"in":  {Precedence: 20, Assoc: ASSOC_LEFT},
-	"<<":  {Precedence: 25, Assoc: ASSOC_LEFT},
-	">>":  {Precedence: 25, Assoc: ASSOC_LEFT},
-	"+":   {Precedence: 30, Assoc: ASSOC_LEFT},
-	"-":   {Precedence: 30, Assoc: ASSOC_LEFT},
-	"~":   {Precedence: 40, Assoc: ASSOC_LEFT},
-	"*":   {Precedence: 60, Assoc: ASSOC_LEFT},
-	"/":   {Precedence: 60, Assoc: ASSOC_LEFT},
-	"%":   {Precedence: 60, Assoc: ASSOC_LEFT},
+	"or":  {precedence: 10, assoc: ASSOC_LEFT},
+	"||":  {precedence: 10, assoc: ASSOC_LEFT},
+	"and": {precedence: 15, assoc: ASSOC_LEFT},
+	"&&":  {precedence: 15, assoc: ASSOC_LEFT},
+	"|":   {precedence: 16, assoc: ASSOC_LEFT},
+	"^":   {precedence: 17, assoc: ASSOC_LEFT},
+	"&":   {precedence: 18, assoc: ASSOC_LEFT},
+	"==":  {precedence: 20, assoc: ASSOC_LEFT},
+	"===": {precedence: 20, assoc: ASSOC_LEFT},
+	"is":  {precedence: 20, assoc: ASSOC_LEFT},
+	"!=":  {precedence: 20, assoc: ASSOC_LEFT},
+	"!==": {precedence: 20, assoc: ASSOC_LEFT},
+	"<":   {precedence: 20, assoc: ASSOC_LEFT},
+	">":   {precedence: 20, assoc: ASSOC_LEFT},
+	">=":  {precedence: 20, assoc: ASSOC_LEFT},
+	"<=":  {precedence: 20, assoc: ASSOC_LEFT},
+	"in":  {precedence: 20, assoc: ASSOC_LEFT},
+	"<<":  {precedence: 25, assoc: ASSOC_LEFT},
+	">>":  {precedence: 25, assoc: ASSOC_LEFT},
+	"+":   {precedence: 30, assoc: ASSOC_LEFT},
+	"-":   {precedence: 30, assoc: ASSOC_LEFT},
+	"~":   {precedence: 40, assoc: ASSOC_LEFT},
+	"*":   {precedence: 60, assoc: ASSOC_LEFT},
+	"/":   {precedence: 60, assoc: ASSOC_LEFT},
+	"%":   {precedence: 60, assoc: ASSOC_LEFT},
 }
 
 var unaryOperators = map[string]OperatorPrecedence{
-	"not": {Precedence: 50},
-	"!":   {Precedence: 50},
-	"-":   {Precedence: 500},
-	"+":   {Precedence: 500},
-	"--":  {Precedence: 500},
-	"++":  {Precedence: 500},
+	"!":  {precedence: 50},
+	"~":  {precedence: 50},
+	"-":  {precedence: 500},
+	"+":  {precedence: 500},
+	"--": {precedence: 500},
+	"++": {precedence: 500},
 }
 
-func IsBinaryOperator(value string) bool {
+func isBinaryOperator(value string) bool {
 	_, ok := binaryOperators[value]
 	return ok
 }
 
-func IsUnaryOperator(value string) bool {
+func isUnaryOperator(value string) bool {
 	_, ok := unaryOperators[value]
 	return ok
 }
 
-func BinaryPrecedence(value string) OperatorPrecedence {
+func getBinaryPrecedence(value string) OperatorPrecedence {
 	if precedence, ok := binaryOperators[value]; ok {
 		return precedence
 	}
 	return defaultOperatorPrecedence
 }
 
-func UnaryPrecedence(value string) OperatorPrecedence {
+func getUnaryPrecedence(value string) OperatorPrecedence {
 	if precedence, ok := unaryOperators[value]; ok {
 		return precedence
 	}
