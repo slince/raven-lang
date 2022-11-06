@@ -61,11 +61,11 @@ func (p *Parser) parseStmt() ast.Stmt {
 		p.tokens.Next()
 	case token.RETURN:
 		p.tokens.Next()
-		smt = ast.NewReturnStmt(p.parseExpr(), tok.Position)
+		smt = ast.NewReturnStmt(p.parseExpr(0), tok.Position)
 	// exceptions statement
 	case token.THROW:
 		p.tokens.Next()
-		smt = ast.NewThrowStmt(p.parseExpr(), tok.Position)
+		smt = ast.NewThrowStmt(p.parseExpr(0), tok.Position)
 	case token.TRY:
 		smt = p.parseTryStmt()
 	// class
@@ -77,7 +77,7 @@ func (p *Parser) parseStmt() ast.Stmt {
 		smt = p.parseBlockStmt()
 	// expression statement
 	default:
-		exp := p.parseExpr()
+		exp := p.parseExpr(0)
 		smt = ast.NewExpressionStmt(exp, tok.Position)
 	}
 	//p.tokens.Expect(token.SEMICOLON)
@@ -115,11 +115,11 @@ func (p *Parser) parseVariableDeclarator() *ast.VariableDeclarator {
 		// parse variable init
 		if p.tokens.Test(token.ASSIGN) { // variable init
 			p.tokens.Next()
-			init = p.parseExpr()
+			init = p.parseExpr(0)
 		}
 	} else {
 		p.tokens.Expect(token.ASSIGN)
-		init = p.parseExpr()
+		init = p.parseExpr(0)
 	}
 	return ast.NewVariableDeclarator(id, kind, init, id.Position())
 }
@@ -173,7 +173,7 @@ func (p *Parser) parseBlockStmt() *ast.BlockStmt {
 func (p *Parser) parseIfStmt() *ast.IfStmt {
 	var tok = p.tokens.Expect(token.IF, token.ELSEIF)
 	p.tokens.Expect(token.LPAREN)
-	var test = p.parseExpr()
+	var test = p.parseExpr(0)
 	p.tokens.Expect(token.RPAREN)
 	var consequent = p.parseBlockStmt()
 	var alternate ast.Stmt
@@ -189,7 +189,7 @@ func (p *Parser) parseIfStmt() *ast.IfStmt {
 func (p *Parser) parseSwitchStmt() *ast.SwitchStmt {
 	var tok = p.tokens.Expect(token.SWITCH)
 	p.tokens.Expect(token.LPAREN)
-	var discriminant = p.parseExpr()
+	var discriminant = p.parseExpr(0)
 	p.tokens.Expect(token.RPAREN)
 	// parse cases
 	var cases = make([]*ast.SwitchCase, 0)
@@ -209,7 +209,7 @@ func (p *Parser) parseSwitchStmt() *ast.SwitchStmt {
 		// parse case item
 		var test ast.Expr
 		if isCase { // "case" requires test expr
-			test = p.parseExpr()
+			test = p.parseExpr(0)
 		}
 		p.tokens.Expect(token.COLON)
 		var consequent = make([]ast.Stmt, 0)
@@ -231,19 +231,19 @@ func (p *Parser) parseForStmt() *ast.ForStmt {
 	if cur := p.tokens.Current(); cur.Test(token.LET, token.CONST) { // variable declaration
 		init = p.parseVariableDeclaration()
 	} else if !cur.Test(token.SEMICOLON) {
-		init = p.parseExpr()
+		init = p.parseExpr(0)
 	}
 	p.tokens.Expect(token.SEMICOLON)
 	// parse test
 	var test ast.Expr
 	if !p.tokens.Test(token.SEMICOLON) {
-		test = p.parseExpr()
+		test = p.parseExpr(0)
 	}
 	p.tokens.Expect(token.SEMICOLON)
 	// parse update
 	var update ast.Expr
 	if !p.tokens.Test(token.RPAREN) {
-		update = p.parseExpr()
+		update = p.parseExpr(0)
 	}
 	p.tokens.Expect(token.RPAREN)
 	var body = p.parseBlockStmt()
@@ -253,7 +253,7 @@ func (p *Parser) parseForStmt() *ast.ForStmt {
 func (p *Parser) parseWhileStmt() *ast.WhileStmt {
 	var tok = p.tokens.Expect(token.WHILE)
 	p.tokens.Expect(token.LPAREN)
-	var test = p.parseExpr()
+	var test = p.parseExpr(0)
 	p.tokens.Expect(token.RPAREN)
 	var body = p.parseBlockStmt()
 	return ast.NewWhileStmt(test, body, tok.Position)
@@ -264,7 +264,7 @@ func (p *Parser) parseDoWhileStmt() *ast.DoWhileStmt {
 	var body = p.parseBlockStmt()
 	p.tokens.Expect(token.WHILE)
 	p.tokens.Expect(token.LPAREN)
-	var test = p.parseExpr()
+	var test = p.parseExpr(0)
 	p.tokens.Expect(token.RPAREN)
 
 	return ast.NewDoWhileStmt(test, body, tok.Position)
@@ -273,7 +273,7 @@ func (p *Parser) parseDoWhileStmt() *ast.DoWhileStmt {
 func (p *Parser) parseForeachStmt() *ast.ForeachStmt {
 	var tok = p.tokens.Expect(token.FOREACH)
 	p.tokens.Expect(token.LPAREN)
-	var source = p.parseExpr()
+	var source = p.parseExpr(0)
 	p.tokens.Expect(token.AS)
 	var key *ast.Identifier
 	var cur = p.tokens.Expect(token.ID)
@@ -421,7 +421,7 @@ func (p *Parser) parseArguments() []ast.Expr {
 		if len(args) > 0 {
 			p.tokens.Expect(token.COMMA)
 		}
-		args = append(args, p.parseExpr())
+		args = append(args, p.parseExpr(0))
 	}
 	p.tokens.Expect(token.RPAREN)
 	return args

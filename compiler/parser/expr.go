@@ -66,14 +66,14 @@ func (p *Parser) parsePostfixExpr(exp ast.Expr) ast.Expr {
 		var tok = p.tokens.Current()
 		var end = false
 		switch tok.Kind {
+		case token.INC, token.DEC: // a ++; b--
+			exp = p.parseUpdateExpr(false, exp)
 		case token.LPAREN:
 			exp = ast.NewCallExpr(exp, p.parseArguments(), exp.Position())
 		case token.DOT:
 			exp = p.parseObjectAccessExpr(exp)
 		case token.LBRACKET: // array[1] map['property']
 			exp = p.parseAccessExpr(exp)
-		case token.INC, token.DEC: // a ++; b--
-			exp = p.parseUpdateExpr(false, exp)
 		case token.ASSIGN,
 			token.ADD_ASSIGN, token.SUB_ASSIGN, token.MUL_ASSIGN, token.DIV_ASSIGN, token.MOD_ASSIGN,
 			token.AND_ASSIGN, token.OR_ASSIGN, token.XOR_ASSIGN, token.SHL_ASSIGN, token.SHR_ASSIGN, token.AND_NOT_ASSIGN:
@@ -94,7 +94,7 @@ func (p *Parser) parseAssignmentExpr(lhs ast.Expr) *ast.AssignmentExpr {
 		p.error(token.NewSyntaxError("Assigning to rvalue", lhs.Position()))
 	}
 	var tok = p.tokens.Expect(token.Assigns...)
-	var rhs = p.parseExpr()
+	var rhs = p.parseExpr(0)
 	return ast.NewAssignmentExpr(converted, tok.Literal, rhs, lhs.Position())
 }
 
@@ -131,7 +131,7 @@ func (p *Parser) parseObjectAccessExpr(object ast.Expr) ast.Expr {
 
 func (p *Parser) parseAccessExpr(object ast.Expr) *ast.MemberExpr {
 	p.tokens.Expect(token.LBRACKET)
-	var property = p.parseExpr()
+	var property = p.parseExpr(0)
 	p.tokens.Expect(token.RBRACKET)
 	return ast.NewMemberExpr(object, property, object.Position())
 }
@@ -143,7 +143,7 @@ func (p *Parser) parseArrayExpr() *ast.ArrayExpr {
 		if !exp.IsEmpty() {
 			p.tokens.Expect(token.COMMA)
 		}
-		exp.AddElement(p.parseExpr())
+		exp.AddElement(p.parseExpr(0))
 	}
 	p.tokens.Expect(token.RBRACKET)
 	return exp
@@ -156,9 +156,9 @@ func (p *Parser) parseMapExpr() *ast.MapExpr {
 		if !exp.IsEmpty() {
 			p.tokens.Expect(token.COMMA)
 		}
-		var key = p.parseExpr()
+		var key = p.parseExpr(0)
 		p.tokens.Expect(token.COLON)
-		var value = p.parseExpr()
+		var value = p.parseExpr(0)
 		exp.AddElement(key, value)
 	}
 	return exp
@@ -166,7 +166,7 @@ func (p *Parser) parseMapExpr() *ast.MapExpr {
 
 func (p *Parser) parseParenExpr() ast.Expr {
 	p.tokens.Expect(token.LPAREN)
-	var exp = p.parseExpr()
+	var exp = p.parseExpr(0)
 	p.tokens.Expect(token.RPAREN)
 	return exp
 }
