@@ -7,25 +7,29 @@ import (
 
 var (
 	// Integer types.
-	I1    = &IntType{BitWidth: 1}    // i1
-	I2    = &IntType{BitWidth: 2}    // i2
-	I3    = &IntType{BitWidth: 3}    // i3
-	I4    = &IntType{BitWidth: 4}    // i4
-	I5    = &IntType{BitWidth: 5}    // i5
-	I6    = &IntType{BitWidth: 6}    // i6
-	I7    = &IntType{BitWidth: 7}    // i7
-	I8    = &IntType{BitWidth: 8}    // i8
-	I16   = &IntType{BitWidth: 16}   // i16
-	I32   = &IntType{BitWidth: 32}   // i32
-	I64   = &IntType{BitWidth: 64}   // i64
-	I128  = &IntType{BitWidth: 128}  // i128
-	I256  = &IntType{BitWidth: 256}  // i256
-	I512  = &IntType{BitWidth: 512}  // i512
-	I1024 = &IntType{BitWidth: 1024} // i1024
+	I4    = NewInt(4, false)    // i4
+	I8    = NewInt(8, false)    // i8
+	I16   = NewInt(16, false)   // i16
+	I32   = NewInt(32, false)   // i32
+	I64   = NewInt(64, false)   // i64
+	I128  = NewInt(128, false)  // i128
+	I256  = NewInt(256, false)  // i256
+	I512  = NewInt(512, false)  // i512
+	I1024 = NewInt(1024, false) // i1024
+
+	U4    = NewInt(4, true)    // i4
+	U8    = NewInt(8, true)    // i8
+	U16   = NewInt(16, true)   // i16
+	U32   = NewInt(32, true)   // i32
+	U64   = NewInt(64, true)   // i64
+	U128  = NewInt(128, true)  // i128
+	U256  = NewInt(256, true)  // i256
+	U512  = NewInt(512, true)  // i512
+	U1024 = NewInt(1024, true) // i1024
 
 	// Float types.
-	F32 = &FloatType{BitWidth: 32} // f32
-	F64 = &FloatType{BitWidth: 64} // f64
+	F32 = NewFloat(32) // f32
+	F64 = NewFloat(64) // f64
 
 	// Bool
 	Bool = &BoolType{}
@@ -96,26 +100,32 @@ type Type interface {
 type IntType struct {
 	// Integer size in number of bits.
 	BitWidth uint64
+	Unsigned bool
 }
 
 // NewInt returns a new integer type based on the given integer bit size.
-func NewInt(bitWidth uint64) *IntType {
+func NewInt(bitWidth uint64, unsigned bool) *IntType {
 	return &IntType{
 		BitWidth: bitWidth,
+		Unsigned: unsigned,
 	}
 }
 
 // Equal reports whether t and u are of equal type.
-func (t *IntType) Equal(u Type) bool {
+func (i *IntType) Equal(u Type) bool {
 	if u, ok := u.(*IntType); ok {
-		return t.BitWidth == u.BitWidth
+		return i.BitWidth == u.BitWidth && i.Unsigned == u.Unsigned
 	}
 	return false
 }
 
 // String returns the string representation of the integer type.
-func (t *IntType) String() string {
-	return fmt.Sprintf("int%d", t.BitWidth)
+func (i *IntType) String() string {
+	var unsigned byte
+	if i.Unsigned {
+		unsigned = 'c'
+	}
+	return fmt.Sprintf("%cint%d", unsigned, i.BitWidth)
 }
 
 // FloatType is an LLVM IR floating-point type.
@@ -125,16 +135,23 @@ type FloatType struct {
 }
 
 // Equal reports whether t and u are of equal type.
-func (t *FloatType) Equal(u Type) bool {
+func (f *FloatType) Equal(u Type) bool {
 	if u, ok := u.(*FloatType); ok {
-		return t.BitWidth == u.BitWidth
+		return f.BitWidth == u.BitWidth
 	}
 	return false
 }
 
 // String returns the string representation of the floating-point type.
-func (t *FloatType) String() string {
-	return fmt.Sprintf("float%d", t.BitWidth)
+func (f *FloatType) String() string {
+	return fmt.Sprintf("float%d", f.BitWidth)
+}
+
+// NewFloat returns a new float type based on the given integer bit size.
+func NewFloat(bitWidth uint64) *FloatType {
+	return &FloatType{
+		BitWidth: bitWidth,
+	}
 }
 
 type BoolType struct {
