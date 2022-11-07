@@ -110,3 +110,33 @@ func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) ir.Operand {
 	}
 	return result
 }
+
+func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) ir.Operand {
+	var name = c.compileIdentifier(expr.Id)
+	var kind types.Type
+	if expr.Kind != nil {
+		kind = c.compileType(expr.Kind)
+	}
+	var init ir.Operand
+	if expr.Init != nil {
+		init = c.compileExpr(expr.Init)
+	}
+	var variable = ir.NewVariable(name, kind)
+	c.ctx.NewLocal(variable, init)
+	return variable
+}
+
+func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) ir.Operand {
+	var target = c.compileIdentifier(expr.Left)
+	var result = ir.NewTemporary(nil)
+	switch expr.Operator {
+	case "!":
+		c.ctx.NewLogicalNot(result, target)
+	case "~":
+		c.ctx.NewBitNot(result, target)
+	case "+":
+	case "-":
+		c.ctx.NewNeg(result, target)
+	}
+	return result
+}

@@ -148,14 +148,50 @@ func (b *BasicBlock) NewBitShr(result Operand, lhs Operand, rhs Operand) *insts.
 	return inst
 }
 
-func (b *BasicBlock) NewAssign(variable Operand, value Operand) *insts.Assign {
-	var inst = insts.NewAssign(variable, value)
+func (b *BasicBlock) NewNeg(result Operand, ope Operand) *insts.Neg {
+	var inst = insts.NewNeg(result, ope)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewNeg(result Operand, ope Operand) *insts.Neg {
-	var inst = insts.NewNeg(result, ope)
+func (b *BasicBlock) NewGlobal(variable Operand, value Operand) *insts.Global {
+	var inst = insts.NewGlobal(variable, value)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewGetGlobal(variable Operand) *insts.GetGlobal {
+	var inst = insts.NewGetGlobal(variable)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewConst(variable Operand, value Operand) *insts.Const {
+	var inst = insts.NewConst(variable, value)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewGetConst(variable Operand) *insts.GetConst {
+	var inst = insts.NewGetConst(variable)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewLocal(variable Operand, value Operand) *insts.Local {
+	var inst = insts.NewLocal(variable, value)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewGetLocal(variable Operand) *insts.GetLocal {
+	var inst = insts.NewGetLocal(variable)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewAssign(variable Operand, value Operand) *insts.Assign {
+	var inst = insts.NewAssign(variable, value)
 	b.AddInstruction(inst)
 	return inst
 }

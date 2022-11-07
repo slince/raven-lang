@@ -18,6 +18,14 @@ func (c *Compiler) compileType(node *ast.Identifier) types.Type {
 		_type = types.I32
 	case "int64":
 		_type = types.I64
+	case "int128":
+		_type = types.I128
+	case "int256":
+		_type = types.I256
+	case "int512":
+		_type = types.I512
+	case "int1024":
+		_type = types.I1024
 	case "uint4":
 		_type = types.U4
 	case "uint8":
@@ -28,6 +36,14 @@ func (c *Compiler) compileType(node *ast.Identifier) types.Type {
 		_type = types.U32
 	case "uint64":
 		_type = types.U64
+	case "uint128":
+		_type = types.U128
+	case "uint256":
+		_type = types.U256
+	case "uint512":
+		_type = types.U512
+	case "uint1024":
+		_type = types.U1024
 	case "float32":
 		_type = types.F32
 	case "float64":
