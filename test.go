@@ -31,10 +31,10 @@ func main() {
 
 	fmt.Println(b)
 
-	var d = 0x12
-	var e = -0o7
+	var d uint8 = 123
+	var e float32 = 123
 
-	fmt.Println(d, e)
+	fmt.Println(d / e)
 
 	m := ir.NewModule()
 

@@ -90,7 +90,7 @@ func (p *Parser) parsePostfixExpr(exp ast.Expr) ast.Expr {
 }
 
 func (p *Parser) parseAssignmentExpr(lhs ast.Expr) *ast.AssignmentExpr {
-	var converted, isIdent = interface{}(lhs).(*ast.Identifier)
+	var converted, isIdent = lhs.(*ast.Identifier)
 	if !isIdent {
 		p.error(token.NewSyntaxError("Assigning to rvalue", lhs.Position()))
 	}

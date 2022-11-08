@@ -11,15 +11,15 @@ type instruction struct {
 
 func (i instruction) inst() {}
 
-type SetGlobal struct {
+type Global struct {
 	Variable ir.Operand
 	Value    ir.Operand
 	Init     bool
 	instruction
 }
 
-func NewSetGlobal(variable ir.Operand, value ir.Operand) *SetGlobal {
-	return &SetGlobal{Variable: variable, Value: value}
+func NewGlobal(variable ir.Operand, value ir.Operand) *Global {
+	return &Global{Variable: variable, Value: value}
 }
 
 type GetGlobal struct {
@@ -31,14 +31,14 @@ func NewGetGlobal(variable ir.Operand) *GetGlobal {
 	return &GetGlobal{Variable: variable}
 }
 
-type SetConst struct {
+type Const struct {
 	Variable ir.Operand
 	Value    ir.Operand
 	instruction
 }
 
-func NewSetConst(variable ir.Operand, value ir.Operand) *SetConst {
-	return &SetConst{Variable: variable, Value: value}
+func NewConst(variable ir.Operand, value ir.Operand) *Const {
+	return &Const{Variable: variable, Value: value}
 }
 
 type GetConst struct {
@@ -50,14 +50,14 @@ func NewGetConst(variable ir.Operand) *GetConst {
 	return &GetConst{Variable: variable}
 }
 
-type SetLocal struct {
+type Local struct {
 	Variable ir.Operand
 	Value    ir.Operand
 	instruction
 }
 
-func NewSetLocal(variable ir.Operand, value ir.Operand) *SetLocal {
-	return &SetLocal{Variable: variable, Value: value}
+func NewLocal(variable ir.Operand, value ir.Operand) *Local {
+	return &Local{Variable: variable, Value: value}
 }
 
 type GetLocal struct {
