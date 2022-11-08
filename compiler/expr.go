@@ -29,6 +29,8 @@ func (c *Compiler) compileLiteral(node *ast.Literal) *ir.Const {
 
 func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
 	switch expr := node.(type) {
+	case *ast.Literal:
+		return c.compileLiteral(expr)
 	case *ast.BinaryExpr:
 		return c.compileBinaryExpr(expr)
 	case *ast.UnaryExpr:
