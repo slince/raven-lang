@@ -5,6 +5,7 @@ import (
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
+	"github.com/samber/lo"
 )
 
 //int g = 2;
@@ -40,6 +41,7 @@ func main() {
 
 	globalG := m.NewGlobalDef("g", constant.NewInt(types.I32, 2))
 
+	lo.Find()
 	funcAdd := m.NewFunc("add", types.I32,
 		ir.NewParam("x", types.I32),
 		ir.NewParam("y", types.I32),

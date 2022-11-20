@@ -29,6 +29,18 @@ func (b *BasicBlock) AddInstruction(instruction insts.Instruction) {
 	b.Instructions = append(b.Instructions, instruction)
 }
 
+func (b *BasicBlock) NewLea(variable Operand, target Operand) *insts.Lea {
+	var inst = insts.NewLea(variable, target)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewPtr(variable Operand, target Operand) *insts.Ptr {
+	var inst = insts.NewPtr(variable, target)
+	b.AddInstruction(inst)
+	return inst
+}
+
 func (b *BasicBlock) NewAdd(result Operand, lhs Operand, rhs Operand) *insts.Add {
 	var inst = insts.NewAdd(result, lhs, rhs)
 	b.AddInstruction(inst)

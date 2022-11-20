@@ -79,6 +79,26 @@ func NewAssign(variable ir.Operand, value ir.Operand) *Assign {
 	return &Assign{Variable: variable, Value: value}
 }
 
+type Lea struct {
+	instruction
+	Variable ir.Operand
+	Target   ir.Operand
+}
+
+func NewLea(variable ir.Operand, target ir.Operand) *Lea {
+	return &Lea{Variable: variable, Target: target}
+}
+
+type Ptr struct {
+	instruction
+	Variable ir.Operand
+	Target   ir.Operand
+}
+
+func NewPtr(variable ir.Operand, target ir.Operand) *Ptr {
+	return &Ptr{Variable: variable, Target: target}
+}
+
 type Arg struct {
 	Value ir.Operand
 	instruction
@@ -125,4 +145,18 @@ type CondJmp struct {
 
 func NewCondJmp(cond ir.Operand, trueTarget ir.Block, falseTarget ir.Block) *CondJmp {
 	return &CondJmp{Cond: cond, TrueTarget: trueTarget, FalseTarget: falseTarget}
+}
+
+type Entry struct {
+}
+
+func NewEntry() *Entry {
+	return &Entry{}
+}
+
+type Exit struct {
+}
+
+func NewExit() *Exit {
+	return &Exit{}
 }
