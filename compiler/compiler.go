@@ -36,38 +36,48 @@ func (c *Compiler) compileIdentifier(node *ast.Identifier) string {
 	return node.Value
 }
 
-func (c *Compiler) Compile(source string) *ir.Program {
+func (c *Compiler) Compile(source string) (*ir.Program, error) {
 	var lex = lexer.NewLexer(source)
 	var tokens = lex.Lex()
 	var p = parser.NewParser(tokens)
 	var program = p.Parse()
-	return c.compileProgram(program)
-}
-
-func (c *Compiler) compileProgram(node *ast.Program) *ir.Program {
-	var program = ir.NewProgram()
-	for _, module := range node.Modules {
-		c.compileModule(program, module)
+	var err = c.compileProgram(program)
+	if err != nil {
+		return nil, err
 	}
-	return program
+	return c.Program, nil
 }
 
-func (c *Compiler) compileModule(program *ir.Program, node *ast.Module) *ir.Module {
-	var module = program.NewModule(c.compileLiteral(node.Name).Value.(string))
-	c.Module = module
+func (c *Compiler) compileProgram(node *ast.Program) error {
+	c.Program = ir.NewProgram()
+	for _, module := range node.Modules {
+		var err = c.compileModule(module)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *Compiler) compileModule(node *ast.Module) error {
+	var name, err = c.compileLiteral(node.Name)
+	if err != nil {
+		return err
+	}
+	c.Module = c.Program.NewModule(name.Value.(string))
 	c.compileBlockStmt(node.Body, "")
-	c.Module = nil
-	return module
+	return nil
 }
 
-func (c *Compiler) compileStmt(node ast.Stmt) {
+func (c *Compiler) compileStmt(node ast.Stmt) error {
+	var err error
 	switch node.(type) {
 	case *ast.FunctionDeclaration:
-		c.compileFunctionDecl(node.(*ast.FunctionDeclaration))
+		err = c.compileFunctionDecl(node.(*ast.FunctionDeclaration))
 	case *ast.BlockStmt:
 		c.compileBlockStmt(node.(*ast.BlockStmt), "")
 	case *ast.ExpressionStmt:
-		c.compileExprStmt(node.(*ast.ExpressionStmt))
+		err = c.compileExprStmt(node.(*ast.ExpressionStmt))
 	case *ast.WhileStmt:
 		c.compileWhileStmt(node.(*ast.WhileStmt))
 	case *ast.DoWhileStmt:
@@ -80,6 +90,7 @@ func (c *Compiler) compileStmt(node ast.Stmt) {
 		c.compileBreakStmt(node.(*ast.BreakStmt))
 	}
 	c.enterBlock(c.ctx.LeaveBlock, nil)
+	return err
 }
 
 func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.BasicBlock {
@@ -94,8 +105,9 @@ func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.Basic
 	return block
 }
 
-func (c *Compiler) compileExprStmt(node *ast.ExpressionStmt) {
-	c.compileExpr(node.Expr)
+func (c *Compiler) compileExprStmt(node *ast.ExpressionStmt) error {
+	_, err := c.compileExpr(node.Expr)
+	return err
 }
 
 func (c *Compiler) compileBlock(block *ir.BasicBlock, executor func()) {
