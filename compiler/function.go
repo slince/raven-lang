@@ -22,8 +22,8 @@ func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) error {
 	}
 	var fun = c.module.NewFunction(name, retType, args...)
 	c.function = fun
-	c.compileBlockStmt(node.Function.Body, "")
-	return nil
+	_, err = c.compileBlockStmt(node.Function.Body, "")
+	return err
 }
 
 func (c *Compiler) compileFunctionArgument(node *ast.FunctionArgument) (*ir.FunctionArgument, error) {
@@ -40,4 +40,5 @@ func (c *Compiler) compileReturnStmt(node *ast.ReturnStmt) error {
 		return err
 	}
 	c.ctx.NewRet(ret)
+	return nil
 }

@@ -176,6 +176,7 @@ func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) error {
 		body.NewJmp(test)
 	}
 	c.ctx.NewJmp(test)
+	return nil
 }
 
 func (c *Compiler) compileBreakStmt(node *ast.BreakStmt) {
