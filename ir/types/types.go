@@ -96,6 +96,18 @@ type Type interface {
 	Equal(u Type) bool
 }
 
+type Nop struct {
+}
+
+func (n *Nop) Equal(u Type) bool {
+	_, ok := u.(*Nop)
+	return ok
+}
+
+func (n *Nop) String() string {
+	return "nop"
+}
+
 // IntType is an LLVM IR integer type.
 type IntType struct {
 	// Integer size in number of bits.

@@ -3,8 +3,8 @@ package ir
 import "github.com/slince/php-plus/ir/types"
 
 var (
-	Zero = NewConst(0, types.I1)
-	One  = NewConst(1, types.I1)
+	Zero = NewConst(0, types.U4)
+	One  = NewConst(1, types.U4)
 )
 
 type Operand interface {
@@ -16,6 +16,7 @@ type operand struct {
 }
 
 func (o operand) operand() {}
+func (o operand) Type()    {}
 
 type Const struct {
 	Value interface{}
@@ -69,4 +70,17 @@ func (v *Temporary) Type() types.Type {
 
 func NewTemporary(variable *Variable) *Temporary {
 	return &Temporary{Original: variable}
+}
+
+type Label struct {
+	Name string
+	operand
+}
+
+func (v *Label) Type() types.Type {
+	return nil
+}
+
+func NewLabel(name string) *Label {
+	return &Label{Name: name}
 }
