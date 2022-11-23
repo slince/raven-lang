@@ -211,7 +211,7 @@ func (t *VoidType) String() string {
 	return "void"
 }
 
-// --- [ Function types ] ------------------------------------------------------
+// --- [ function types ] ------------------------------------------------------
 
 // FuncType is an LLVM IR function type.
 type FuncType struct {
@@ -219,7 +219,7 @@ type FuncType struct {
 	TypeName string
 	// Return type.
 	RetType Type
-	// Function parameters.
+	// function parameters.
 	Params []Type
 	// Variable number of function arguments.
 	Variadic bool

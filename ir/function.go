@@ -5,7 +5,7 @@ import (
 	"github.com/slince/php-plus/ir/types"
 )
 
-// ___ [ Function argument ] __________________________________________________
+// ___ [ function argument ] __________________________________________________
 
 // FunctionArgument is a function argument.
 type FunctionArgument struct {

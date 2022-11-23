@@ -20,8 +20,8 @@ func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) error {
 		}
 		args = append(args, compiled)
 	}
-	var fun = c.Module.NewFunction(name, retType, args...)
-	c.Function = fun
+	var fun = c.module.NewFunction(name, retType, args...)
+	c.function = fun
 	c.compileBlockStmt(node.Function.Body, "")
 	return nil
 }

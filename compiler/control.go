@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Compiler) compileIfStmt(node *ast.IfStmt) *ir.BasicBlock {
-	c.ctx.LeaveBlock = c.Function.NewBlock("if.done")
+	c.ctx.LeaveBlock = c.function.NewBlock("if.done")
 	var consequent = c.compileBlockStmt(node.Consequent, "if.then")
 	if consequent.Terminator == nil {
 		consequent.NewJmp(c.ctx.LeaveBlock)
@@ -21,7 +21,7 @@ func (c *Compiler) compileIfStmt(node *ast.IfStmt) *ir.BasicBlock {
 			ifElse = c.compileIfStmt(alternate)
 		}
 	}
-	var test = c.Function.NewBlock("if.test")
+	var test = c.function.NewBlock("if.test")
 	c.compileBlock(test, func() {
 		c.ctx.NewCondJmp(c.compileExpr(node.Test), consequent, ifElse)
 	})
@@ -31,7 +31,7 @@ func (c *Compiler) compileIfStmt(node *ast.IfStmt) *ir.BasicBlock {
 func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
 	// compile switch cases
 	var disc = c.compileExpr(node.Discriminant)
-	c.ctx.LeaveBlock = c.Function.NewBlock("switch.done")
+	c.ctx.LeaveBlock = c.function.NewBlock("switch.done")
 	c.enterScope()
 	var caseNum = len(node.Cases)
 	var _, defaultIdx, _ = lo.FindIndexOf(node.Cases, func(clause *ast.SwitchCase) bool {
@@ -47,7 +47,7 @@ func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
 }
 
 func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) *ir.BasicBlock {
-	var discBlock = c.Function.NewBlock("switch.case.disc." + strconv.Itoa(idx))
+	var discBlock = c.function.NewBlock("switch.case.disc." + strconv.Itoa(idx))
 	c.compileBlock(discBlock, func() {
 		if node.Default {
 			c.ctx.NewJmp(caseBody)
@@ -77,7 +77,7 @@ func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBloc
 }
 
 func (c *Compiler) compileSwitchCaseBody(node *ast.SwitchCase, idx int, last bool) *ir.BasicBlock {
-	var caseBlock = c.Function.NewBlock("switch.case." + strconv.Itoa(idx))
+	var caseBlock = c.function.NewBlock("switch.case." + strconv.Itoa(idx))
 	c.compileBlock(caseBlock, func() {
 		c.compileSwitchCaseConsequent(node)
 		if c.ctx.Terminator == nil {
@@ -100,9 +100,9 @@ func (c *Compiler) compileSwitchCaseConsequent(node *ast.SwitchCase) {
 }
 
 func (c *Compiler) compileDoWhileStmt(node *ast.DoWhileStmt) {
-	c.ctx.LeaveBlock = c.Function.NewBlock("do.while.done")
+	c.ctx.LeaveBlock = c.function.NewBlock("do.while.done")
 	var body = c.compileBlockStmt(node.Body, "do.while.body")
-	var test = c.Function.NewBlock("do.while.test")
+	var test = c.function.NewBlock("do.while.test")
 	c.compileBlock(test, func() {
 		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
 	})
@@ -113,9 +113,9 @@ func (c *Compiler) compileDoWhileStmt(node *ast.DoWhileStmt) {
 }
 
 func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) {
-	c.ctx.LeaveBlock = c.Function.NewBlock("while.done")
+	c.ctx.LeaveBlock = c.function.NewBlock("while.done")
 	var body = c.compileBlockStmt(node.Body, "while.body")
-	var test = c.Function.NewBlock("while.test")
+	var test = c.function.NewBlock("while.test")
 	c.compileBlock(test, func() {
 		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
 	})

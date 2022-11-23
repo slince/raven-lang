@@ -10,9 +10,9 @@ import (
 type Compiler struct {
 	ctx         *ir.BlockContext
 	symbolTable *ir.SymbolTable
-	Module      *ir.Module
-	Function    *ir.Function
-	Program     *ir.Program
+	module   *ir.Module
+	function *ir.Function
+	program  *ir.Program
 }
 
 func (c *Compiler) enterScope() {
@@ -45,11 +45,11 @@ func (c *Compiler) Compile(source string) (*ir.Program, error) {
 	if err != nil {
 		return nil, err
 	}
-	return c.Program, nil
+	return c.program, nil
 }
 
 func (c *Compiler) compileProgram(node *ast.Program) error {
-	c.Program = ir.NewProgram()
+	c.program = ir.NewProgram()
 	for _, module := range node.Modules {
 		var err = c.compileModule(module)
 		if err != nil {
@@ -64,7 +64,7 @@ func (c *Compiler) compileModule(node *ast.Module) error {
 	if err != nil {
 		return err
 	}
-	c.Module = c.Program.NewModule(name.Value.(string))
+	c.module = c.program.NewModule(name.Value.(string))
 	c.compileBlockStmt(node.Body, "")
 	return nil
 }
@@ -95,7 +95,7 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 
 func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.BasicBlock {
 	c.enterScope()
-	var block = c.Function.NewBlock(label)
+	var block = c.function.NewBlock(label)
 	c.compileBlock(block, func() {
 		for _, stmt := range node.Body {
 			c.compileStmt(stmt)
