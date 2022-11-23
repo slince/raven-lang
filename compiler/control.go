@@ -7,30 +7,45 @@ import (
 	"strconv"
 )
 
-func (c *Compiler) compileIfStmt(node *ast.IfStmt) *ir.BasicBlock {
+func (c *Compiler) compileIfStmt(node *ast.IfStmt) (*ir.BasicBlock, error) {
 	c.ctx.LeaveBlock = c.function.NewBlock("if.done")
-	var consequent = c.compileBlockStmt(node.Consequent, "if.then")
+	var consequent, err = c.compileBlockStmt(node.Consequent, "if.then")
+	if err != nil {
+		return nil, err
+	}
 	if consequent.Terminator == nil {
 		consequent.NewJmp(c.ctx.LeaveBlock)
 	}
+	// Compile if else body
 	var ifElse ir.Block = c.ctx.LeaveBlock
 	if node.Alternate != nil {
 		if alternate, ok := node.Alternate.(*ast.BlockStmt); ok {
-			ifElse = c.compileBlockStmt(alternate, "if.else")
+			ifElse, err = c.compileBlockStmt(alternate, "if.else")
 		} else if alternate, ok := node.Alternate.(*ast.IfStmt); ok {
-			ifElse = c.compileIfStmt(alternate)
+			ifElse, err = c.compileIfStmt(alternate)
+		}
+		if err != nil {
+			return nil, err
 		}
 	}
+	// Compile if head
 	var test = c.function.NewBlock("if.test")
-	c.compileBlock(test, func() {
-		c.ctx.NewCondJmp(c.compileExpr(node.Test), consequent, ifElse)
+	err = c.compileBlock(test, func() error {
+		var test, err = c.compileExpr(node.Test)
+		if err == nil {
+			c.ctx.NewCondJmp(test, consequent, ifElse)
+		}
+		return err
 	})
-	return test
+	return test, err
 }
 
-func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
+func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) error {
 	// compile switch cases
-	var disc = c.compileExpr(node.Discriminant)
+	var disc, err = c.compileExpr(node.Discriminant)
+	if err != nil {
+		return err
+	}
 	c.ctx.LeaveBlock = c.function.NewBlock("switch.done")
 	c.enterScope()
 	var caseNum = len(node.Cases)
@@ -38,23 +53,34 @@ func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) {
 		return clause.Default
 	})
 	for idx, clause := range node.Cases {
-		var caseBody = c.compileSwitchCaseBody(clause, idx, idx == caseNum-1)
-		c.compileSwitchCaseDisc(disc, caseBody, clause, idx, idx == caseNum-1, defaultIdx)
+		var caseBody, err = c.compileSwitchCaseBody(clause, idx, idx == caseNum-1)
+		if err != nil {
+			return err
+		}
+		_, err = c.compileSwitchCaseDisc(disc, caseBody, clause, idx, idx == caseNum-1, defaultIdx)
+		if err != nil {
+			return err
+		}
 	}
 	c.leaveScope()
 	// jmp first case discriminant
 	c.ctx.NewJmp(ir.NewReference("switch.case.disc.0"))
+	return nil
 }
 
-func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) *ir.BasicBlock {
+func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) (*ir.BasicBlock, error) {
 	var discBlock = c.function.NewBlock("switch.case.disc." + strconv.Itoa(idx))
-	c.compileBlock(discBlock, func() {
+	var err = c.compileBlock(discBlock, func() error {
 		if node.Default {
 			c.ctx.NewJmp(caseBody)
-			return
+			return nil
 		}
 		var cond = ir.NewTemporary(nil)
-		c.ctx.NewEq(cond, disc, c.compileExpr(node.Test))
+		var test, err = c.compileExpr(node.Test)
+		if err != nil {
+			return err
+		}
+		c.ctx.NewEq(cond, disc, test)
 		var leaveTarget ir.Block
 		if last {
 			// jump to default case when not match the case, if the default case is present.
@@ -72,14 +98,18 @@ func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBloc
 			}
 		}
 		c.ctx.NewCondJmp(cond, caseBody, leaveTarget)
+		return nil
 	})
-	return discBlock
+	return discBlock, err
 }
 
-func (c *Compiler) compileSwitchCaseBody(node *ast.SwitchCase, idx int, last bool) *ir.BasicBlock {
+func (c *Compiler) compileSwitchCaseBody(node *ast.SwitchCase, idx int, last bool) (*ir.BasicBlock, error) {
 	var caseBlock = c.function.NewBlock("switch.case." + strconv.Itoa(idx))
-	c.compileBlock(caseBlock, func() {
-		c.compileSwitchCaseConsequent(node)
+	var err = c.compileBlock(caseBlock, func() error {
+		var err = c.compileSwitchCaseConsequent(node)
+		if err != nil {
+			return err
+		}
 		if c.ctx.Terminator == nil {
 			var leaveTarget ir.Block
 			if last {
@@ -89,35 +119,58 @@ func (c *Compiler) compileSwitchCaseBody(node *ast.SwitchCase, idx int, last boo
 			}
 			c.ctx.NewJmp(leaveTarget)
 		}
+		return nil
 	})
-	return caseBlock
+	return caseBlock, err
 }
 
-func (c *Compiler) compileSwitchCaseConsequent(node *ast.SwitchCase) {
+func (c *Compiler) compileSwitchCaseConsequent(node *ast.SwitchCase) error {
 	for _, consequent := range node.Consequent {
-		c.compileStmt(consequent)
+		err := c.compileStmt(consequent)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func (c *Compiler) compileDoWhileStmt(node *ast.DoWhileStmt) {
+func (c *Compiler) compileDoWhileStmt(node *ast.DoWhileStmt) error {
 	c.ctx.LeaveBlock = c.function.NewBlock("do.while.done")
-	var body = c.compileBlockStmt(node.Body, "do.while.body")
+	var body, err = c.compileBlockStmt(node.Body, "do.while.body")
+	if err != nil {
+		return err
+	}
 	var test = c.function.NewBlock("do.while.test")
-	c.compileBlock(test, func() {
-		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
+	err = c.compileBlock(test, func() error {
+		var test, err = c.compileExpr(node.Test)
+		if err == nil {
+			c.ctx.NewCondJmp(test, body, c.ctx.LeaveBlock)
+		}
+		return err
 	})
+	if err != nil {
+		return err
+	}
 	if body.Terminator == nil {
 		body.NewJmp(test)
 	}
 	c.ctx.NewJmp(body)
+	return nil
 }
 
-func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) {
+func (c *Compiler) compileWhileStmt(node *ast.WhileStmt) error {
 	c.ctx.LeaveBlock = c.function.NewBlock("while.done")
-	var body = c.compileBlockStmt(node.Body, "while.body")
+	var body, err = c.compileBlockStmt(node.Body, "while.body")
+	if err != nil {
+		return err
+	}
 	var test = c.function.NewBlock("while.test")
-	c.compileBlock(test, func() {
-		c.ctx.NewCondJmp(c.compileExpr(node.Test), body, c.ctx.LeaveBlock)
+	err = c.compileBlock(test, func() error {
+		var test, err = c.compileExpr(node.Test)
+		if err == nil {
+			c.ctx.NewCondJmp(test, body, c.ctx.LeaveBlock)
+		}
+		return err
 	})
 	if body.Terminator == nil {
 		body.NewJmp(test)

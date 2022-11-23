@@ -65,8 +65,8 @@ func (c *Compiler) compileModule(node *ast.Module) error {
 		return err
 	}
 	c.module = c.program.NewModule(name.Value.(string))
-	c.compileBlockStmt(node.Body, "")
-	return nil
+	_, err = c.compileBlockStmt(node.Body, "")
+	return err
 }
 
 func (c *Compiler) compileStmt(node ast.Stmt) error {
@@ -75,7 +75,7 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 	case *ast.FunctionDeclaration:
 		err = c.compileFunctionDecl(node.(*ast.FunctionDeclaration))
 	case *ast.BlockStmt:
-		c.compileBlockStmt(node.(*ast.BlockStmt), "")
+		_, err = c.compileBlockStmt(node.(*ast.BlockStmt), "")
 	case *ast.ExpressionStmt:
 		err = c.compileExprStmt(node.(*ast.ExpressionStmt))
 	case *ast.WhileStmt:
@@ -85,7 +85,7 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 	case *ast.SwitchStmt:
 		c.compileSwitchStmt(node.(*ast.SwitchStmt))
 	case *ast.ReturnStmt:
-		c.compileReturnStmt(node.(*ast.ReturnStmt))
+		err = c.compileReturnStmt(node.(*ast.ReturnStmt))
 	case *ast.BreakStmt:
 		c.compileBreakStmt(node.(*ast.BreakStmt))
 	}
@@ -93,16 +93,20 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 	return err
 }
 
-func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) *ir.BasicBlock {
+func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) (*ir.BasicBlock, error) {
 	c.enterScope()
 	var block = c.function.NewBlock(label)
-	c.compileBlock(block, func() {
+	var err = c.compileBlock(block, func() error {
 		for _, stmt := range node.Body {
-			c.compileStmt(stmt)
+			var err = c.compileStmt(stmt)
+			if err != nil {
+				return err
+			}
 		}
+		return nil
 	})
 	c.leaveScope()
-	return block
+	return block, err
 }
 
 func (c *Compiler) compileExprStmt(node *ast.ExpressionStmt) error {
@@ -110,8 +114,9 @@ func (c *Compiler) compileExprStmt(node *ast.ExpressionStmt) error {
 	return err
 }
 
-func (c *Compiler) compileBlock(block *ir.BasicBlock, executor func()) {
+func (c *Compiler) compileBlock(block *ir.BasicBlock, executor func() error) error {
 	c.enterBlock(block, c.ctx.LeaveBlock)
-	executor()
+	var err = executor()
 	c.leaveBlock()
+	return err
 }

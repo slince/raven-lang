@@ -34,6 +34,10 @@ func (c *Compiler) compileFunctionArgument(node *ast.FunctionArgument) (*ir.Func
 	return ir.NewFuncParam(c.compileIdentifier(node.Id), kind), err
 }
 
-func (c *Compiler) compileReturnStmt(node *ast.ReturnStmt) {
-	c.ctx.NewRet(c.compileExpr(node.Argument))
+func (c *Compiler) compileReturnStmt(node *ast.ReturnStmt) error {
+	var ret, err = c.compileExpr(node.Argument)
+	if err != nil {
+		return err
+	}
+	c.ctx.NewRet(ret)
 }
