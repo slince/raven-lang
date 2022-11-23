@@ -5,21 +5,33 @@ import (
 	"github.com/slince/php-plus/ir"
 )
 
-func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) {
+func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) error {
 	var name = c.compileIdentifier(node.Function.Id)
-	var retType = c.compileType(node.Function.Kind)
+	var retType, err = c.compileType(node.Function.Kind)
+	if err != nil {
+		return err
+	}
 	// function arguments
 	var args = make([]*ir.FunctionArgument, 0)
 	for _, arg := range node.Function.Args {
-		args = append(args, c.compileFunctionArgument(arg))
+		var compiled, err = c.compileFunctionArgument(arg)
+		if err != nil {
+			return err
+		}
+		args = append(args, compiled)
 	}
 	var fun = c.Module.NewFunction(name, retType, args...)
 	c.Function = fun
 	c.compileBlockStmt(node.Function.Body, "")
+	return nil
 }
 
-func (c *Compiler) compileFunctionArgument(node *ast.FunctionArgument) *ir.FunctionArgument {
-	return ir.NewFuncParam(c.compileIdentifier(node.Id), c.compileType(node.Kind))
+func (c *Compiler) compileFunctionArgument(node *ast.FunctionArgument) (*ir.FunctionArgument, error) {
+	var kind, err = c.compileType(node.Kind)
+	if err != nil {
+		return nil, err
+	}
+	return ir.NewFuncParam(c.compileIdentifier(node.Id), kind), err
 }
 
 func (c *Compiler) compileReturnStmt(node *ast.ReturnStmt) {

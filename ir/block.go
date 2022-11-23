@@ -8,6 +8,17 @@ type Block interface {
 	block()
 }
 
+// Reference references to other block
+type Reference struct {
+	Name string
+}
+
+func NewReference(name string) *Reference {
+	return &Reference{Name: name}
+}
+
+func (r *Reference) block() {}
+
 type BasicBlock struct {
 	Name         string
 	Instructions []insts.Instruction
@@ -238,17 +249,18 @@ func (b *BasicBlock) NewCondJmp(cond Operand, trueTarget Block, falseTarget Bloc
 	return inst
 }
 
+func (b *BasicBlock) NewSetArray(variable Variable, index Operand, value Operand) *insts.SetArray {
+	var inst = insts.NewSetArray(variable, index, value)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewGetArray(result Operand, variable Variable, index Operand) *insts.GetArray {
+	var inst = insts.NewGetArray(result, variable, index)
+	b.AddInstruction(inst)
+	return inst
+}
+
 func NewBlock(name string) *BasicBlock {
 	return &BasicBlock{Name: name, Instructions: []insts.Instruction{}}
-}
-
-// Reference references to other block
-type Reference struct {
-	Name string
-}
-
-func (r *Reference) block() {}
-
-func NewReference(name string) *Reference {
-	return &Reference{Name: name}
 }

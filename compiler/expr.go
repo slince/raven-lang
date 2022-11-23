@@ -1,14 +1,17 @@
 package compiler
 
 import (
+	"fmt"
 	"github.com/slince/php-plus/compiler/ast"
+	"github.com/slince/php-plus/compiler/token"
 	"github.com/slince/php-plus/ir"
 	"github.com/slince/php-plus/ir/types"
 	"math"
 )
 
-func (c *Compiler) compileLiteral(node *ast.Literal) *ir.Const {
+func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
 	var kind types.Type
+	var err error
 	switch node.Value.(type) {
 	case int64:
 		kind = types.I64
@@ -23,8 +26,13 @@ func (c *Compiler) compileLiteral(node *ast.Literal) *ir.Const {
 		}
 	case string:
 		kind = types.String
+	default:
+		err = token.NewSyntaxError(fmt.Sprintf("unknown identifier %s", node.Value), node.Position())
 	}
-	return ir.NewConst(node.Value, kind)
+	if err != nil {
+		return nil, err
+	}
+	return ir.NewConst(node.Value, kind), err
 }
 
 func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
@@ -115,11 +123,15 @@ func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) ir.Operand {
 	return result
 }
 
-func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) ir.Operand {
+func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) (ir.Operand, error) {
 	var name = c.compileIdentifier(expr.Id)
 	var kind types.Type
+	var err error
 	if expr.Kind != nil {
-		kind = c.compileType(expr.Kind)
+		kind, err = c.compileType(expr.Kind)
+		if err != nil {
+			return nil, err
+		}
 	}
 	var init ir.Operand
 	if expr.Init != nil {
@@ -127,7 +139,7 @@ func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType st
 	}
 	var variable = ir.NewVariable(name, kind)
 	c.ctx.NewLocal(variable, init)
-	return variable
+	return variable, err
 }
 
 func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) ir.Operand {

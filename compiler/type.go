@@ -1,12 +1,15 @@
 package compiler
 
 import (
+	"fmt"
 	"github.com/slince/php-plus/compiler/ast"
+	"github.com/slince/php-plus/compiler/token"
 	"github.com/slince/php-plus/ir/types"
 )
 
-func (c *Compiler) compileType(node *ast.Identifier) types.Type {
+func (c *Compiler) compileType(node *ast.Identifier) (types.Type, error) {
 	var _type types.Type
+	var err error
 	switch node.Value {
 	case "int4":
 		_type = types.I4
@@ -54,6 +57,8 @@ func (c *Compiler) compileType(node *ast.Identifier) types.Type {
 		_type = types.Bool
 	case "void":
 		_type = types.Void
+	default:
+		err = token.NewSyntaxError(fmt.Sprintf("unknown identifier %s", node.Value), node.Position())
 	}
-	return _type
+	return _type, err
 }
