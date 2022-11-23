@@ -27,14 +27,14 @@ func (p *Parser) parsePrimaryExpr() ast.Expr {
 	// constant
 	case token.INT:
 		num, _ := strconv.ParseInt(tok.Literal, 10, 64)
-		exp = ast.NewLiteral(num, tok.Literal, tok.Position)
+		exp = ast.NewLiteral("int", num, tok.Literal, tok.Position)
 		p.tokens.Next()
 	case token.FLOAT:
 		num, _ := strconv.ParseFloat(tok.Literal, 64)
-		exp = ast.NewLiteral(num, tok.Literal, tok.Position)
+		exp = ast.NewLiteral("float", num, tok.Literal, tok.Position)
 		p.tokens.Next()
 	case token.STR:
-		exp = ast.NewLiteral(tok.Literal, tok.Literal, tok.Position)
+		exp = ast.NewLiteral("string", tok.Literal, tok.Literal, tok.Position)
 		p.tokens.Next()
 	// identifier
 	case token.ID:
@@ -105,13 +105,13 @@ func (p *Parser) parseIdentifierExpr() ast.Expr {
 	switch tok.Literal {
 	case "true":
 	case "TRUE":
-		exp = ast.NewLiteral(true, tok.Literal, tok.Position)
+		exp = ast.NewLiteral("bool", true, tok.Literal, tok.Position)
 	case "false":
 	case "FALSE":
-		exp = ast.NewLiteral(false, tok.Literal, tok.Position)
+		exp = ast.NewLiteral("bool", false, tok.Literal, tok.Position)
 	case "null":
 	case "NULL":
-		exp = ast.NewLiteral(nil, tok.Literal, tok.Position)
+		exp = ast.NewLiteral("null", nil, tok.Literal, tok.Position)
 	default:
 		exp = ast.NewIdentifier(tok.Literal, tok.Position)
 	}

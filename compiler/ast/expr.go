@@ -11,6 +11,7 @@ type Identifier struct {
 }
 
 type Literal struct {
+	Kind  string
 	Raw   string
 	Value interface{}
 	expr
@@ -111,8 +112,9 @@ func NewIdentifier(value string, pos *token.Position) *Identifier {
 	return ident
 }
 
-func NewLiteral(value interface{}, raw string, pos *token.Position) *Literal {
+func NewLiteral(kind string, value interface{}, raw string, pos *token.Position) *Literal {
 	var exp = &Literal{
+		Kind:  kind,
 		Raw:   raw,
 		Value: value,
 	}

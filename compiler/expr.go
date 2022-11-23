@@ -12,20 +12,21 @@ import (
 func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
 	var kind types.Type
 	var err error
-	switch node.Value.(type) {
-	case int64:
+	switch node.Kind {
+	case "int":
 		kind = types.I64
-	case bool:
-		kind = types.Bool
-	case float64:
-		var num = node.Value.(float64)
-		if num > math.MaxFloat32 {
-			kind = types.F32
-		} else {
+	case "float":
+		if node.Value.(float64) > math.MaxFloat32 {
 			kind = types.F64
+		} else {
+			kind = types.F32
 		}
-	case string:
+	case "string":
 		kind = types.String
+	case "bool":
+		kind = types.Bool
+	case "null":
+		kind = types.Nop
 	default:
 		err = token.NewSyntaxError(fmt.Sprintf("unknown identifier %s", node.Value), node.Position())
 	}
@@ -35,7 +36,7 @@ func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
 	return ir.NewConst(node.Value, kind), err
 }
 
-func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
+func (c *Compiler) compileExpr(node ast.Expr) (ir.Operand, error) {
 	switch expr := node.(type) {
 	case *ast.Literal:
 		return c.compileLiteral(expr)
@@ -46,12 +47,19 @@ func (c *Compiler) compileExpr(node ast.Expr) ir.Operand {
 	case *ast.UpdateExpr:
 		return c.compileUpdateExpr(expr)
 	case *ast.ArrayExpr:
-
+		return c.compileArrayExpr(expr)
 	}
 }
 
-func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) ir.Operand {
-	var target = c.compileExpr(expr.Target)
+func (c *Compiler) compileArrayExpr(expr *ast.ArrayExpr) (ir.Operand, error) {
+
+}
+
+func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (ir.Operand, error) {
+	var target, err = c.compileExpr(expr.Target)
+	if err != nil {
+		return nil, err
+	}
 	var result = ir.NewTemporary(nil)
 	switch expr.Operator {
 	case "++":
@@ -59,11 +67,18 @@ func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) ir.Operand {
 	case "--":
 		c.ctx.NewSub(result, target, ir.NewConst(1, target.Type()))
 	}
-	return result
+	return result, nil
 }
 
-func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) ir.Operand {
-	var l, r = c.compileExpr(expr.Left), c.compileExpr(expr.Right)
+func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (ir.Operand, error) {
+	var l, err = c.compileExpr(expr.Left)
+	if err != nil {
+		return nil, err
+	}
+	r, err := c.compileExpr(expr.Right)
+	if err != nil {
+		return nil, err
+	}
 	var result = ir.NewTemporary(nil)
 	switch expr.Operator {
 	case "+":
@@ -105,11 +120,14 @@ func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) ir.Operand {
 	case ">=":
 		c.ctx.NewGeq(result, l, r)
 	}
-	return result
+	return result, nil
 }
 
-func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) ir.Operand {
-	var target = c.compileExpr(expr.Target)
+func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (ir.Operand, error) {
+	var target, err = c.compileExpr(expr.Target)
+	if err != nil {
+		return nil, err
+	}
 	var result = ir.NewTemporary(nil)
 	switch expr.Operator {
 	case "!":
@@ -120,7 +138,7 @@ func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) ir.Operand {
 	case "-":
 		c.ctx.NewNeg(result, target)
 	}
-	return result
+	return result, nil
 }
 
 func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) (ir.Operand, error) {
@@ -135,7 +153,10 @@ func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType st
 	}
 	var init ir.Operand
 	if expr.Init != nil {
-		init = c.compileExpr(expr.Init)
+		init, err = c.compileExpr(expr.Init)
+		if err != nil {
+			return nil, err
+		}
 	}
 	var variable = ir.NewVariable(name, kind)
 	c.ctx.NewLocal(variable, init)

@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	// Integer types.
 	I4    = NewInt(4, false)    // i4
 	I8    = NewInt(8, false)    // i8
 	I16   = NewInt(16, false)   // i16
@@ -27,16 +26,16 @@ var (
 	U512  = NewInt(512, true)  // i512
 	U1024 = NewInt(1024, true) // i1024
 
-	// Float types.
 	F32 = NewFloat(32) // f32
 	F64 = NewFloat(64) // f64
 
-	// Bool
 	Bool = &BoolType{}
 
 	Void = &VoidType{}
 
 	String = &StringType{}
+
+	Nop = &NopType{}
 )
 
 // IsVoid reports whether the given type is a void type.
@@ -96,15 +95,15 @@ type Type interface {
 	Equal(u Type) bool
 }
 
-type Nop struct {
+type NopType struct {
 }
 
-func (n *Nop) Equal(u Type) bool {
-	_, ok := u.(*Nop)
+func (n *NopType) Equal(u Type) bool {
+	_, ok := u.(*NopType)
 	return ok
 }
 
-func (n *Nop) String() string {
+func (n *NopType) String() string {
 	return "nop"
 }
 
@@ -413,20 +412,6 @@ func (t *StructType) Equal(u Type) bool {
 
 // String returns the string representation of the structure type.
 func (t *StructType) String() string {
-	// Opaque struct type.
-	//
-	//	'opaque'
-	//
-	// Struct type.
-	//
-	//	'{' Fields=(Type separator ',')+? '}'
-	//
-	// Packed struct type.
-	//
-	//	'<' '{' Fields=(Type separator ',')+? '}' '>'   -> PackedStructType
-	if t.Opaque {
-		return "opaque"
-	}
 	if len(t.Fields) == 0 {
 		if t.Packed {
 			return "<{}>"
