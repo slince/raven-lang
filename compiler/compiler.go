@@ -10,9 +10,9 @@ import (
 type Compiler struct {
 	ctx         *ir.BlockContext
 	symbolTable *ir.SymbolTable
-	module   *ir.Module
-	function *ir.Function
-	program  *ir.Program
+	module      *ir.Module
+	function    *ir.Function
+	program     *ir.Program
 }
 
 func (c *Compiler) enterScope() {
