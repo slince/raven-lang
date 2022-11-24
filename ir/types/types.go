@@ -435,3 +435,26 @@ func (t *StructType) String() string {
 	}
 	return buf.String()
 }
+
+type PointerType struct {
+	BaseType Type
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *PointerType) Equal(u Type) bool {
+	if u, ok := u.(*PointerType); ok {
+		return t.BaseType.Equal(u.BaseType)
+	}
+	return false
+}
+
+// String returns the string representation of the vector type.
+func (t *PointerType) String() string {
+	return fmt.Sprintf("* %s", t.BaseType.String())
+}
+
+func NewPoint(base Type) *PointerType {
+	return &PointerType{
+		BaseType: base,
+	}
+}
