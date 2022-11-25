@@ -36,9 +36,7 @@ func NewConst(value interface{}, kind types.Type) *Const {
 }
 
 type Variable struct {
-	// Parameter name.
 	Name string
-	// Parameter type.
 	Kind types.Type
 	Init bool
 	operand
