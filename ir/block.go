@@ -13,8 +13,16 @@ type Reference struct {
 	Name string
 }
 
+type Incoming struct {
+	Name string
+}
+
 func NewReference(name string) *Reference {
 	return &Reference{Name: name}
+}
+
+func NewIncoming(name string) *Incoming {
+	return &Incoming{Name: name}
 }
 
 func (r *Reference) block() {}
