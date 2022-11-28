@@ -57,18 +57,26 @@ type Ptr struct {
 }
 
 type Load struct {
+	instruction
 	Result ir.Operand
 	Addr   ir.Operand // PointType variable
 }
 
 type Store struct {
+	instruction
 	Addr  ir.Operand
 	Value ir.Operand // PointType variable
 }
 
 type PtrStride struct {
+	instruction
 	Addr   ir.Operand
 	Stride int64
+}
+
+type Label struct {
+	instruction
+	Name string
 }
 
 func NewGlobal(variable ir.Operand, value ir.Operand) *Global {
