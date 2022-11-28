@@ -120,3 +120,9 @@ func (c *Compiler) compileBlock(block *ir.BasicBlock, executor func() error) err
 	c.leaveBlock()
 	return err
 }
+
+func (c *Compiler) createBlock(label string, executor func() error) (ir.Block, error) {
+	var block = c.function.NewBlock(label)
+	var err = c.compileBlock(block, executor)
+	return block, err
+}

@@ -8,7 +8,13 @@ import (
 )
 
 func (c *Compiler) compileIfStmt(node *ast.IfStmt) (*ir.BasicBlock, error) {
-	var cond = c.compileBlock()
+	var cond, err = c.createBlock("if.test", func() error {
+		var test, err = c.compileExpr(node.Test)
+		if err == nil {
+			c.ctx.NewCondJmp(test, consequent, ifElse)
+		}
+		return err
+	})
 
 }
 
