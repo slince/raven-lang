@@ -231,11 +231,10 @@ func (l *Lexer) unexpect(ch rune, position *token.Position) {
 }
 
 func NewLexer(source string) *Lexer {
-	var buf = []rune(source + " ")
-
+	var buf = []rune(source + "0")
 	return &Lexer{
 		source: buf,
-		end:    len(buf) - 1,
+		end:    len(buf) - 2,
 		offset: 0,
 		line:   0,
 		column: 0,

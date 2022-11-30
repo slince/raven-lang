@@ -2,28 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/compiler/lexer"
 	"github.com/slince/php-plus/compiler/parser"
 	"io"
 	"os"
 )
 
-type STT struct {
-	Name string
-}
-
-var a = STT{
-	Name: "asa",
-}
-
-func read() string {
-	return "asas"
-}
-
-var b = read()
-
-func main() {
-	var file, err = os.Open("./examples/lang/simple.x")
+func parse(path string) *ast.Program {
+	var file, err = os.Open(path)
 	if err != nil {
 		panic(err)
 	}
@@ -32,8 +19,13 @@ func main() {
 	tokens := lex.Lex()
 
 	p := parser.NewParser(tokens)
-	ast := p.Parse()
-	fmt.Println(tokens, ast, b)
+	return p.Parse()
+}
+
+func main() {
+
+	var ast = parse("./examples/lang/simple.x")
+	fmt.Println(ast)
 
 	//var a  int32 = 10
 	//var b int64 = 20
