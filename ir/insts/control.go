@@ -1,6 +1,8 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import (
+	"github.com/slince/php-plus/ir"
+)
 
 type If struct {
 	instruction
