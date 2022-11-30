@@ -32,7 +32,7 @@ func main() {
 	//fmt.Println(ast)
 
 	var c = compiler.NewCompiler()
-	var program, err = c.Compile("./examples/lang/simple.x")
+	var program, err = c.Compile(source("./examples/lang/simple.x"))
 	fmt.Println(program)
 	if err != nil {
 		panic(err)

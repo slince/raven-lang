@@ -1,76 +1,74 @@
 package insts
 
-import (
-	"github.com/slince/php-plus/ir"
-)
+import "github.com/slince/php-plus/ir/value"
 
 type Global struct {
-	Variable ir.Operand
-	Value    ir.Operand
+	Variable value.Operand
+	Value    value.Operand
 	Init     bool
 	instruction
 }
 
 type GetGlobal struct {
-	Variable ir.Operand
+	Variable value.Operand
 	instruction
 }
 
 type Const struct {
-	Variable ir.Operand
-	Value    ir.Operand
+	Variable value.Operand
+	Value    value.Operand
 	instruction
 }
 
 type GetConst struct {
-	Variable ir.Operand
+	Variable value.Operand
 	instruction
 }
 
 type Local struct {
-	Variable ir.Operand
-	Value    ir.Operand
+	Variable value.Operand
+	Value    value.Operand
 	instruction
 }
 
 type GetLocal struct {
-	Variable ir.Operand
+	Variable value.Operand
 	instruction
 }
 
 type Assign struct {
-	Variable ir.Operand
-	Value    ir.Operand
+	Variable value.Operand
+	Value    value.Operand
 	instruction
 }
 
 type Lea struct {
 	instruction
-	Variable ir.Operand
-	Target   ir.Operand
+	Variable value.Operand
+	Target   value.Operand
 }
 
 type Ptr struct {
 	instruction
-	Variable ir.Operand
-	Target   ir.Operand
+	Variable value.Operand
+	Target   value.Operand
 }
 
 type Load struct {
 	instruction
-	Result ir.Operand
-	Addr   ir.Operand // PointType variable
+	Result value.Operand
+	Addr   value.Operand // PointType variable
 }
 
 type Store struct {
 	instruction
-	Addr  ir.Operand
-	Value ir.Operand // PointType variable
+	Addr  value.Operand
+	Value value.Operand // PointType variable
 }
 
 type PtrStride struct {
 	instruction
-	Addr   ir.Operand
+	Addr   value.Operand
 	Stride int64
 }
 
@@ -79,38 +77,38 @@ type Label struct {
 	Name string
 }
 
-func NewGlobal(variable ir.Operand, value ir.Operand) *Global {
+func NewGlobal(variable value.Operand, value value.Operand) *Global {
 	return &Global{Variable: variable, Value: value}
 }
 
-func NewGetGlobal(variable ir.Operand) *GetGlobal {
+func NewGetGlobal(variable value.Operand) *GetGlobal {
 	return &GetGlobal{Variable: variable}
 }
 
-func NewConst(variable ir.Operand, value ir.Operand) *Const {
+func NewConst(variable value.Operand, value value.Operand) *Const {
 	return &Const{Variable: variable, Value: value}
 }
 
-func NewGetConst(variable ir.Operand) *GetConst {
+func NewGetConst(variable value.Operand) *GetConst {
 	return &GetConst{Variable: variable}
 }
 
-func NewGetLocal(variable ir.Operand) *GetLocal {
+func NewGetLocal(variable value.Operand) *GetLocal {
 	return &GetLocal{Variable: variable}
 }
 
-func NewLocal(variable ir.Operand, value ir.Operand) *Local {
+func NewLocal(variable value.Operand, value value.Operand) *Local {
 	return &Local{Variable: variable, Value: value}
 }
 
-func NewAssign(variable ir.Operand, value ir.Operand) *Assign {
+func NewAssign(variable value.Operand, value value.Operand) *Assign {
 	return &Assign{Variable: variable, Value: value}
 }
 
-func NewLea(variable ir.Operand, target ir.Operand) *Lea {
+func NewLea(variable value.Operand, target value.Operand) *Lea {
 	return &Lea{Variable: variable, Target: target}
 }
 
-func NewPtr(variable ir.Operand, target ir.Operand) *Ptr {
+func NewPtr(variable value.Operand, target value.Operand) *Ptr {
 	return &Ptr{Variable: variable, Target: target}
 }

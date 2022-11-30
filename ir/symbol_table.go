@@ -1,11 +1,15 @@
 package ir
 
+import (
+	"github.com/slince/php-plus/ir/value"
+)
+
 type SymbolTable struct {
 	Outer *SymbolTable
-	vars  map[string]*Variable
+	vars  map[string]*value.Variable
 }
 
-func (s *SymbolTable) GetVariable(name string) *Variable {
+func (s *SymbolTable) GetVariable(name string) *value.Variable {
 	if v, ok := s.vars[name]; ok {
 		return v
 	} else if s.Outer != nil {
@@ -17,6 +21,6 @@ func (s *SymbolTable) GetVariable(name string) *Variable {
 func NewSymbolTable(outer *SymbolTable) *SymbolTable {
 	return &SymbolTable{
 		Outer: outer,
-		vars:  make(map[string]*Variable),
+		vars:  make(map[string]*value.Variable),
 	}
 }

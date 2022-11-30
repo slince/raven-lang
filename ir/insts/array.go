@@ -1,6 +1,6 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import "github.com/slince/php-plus/ir/value"
 
 type Array struct {
 	instruction
@@ -8,10 +8,10 @@ type Array struct {
 
 type PushArray struct {
 	instruction
-	Variable ir.Variable
+	Variable value.Variable
 }
 
-func NewPushArray(variable ir.Variable) *PushArray {
+func NewPushArray(variable value.Variable) *PushArray {
 	return &PushArray{
 		Variable: variable,
 	}
@@ -19,12 +19,12 @@ func NewPushArray(variable ir.Variable) *PushArray {
 
 type SetArray struct {
 	instruction
-	Variable ir.Variable
-	Index    ir.Operand
-	Value    ir.Operand
+	Variable value.Variable
+	Index    value.Operand
+	Value    value.Operand
 }
 
-func NewSetArray(variable ir.Variable, index ir.Operand, value ir.Operand) *SetArray {
+func NewSetArray(variable value.Variable, index value.Operand, value value.Operand) *SetArray {
 	return &SetArray{
 		Variable: variable,
 		Index:    index,
@@ -34,12 +34,12 @@ func NewSetArray(variable ir.Variable, index ir.Operand, value ir.Operand) *SetA
 
 type GetArray struct {
 	instruction
-	Result   ir.Operand
-	Variable ir.Variable
-	Index    ir.Operand
+	Result   value.Operand
+	Variable value.Variable
+	Index    value.Operand
 }
 
-func NewGetArray(result ir.Operand, variable ir.Variable, index ir.Operand) *GetArray {
+func NewGetArray(result value.Operand, variable value.Variable, index value.Operand) *GetArray {
 	return &GetArray{
 		Result:   result,
 		Variable: variable,

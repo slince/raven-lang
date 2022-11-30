@@ -1,6 +1,6 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import "github.com/slince/php-plus/ir/value"
 
 type Logical interface {
 	logical()
@@ -13,99 +13,99 @@ type logical struct {
 func (a logical) logical() {}
 
 type Gt struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type Geq struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type Lt struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type Leq struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type Eq struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type Neq struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type LogicalAnd struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type LogicalOr struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	logical
 }
 
 type LogicalNot struct {
-	Result ir.Operand
-	Ope    ir.Operand
+	Result value.Operand
+	Ope    value.Operand
 	logical
 }
 
-func NewGt(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Gt {
+func NewGt(result value.Operand, lhs value.Operand, rhs value.Operand) *Gt {
 	return &Gt{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewGeq(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Geq {
+func NewGeq(result value.Operand, lhs value.Operand, rhs value.Operand) *Geq {
 	return &Geq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLt(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Lt {
+func NewLt(result value.Operand, lhs value.Operand, rhs value.Operand) *Lt {
 	return &Lt{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLeq(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Leq {
+func NewLeq(result value.Operand, lhs value.Operand, rhs value.Operand) *Leq {
 	return &Leq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewEq(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Eq {
+func NewEq(result value.Operand, lhs value.Operand, rhs value.Operand) *Eq {
 	return &Eq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewNeq(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Neq {
+func NewNeq(result value.Operand, lhs value.Operand, rhs value.Operand) *Neq {
 	return &Neq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLogicalAnd(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *LogicalAnd {
+func NewLogicalAnd(result value.Operand, lhs value.Operand, rhs value.Operand) *LogicalAnd {
 	return &LogicalAnd{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLogicalOr(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *LogicalOr {
+func NewLogicalOr(result value.Operand, lhs value.Operand, rhs value.Operand) *LogicalOr {
 	return &LogicalOr{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLogicalNot(result ir.Operand, ope ir.Operand) *LogicalNot {
+func NewLogicalNot(result value.Operand, ope value.Operand) *LogicalNot {
 	return &LogicalNot{Result: result, Ope: ope}
 }

@@ -1,6 +1,6 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import "github.com/slince/php-plus/ir/value"
 
 type Unary interface {
 	unary()
@@ -11,11 +11,11 @@ type unary struct {
 }
 
 type Neg struct {
-	Result ir.Operand
-	Ope    ir.Operand
+	Result value.Operand
+	Ope    value.Operand
 	unary
 }
 
-func NewNeg(result ir.Operand, ope ir.Operand) *Neg {
+func NewNeg(result value.Operand, ope value.Operand) *Neg {
 	return &Neg{Result: result, Ope: ope}
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/ir"
+	"github.com/slince/php-plus/ir/value"
 	"strconv"
 )
 
@@ -68,14 +69,14 @@ func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) error {
 	return nil
 }
 
-func (c *Compiler) compileSwitchCaseDisc(disc ir.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) (*ir.BasicBlock, error) {
+func (c *Compiler) compileSwitchCaseDisc(disc value.Operand, caseBody *ir.BasicBlock, node *ast.SwitchCase, idx int, last bool, defaultIdx int) (*ir.BasicBlock, error) {
 	var discBlock = c.function.NewBlock("switch.case.disc." + strconv.Itoa(idx))
 	var err = c.compileBlock(discBlock, func() error {
 		if node.Default {
 			c.ctx.NewJmp(caseBody)
 			return nil
 		}
-		var cond = ir.NewTemporary(nil)
+		var cond = value.NewTemporary(nil)
 		var test, err = c.compileExpr(node.Test)
 		if err != nil {
 			return err

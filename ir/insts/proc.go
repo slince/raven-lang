@@ -1,13 +1,16 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import (
+	"github.com/slince/php-plus/ir"
+	"github.com/slince/php-plus/ir/value"
+)
 
 type Arg struct {
-	Value ir.Operand
+	Value value.Operand
 	instruction
 }
 
-func NewArg(value ir.Operand) *Arg {
+func NewArg(value value.Operand) *Arg {
 	return &Arg{Value: value}
 }
 
@@ -22,10 +25,10 @@ func NewCall(callee *ir.Function, argNum uint64) *Call {
 }
 
 type Ret struct {
-	Ope ir.Operand
+	Ope value.Operand
 	instruction
 }
 
-func NewRet(ope ir.Operand) *Ret {
+func NewRet(ope value.Operand) *Ret {
 	return &Ret{Ope: ope}
 }

@@ -1,10 +1,10 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import "github.com/slince/php-plus/ir/value"
 
 type Phi struct {
-	Variable ir.Operand
-	First    *ir.Temporary
-	Second   *ir.Temporary
+	Variable value.Operand
+	First    *value.Temporary
+	Second   *value.Temporary
 	instruction
 }

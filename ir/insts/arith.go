@@ -1,6 +1,6 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import "github.com/slince/php-plus/ir/value"
 
 type Arith interface {
 	arith()
@@ -13,56 +13,56 @@ type arith struct {
 func (a arith) arith() {}
 
 type Add struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	arith
 }
 
 type Sub struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	arith
 }
 
 type Mul struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	arith
 }
 
 type Div struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	arith
 }
 
 type Mod struct {
-	Result ir.Operand
-	Lhs    ir.Operand
-	Rhs    ir.Operand
+	Result value.Operand
+	Lhs    value.Operand
+	Rhs    value.Operand
 	arith
 }
 
-func NewAdd(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Add {
+func NewAdd(result value.Operand, lhs value.Operand, rhs value.Operand) *Add {
 	return &Add{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewSub(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Sub {
+func NewSub(result value.Operand, lhs value.Operand, rhs value.Operand) *Sub {
 	return &Sub{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewMul(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Mul {
+func NewMul(result value.Operand, lhs value.Operand, rhs value.Operand) *Mul {
 	return &Mul{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewDiv(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Div {
+func NewDiv(result value.Operand, lhs value.Operand, rhs value.Operand) *Div {
 	return &Div{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewMod(result ir.Operand, lhs ir.Operand, rhs ir.Operand) *Mod {
+func NewMod(result value.Operand, lhs value.Operand, rhs value.Operand) *Mod {
 	return &Mod{Result: result, Lhs: lhs, Rhs: rhs}
 }

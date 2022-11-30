@@ -1,79 +1,79 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import "github.com/slince/php-plus/ir/value"
 
 type SetArrayElement struct {
-	Array ir.Operand
-	Value ir.Operand
-	Index ir.Operand
+	Array value.Operand
+	Value value.Operand
+	Index value.Operand
 }
 
-func NewSetArrayElement(array ir.Operand, value ir.Operand, index ir.Operand) *SetArrayElement {
+func NewSetArrayElement(array value.Operand, value value.Operand, index value.Operand) *SetArrayElement {
 	return &SetArrayElement{Array: array, Value: value, Index: index}
 }
 
 type GetArrayElement struct {
-	Variable ir.Operand
-	Array    ir.Operand
-	Index    ir.Operand
+	Variable value.Operand
+	Array    value.Operand
+	Index    value.Operand
 }
 
-func NewGetArrayElement(variable ir.Operand, array ir.Operand, index ir.Operand) *GetArrayElement {
+func NewGetArrayElement(variable value.Operand, array value.Operand, index value.Operand) *GetArrayElement {
 	return &GetArrayElement{Variable: variable, Array: array, Index: index}
 }
 
 type SetSliceElement struct {
-	Slice ir.Operand
-	Value ir.Operand
-	Index ir.Operand
+	Slice value.Operand
+	Value value.Operand
+	Index value.Operand
 }
 
-func NewSetSliceElement(slice ir.Operand, value ir.Operand, index ir.Operand) *SetSliceElement {
+func NewSetSliceElement(slice value.Operand, value value.Operand, index value.Operand) *SetSliceElement {
 	return &SetSliceElement{Slice: slice, Value: value, Index: index}
 }
 
 type GetSliceElement struct {
-	Variable ir.Operand
-	Slice    ir.Operand
-	Index    ir.Operand
+	Variable value.Operand
+	Slice    value.Operand
+	Index    value.Operand
 }
 
-func NewGetSliceElement(variable ir.Operand, slice ir.Operand, index ir.Operand) *GetSliceElement {
+func NewGetSliceElement(variable value.Operand, slice value.Operand, index value.Operand) *GetSliceElement {
 	return &GetSliceElement{Variable: variable, Slice: slice, Index: index}
 }
 
 type SetMapElement struct {
-	Map   ir.Operand
-	Value ir.Operand
-	Key   ir.Operand
+	Map   value.Operand
+	Value value.Operand
+	Key   value.Operand
 }
 
-func NewSetMapElement(_map ir.Operand, value ir.Operand, key ir.Operand) *SetMapElement {
+func NewSetMapElement(_map value.Operand, value value.Operand, key value.Operand) *SetMapElement {
 	return &SetMapElement{Map: _map, Value: value, Key: key}
 }
 
 type GetMapElement struct {
-	Variable ir.Operand
-	Map      ir.Operand
-	Key      ir.Operand
+	Variable value.Operand
+	Map      value.Operand
+	Key      value.Operand
 }
 
-func NewGetMapElement(variable ir.Operand, _map ir.Operand, key ir.Operand) *GetMapElement {
+func NewGetMapElement(variable value.Operand, _map value.Operand, key value.Operand) *GetMapElement {
 	return &GetMapElement{Variable: variable, Map: _map, Key: key}
 }
 
 type Len struct {
-	Variable ir.Operand
+	Variable value.Operand
 }
 
-func NewLen(variable ir.Operand) *Len {
+func NewLen(variable value.Operand) *Len {
 	return &Len{Variable: variable}
 }
 
 type Cap struct {
-	Variable ir.Operand
+	Variable value.Operand
 }
 
-func NewCap(variable ir.Operand) *Cap {
+func NewCap(variable value.Operand) *Cap {
 	return &Cap{Variable: variable}
 }

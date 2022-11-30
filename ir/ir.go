@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/slince/php-plus/ir/types"
+import (
+	"github.com/slince/php-plus/ir/insts"
+	"github.com/slince/php-plus/ir/types"
+	"github.com/slince/php-plus/ir/value"
+)
 
 type Ir struct {
 	Global string
@@ -24,8 +28,8 @@ func NewProgram() *Program {
 type Module struct {
 	Name      string
 	Types     []types.Type
-	Globals   []*Variable
-	Consts    []*Const
+	Globals   []*value.Variable
+	Consts    []*insts.Const
 	Functions []*Function
 }
 

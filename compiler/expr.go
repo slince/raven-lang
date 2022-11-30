@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/compiler/token"
-	"github.com/slince/php-plus/ir"
+	"github.com/slince/php-plus/ir/insts"
 	"github.com/slince/php-plus/ir/types"
+	"github.com/slince/php-plus/ir/value"
 	"math"
 )
 
-func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
+func (c *Compiler) compileLiteral(node *ast.Literal) (*insts.Const, error) {
 	var kind types.Type
 	var err error
 	switch node.Kind {
@@ -33,10 +34,10 @@ func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ir.NewConst(node.Value, kind), err
+	return insts.NewConst(node.Value, kind), err
 }
 
-func (c *Compiler) compileExpr(node ast.Expr) (ir.Operand, error) {
+func (c *Compiler) compileExpr(node ast.Expr) (value.Operand, error) {
 	switch expr := node.(type) {
 	case *ast.Literal:
 		return c.compileLiteral(expr)
@@ -51,26 +52,26 @@ func (c *Compiler) compileExpr(node ast.Expr) (ir.Operand, error) {
 	}
 }
 
-func (c *Compiler) compileArrayExpr(expr *ast.ArrayExpr) (ir.Operand, error) {
+func (c *Compiler) compileArrayExpr(expr *ast.ArrayExpr) (value.Operand, error) {
 
 }
 
-func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (ir.Operand, error) {
+func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Operand, error) {
 	var target, err = c.compileExpr(expr.Target)
 	if err != nil {
 		return nil, err
 	}
-	var result = ir.NewTemporary(nil)
+	var result = value.NewTemporary(nil)
 	switch expr.Operator {
 	case "++":
-		c.ctx.NewAdd(result, target, ir.NewConst(1, target.Type()))
+		c.ctx.NewAdd(result, target, insts.NewConst(1, target.Type()))
 	case "--":
-		c.ctx.NewSub(result, target, ir.NewConst(1, target.Type()))
+		c.ctx.NewSub(result, target, insts.NewConst(1, target.Type()))
 	}
 	return result, nil
 }
 
-func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (ir.Operand, error) {
+func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (value.Operand, error) {
 	var l, err = c.compileExpr(expr.Left)
 	if err != nil {
 		return nil, err
@@ -79,7 +80,7 @@ func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (ir.Operand, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result = ir.NewTemporary(nil)
+	var result = value.NewTemporary(nil)
 	switch expr.Operator {
 	case "+":
 		c.ctx.NewAdd(result, l, r)
@@ -123,12 +124,12 @@ func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (ir.Operand, error) {
 	return result, nil
 }
 
-func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (ir.Operand, error) {
+func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (value.Operand, error) {
 	var target, err = c.compileExpr(expr.Target)
 	if err != nil {
 		return nil, err
 	}
-	var result = ir.NewTemporary(nil)
+	var result = value.NewTemporary(nil)
 	switch expr.Operator {
 	case "!":
 		c.ctx.NewLogicalNot(result, target)
@@ -141,7 +142,7 @@ func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (ir.Operand, error) {
 	return result, nil
 }
 
-func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) (ir.Operand, error) {
+func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) (value.Operand, error) {
 	var name = c.compileIdentifier(expr.Id)
 	var kind types.Type
 	var err error
@@ -151,21 +152,21 @@ func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType st
 			return nil, err
 		}
 	}
-	var init ir.Operand
+	var init value.Operand
 	if expr.Init != nil {
 		init, err = c.compileExpr(expr.Init)
 		if err != nil {
 			return nil, err
 		}
 	}
-	var variable = ir.NewVariable(name, kind)
+	var variable = value.NewVariable(name, kind)
 	c.ctx.NewLocal(variable, init)
 	return variable, err
 }
 
-func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) ir.Operand {
+func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) value.Operand {
 	var target = c.compileIdentifier(expr.Left)
-	var result = ir.NewTemporary(nil)
+	var result = value.NewTemporary(nil)
 	switch expr.Operator {
 	case "!":
 		c.ctx.NewLogicalNot(result, target)

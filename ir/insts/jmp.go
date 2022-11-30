@@ -1,6 +1,9 @@
 package insts
 
-import "github.com/slince/php-plus/ir"
+import (
+	"github.com/slince/php-plus/ir"
+	"github.com/slince/php-plus/ir/value"
+)
 
 type Jmp struct {
 	Target ir.Block
@@ -12,12 +15,12 @@ func NewJmp(target ir.Block) *Jmp {
 }
 
 type CondJmp struct {
-	Cond        ir.Operand
+	Cond        value.Operand
 	TrueTarget  ir.Block
 	FalseTarget ir.Block
 	instruction
 }
 
-func NewCondJmp(cond ir.Operand, trueTarget ir.Block, falseTarget ir.Block) *CondJmp {
+func NewCondJmp(cond value.Operand, trueTarget ir.Block, falseTarget ir.Block) *CondJmp {
 	return &CondJmp{Cond: cond, TrueTarget: trueTarget, FalseTarget: falseTarget}
 }
