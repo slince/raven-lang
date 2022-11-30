@@ -22,7 +22,7 @@ func (p *Parser) Parse() *ast.Program {
 func (p *Parser) parseModule() *ast.Module {
 	var tok = p.tokens.Current()
 	var stmts = make([]ast.Stmt, 0)
-	for !p.tokens.Test(token.EOF, token.PACKAGE) {
+	for !p.tokens.Eof() {
 		stmts = append(stmts, p.parseStmt())
 	}
 	var body = ast.NewBlockStmt(stmts, tok.Position)

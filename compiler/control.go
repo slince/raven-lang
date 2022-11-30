@@ -8,14 +8,36 @@ import (
 )
 
 func (c *Compiler) compileIfStmt(node *ast.IfStmt) (*ir.BasicBlock, error) {
-	var cond, err = c.createBlock("if.test", func() error {
+	c.ctx.LeaveBlock = c.function.NewBlock("if.done")
+	var consequent, err = c.compileBlockStmt(node.Consequent, "if.then")
+	if err != nil {
+		return nil, err
+	}
+	if consequent.Terminator == nil {
+		consequent.NewJmp(c.ctx.LeaveBlock)
+	}
+	// Compile if else body
+	var ifElse ir.Block = c.ctx.LeaveBlock
+	if node.Alternate != nil {
+		if alternate, ok := node.Alternate.(*ast.BlockStmt); ok {
+			ifElse, err = c.compileBlockStmt(alternate, "if.else")
+		} else if alternate, ok := node.Alternate.(*ast.IfStmt); ok {
+			ifElse, err = c.compileIfStmt(alternate)
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	// Compile if head
+	var test = c.function.NewBlock("if.test")
+	err = c.compileBlock(test, func() error {
 		var test, err = c.compileExpr(node.Test)
 		if err == nil {
 			c.ctx.NewCondJmp(test, consequent, ifElse)
 		}
 		return err
 	})
-
+	return test, err
 }
 
 func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) error {

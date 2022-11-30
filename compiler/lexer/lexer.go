@@ -32,7 +32,6 @@ func (l *Lexer) NextToken() *token.Token {
 	if l.eof() {
 		return token.NewToken(token.EOF, token.Literal(token.EOF), l.position())
 	}
-
 	var ch = l.current()
 
 	var tok *token.Token
@@ -224,7 +223,7 @@ func (l *Lexer) position() *token.Position {
 }
 
 func (l *Lexer) eof() bool {
-	return l.offset >= l.end
+	return l.offset > l.end
 }
 
 func (l *Lexer) unexpect(ch rune, position *token.Position) {
@@ -232,7 +231,7 @@ func (l *Lexer) unexpect(ch rune, position *token.Position) {
 }
 
 func NewLexer(source string) *Lexer {
-	var buf = []rune(source)
+	var buf = []rune(source + " ")
 
 	return &Lexer{
 		source: buf,
