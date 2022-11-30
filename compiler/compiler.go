@@ -15,6 +15,18 @@ type Compiler struct {
 	program     *ir.Program
 }
 
+func (c *Compiler) Compile(source string) (*ir.Program, error) {
+	var lex = lexer.NewLexer(source)
+	var tokens = lex.Lex()
+	var p = parser.NewParser(tokens)
+	var program = p.Parse()
+	var err = c.compileProgram(program)
+	if err != nil {
+		return nil, err
+	}
+	return c.program, nil
+}
+
 func (c *Compiler) enterScope() {
 	c.symbolTable = ir.NewSymbolTable(c.symbolTable)
 }
@@ -34,18 +46,6 @@ func (c *Compiler) leaveBlock() {
 
 func (c *Compiler) compileIdentifier(node *ast.Identifier) string {
 	return node.Value
-}
-
-func (c *Compiler) Compile(source string) (*ir.Program, error) {
-	var lex = lexer.NewLexer(source)
-	var tokens = lex.Lex()
-	var p = parser.NewParser(tokens)
-	var program = p.Parse()
-	var err = c.compileProgram(program)
-	if err != nil {
-		return nil, err
-	}
-	return c.program, nil
 }
 
 func (c *Compiler) compileProgram(node *ast.Program) error {
@@ -125,4 +125,8 @@ func (c *Compiler) createBlock(label string, executor func() error) (ir.Block, e
 	var block = c.function.NewBlock(label)
 	var err = c.compileBlock(block, executor)
 	return block, err
+}
+
+func NewCompiler() *Compiler {
+	return &Compiler{}
 }
