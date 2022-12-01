@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/compiler/token"
-	"github.com/slince/php-plus/ir/insts"
+	"github.com/slince/php-plus/ir"
 	"github.com/slince/php-plus/ir/types"
 	"github.com/slince/php-plus/ir/value"
 	"math"
 )
 
-func (c *Compiler) compileLiteral(node *ast.Literal) (*insts.Const, error) {
+func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
 	var kind types.Type
 	var err error
 	switch node.Kind {
@@ -34,7 +34,7 @@ func (c *Compiler) compileLiteral(node *ast.Literal) (*insts.Const, error) {
 	if err != nil {
 		return nil, err
 	}
-	return insts.NewConst(node.Value, kind), err
+	return ir.NewConst(node.Value, kind), err
 }
 
 func (c *Compiler) compileExpr(node ast.Expr) (value.Operand, error) {
@@ -64,9 +64,9 @@ func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Operand, error
 	var result = value.NewTemporary(nil)
 	switch expr.Operator {
 	case "++":
-		c.ctx.NewAdd(result, target, insts.NewConst(1, target.Type()))
+		c.ctx.NewAdd(result, target, ir.NewConst(1, target.Type()))
 	case "--":
-		c.ctx.NewSub(result, target, insts.NewConst(1, target.Type()))
+		c.ctx.NewSub(result, target, ir.NewConst(1, target.Type()))
 	}
 	return result, nil
 }

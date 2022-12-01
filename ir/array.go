@@ -1,4 +1,4 @@
-package insts
+package ir
 
 import "github.com/slince/php-plus/ir/value"
 

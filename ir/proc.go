@@ -1,7 +1,6 @@
-package insts
+package ir
 
 import (
-	"github.com/slince/php-plus/ir"
 	"github.com/slince/php-plus/ir/value"
 )
 
@@ -15,12 +14,12 @@ func NewArg(value value.Operand) *Arg {
 }
 
 type Call struct {
-	Callee *ir.Function
+	Callee *Function
 	ArgNum uint64
 	instruction
 }
 
-func NewCall(callee *ir.Function, argNum uint64) *Call {
+func NewCall(callee *Function, argNum uint64) *Call {
 	return &Call{Callee: callee, ArgNum: argNum}
 }
 

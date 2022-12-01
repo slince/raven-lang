@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/slince/php-plus/ir/insts"
 	"github.com/slince/php-plus/ir/types"
 	"github.com/slince/php-plus/ir/value"
 )
@@ -29,7 +28,7 @@ type Module struct {
 	Name      string
 	Types     []types.Type
 	Globals   []*value.Variable
-	Consts    []*insts.Const
+	Consts    []*Const
 	Functions []*Function
 }
 

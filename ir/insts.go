@@ -1,4 +1,4 @@
-package insts
+package ir
 
 type Instruction interface {
 	inst()
