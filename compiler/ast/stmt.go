@@ -14,7 +14,7 @@ func (p *Program) AddModule(module *Module) {
 }
 
 type Module struct {
-	Name *Literal
+	Name *Identifier
 	Body *BlockStmt
 	stmt
 }

@@ -46,6 +46,9 @@ func (c *Compiler) leaveBlock() {
 }
 
 func (c *Compiler) compileIdentifier(node *ast.Identifier) string {
+	if node == nil {
+		return ""
+	}
 	return node.Value
 }
 
@@ -66,12 +69,9 @@ func (c *Compiler) compileProgram(node *ast.Program) error {
 }
 
 func (c *Compiler) compileModule(node *ast.Module) error {
-	var name, err = c.compileLiteral(node.Name)
-	if err != nil {
-		return err
-	}
-	c.module = c.program.NewModule(name.Value.(string))
-	_, err = c.compileBlockStmt(node.Body, "")
+	var name = c.compileIdentifier(node.Name)
+	c.module = c.program.NewModule(name)
+	var _, err = c.compileBlockStmt(node.Body, "")
 	return err
 }
 
