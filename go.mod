@@ -1,6 +1,6 @@
 module github.com/slince/php-plus
 
-go 1.17
+go 1.19
 
 require (
 	github.com/llir/llvm v0.3.4

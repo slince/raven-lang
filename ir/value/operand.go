@@ -8,20 +8,12 @@ var (
 )
 
 type Operand interface {
-	operand()
 	Type() types.Type
 }
-
-type operand struct {
-}
-
-func (o operand) operand() {}
-func (o operand) Type()    {}
 
 type Const struct {
 	Value interface{}
 	Kind  types.Type
-	operand
 }
 
 func (c *Const) Type() types.Type {
@@ -39,7 +31,6 @@ type Variable struct {
 	Name string
 	Kind types.Type
 	Init bool
-	operand
 }
 
 func (v *Variable) Type() types.Type {
@@ -56,7 +47,6 @@ func NewVariable(name string, kind types.Type) *Variable {
 
 type Temporary struct {
 	Original *Variable
-	operand
 }
 
 func (v *Temporary) Type() types.Type {
@@ -72,7 +62,6 @@ func NewTemporary(variable *Variable) *Temporary {
 
 type Label struct {
 	Name string
-	operand
 }
 
 func (v *Label) Type() types.Type {
