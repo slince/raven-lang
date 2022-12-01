@@ -56,7 +56,11 @@ func NewFunction(name string, retType types.Type, arguments ...*FunctionArgument
 	for i, param := range arguments {
 		paramTypes[i] = param.Kind
 	}
-	sig := types.NewFunc(retType, paramTypes...)
-	f := &Function{Name: name, Signature: sig, Arguments: arguments, Blocks: []*BasicBlock{}}
-	return f
+	var sig = types.NewFunc(retType, paramTypes...)
+	return &Function{
+		Name:      name,
+		Signature: sig,
+		Arguments: arguments,
+		Blocks:    []*BasicBlock{},
+	}
 }
