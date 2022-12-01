@@ -5,6 +5,7 @@ import (
 	"github.com/slince/php-plus/compiler/lexer"
 	"github.com/slince/php-plus/compiler/parser"
 	"github.com/slince/php-plus/ir"
+	"github.com/slince/php-plus/ir/value"
 )
 
 type Compiler struct {
@@ -46,6 +47,11 @@ func (c *Compiler) leaveBlock() {
 
 func (c *Compiler) compileIdentifier(node *ast.Identifier) string {
 	return node.Value
+}
+
+func (c *Compiler) compileVariable(node *ast.Identifier) (*value.Variable, error) {
+	var name = c.compileIdentifier(node)
+	return c.symbolTable.GetVariable(name)
 }
 
 func (c *Compiler) compileProgram(node *ast.Program) error {

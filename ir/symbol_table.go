@@ -1,6 +1,7 @@
 package ir
 
 import (
+	"github.com/pkg/errors"
 	"github.com/slince/php-plus/ir/value"
 )
 
@@ -9,13 +10,13 @@ type SymbolTable struct {
 	vars  map[string]*value.Variable
 }
 
-func (s *SymbolTable) GetVariable(name string) *value.Variable {
+func (s *SymbolTable) GetVariable(name string) (*value.Variable, error) {
 	if v, ok := s.vars[name]; ok {
-		return v
+		return v, nil
 	} else if s.Outer != nil {
 		return s.Outer.GetVariable(name)
 	}
-	return nil
+	return nil, errors.Errorf("unresolved reference '%s'", name)
 }
 
 func NewSymbolTable(outer *SymbolTable) *SymbolTable {

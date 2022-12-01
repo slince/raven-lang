@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/compiler/token"
-	"github.com/slince/php-plus/ir"
 	"github.com/slince/php-plus/ir/types"
 	"github.com/slince/php-plus/ir/value"
 	"math"
 )
 
-func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
+func (c *Compiler) compileLiteral(node *ast.Literal) (*value.Const, error) {
 	var kind types.Type
 	var err error
 	switch node.Kind {
@@ -34,7 +33,7 @@ func (c *Compiler) compileLiteral(node *ast.Literal) (*ir.Const, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ir.NewConst(node.Value, kind), err
+	return value.NewConst(node.Value, kind), err
 }
 
 func (c *Compiler) compileExpr(node ast.Expr) (value.Operand, error) {
@@ -50,10 +49,11 @@ func (c *Compiler) compileExpr(node ast.Expr) (value.Operand, error) {
 	case *ast.ArrayExpr:
 		return c.compileArrayExpr(expr)
 	}
+	return nil, nil
 }
 
 func (c *Compiler) compileArrayExpr(expr *ast.ArrayExpr) (value.Operand, error) {
-
+	return nil, nil
 }
 
 func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Operand, error) {
@@ -64,9 +64,9 @@ func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Operand, error
 	var result = value.NewTemporary(nil)
 	switch expr.Operator {
 	case "++":
-		c.ctx.NewAdd(result, target, ir.NewConst(1, target.Type()))
+		c.ctx.NewAdd(result, target, value.NewConst(1, target.Type()))
 	case "--":
-		c.ctx.NewSub(result, target, ir.NewConst(1, target.Type()))
+		c.ctx.NewSub(result, target, value.NewConst(1, target.Type()))
 	}
 	return result, nil
 }
@@ -164,8 +164,11 @@ func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType st
 	return variable, err
 }
 
-func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) value.Operand {
-	var target = c.compileIdentifier(expr.Left)
+func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) (value.Operand, error) {
+	var target, err = c.compileVariable(expr.Left)
+	if err != nil {
+		return target, err
+	}
 	var result = value.NewTemporary(nil)
 	switch expr.Operator {
 	case "!":
@@ -176,5 +179,5 @@ func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) value.Operand
 	case "-":
 		c.ctx.NewNeg(result, target)
 	}
-	return result
+	return result, nil
 }

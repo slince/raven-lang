@@ -48,11 +48,12 @@ func main() {
 	)
 	ab := funcAdd.NewBlock("")
 	ab.NewRet(ab.NewAdd(funcAdd.Params[0], funcAdd.Params[1]))
-	ab.NewSwitch()
+
+	ir.NewC
 	funcMain := m.NewFunc(
 		"main",
 		types.I32,
-	) // omit parameters
+	)                           // omit parameters
 	mb := funcMain.NewBlock("") // llir/llvm would give correct default name for block without name
 	mb.NewRet(mb.NewCall(funcAdd, constant.NewInt(types.I32, 1), mb.NewLoad(types.I32, globalG)))
 	println(m.String())
