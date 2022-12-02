@@ -71,7 +71,10 @@ func (c *Compiler) compileProgram(node *ast.Program) error {
 func (c *Compiler) compileModule(node *ast.Module) error {
 	var name = c.compileIdentifier(node.Name)
 	c.module = c.program.NewModule(name)
-	var _, err = c.compileBlockStmt(node.Body, "")
+	var err error
+	for _, stmt := range node.Body.Body {
+		err = c.compileStmt(stmt)
+	}
 	return err
 }
 
@@ -80,6 +83,8 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 	switch node.(type) {
 	case *ast.FunctionDeclaration:
 		err = c.compileFunctionDecl(node.(*ast.FunctionDeclaration))
+	case *ast.VariableDeclaration:
+		err = c.compileVarDecl(node.(*ast.VariableDeclaration))
 	case *ast.BlockStmt:
 		_, err = c.compileBlockStmt(node.(*ast.BlockStmt), "")
 	case *ast.ExpressionStmt:
