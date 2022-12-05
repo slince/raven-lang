@@ -9,12 +9,12 @@ import (
 func (c *Compiler) compileVarDecl(node *ast.VariableDeclaration) error {
 	var err error
 	for _, decl := range node.Declarators {
-		err = c.compileVarDeclarator(decl)
+		err = c.compileVarDeclarator(decl, node.Kind == "const")
 	}
 	return err
 }
 
-func (c *Compiler) compileVarDeclarator(node *ast.VariableDeclarator) error {
+func (c *Compiler) compileVarDeclarator(node *ast.VariableDeclarator, immutable bool) error {
 	var name string
 	var init value.Operand
 	var kind types.Type
@@ -33,9 +33,14 @@ func (c *Compiler) compileVarDeclarator(node *ast.VariableDeclarator) error {
 	}
 	name = c.compileIdentifier(node.Id)
 	if c.function == nil {
-		c.module.NewGlobal(name, kind, init.(*value.Const))
+		if immutable {
+			c.module.NewConst(name, kind, init.(*value.Const))
+		} else {
+			c.module.NewGlobal(name, kind, init.(*value.Const))
+		}
 	} else {
 		var variable = value.NewVariable(name, kind)
+		variable.Immutable = immutable
 		c.ctx.NewLocal(variable, init)
 	}
 	return nil

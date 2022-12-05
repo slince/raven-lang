@@ -44,6 +44,12 @@ func (m *Module) NewGlobal(name string, kind types.Type, init *value.Const) *Glo
 	return global
 }
 
+func (m *Module) NewConst(name string, kind types.Type, init *value.Const) *Const {
+	var global = NewGlobal(name, kind, init)
+	m.Globals = append(m.Globals, global)
+	return global
+}
+
 func NewModule(name string) *Module {
 	return &Module{Name: name, Functions: []*Function{}}
 }

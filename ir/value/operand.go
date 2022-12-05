@@ -28,9 +28,10 @@ func NewConst(value interface{}, kind types.Type) *Const {
 }
 
 type Variable struct {
-	Name string
-	Kind types.Type
-	Init bool
+	Name      string
+	Kind      types.Type
+	Immutable bool
+	Init      bool
 }
 
 func (v *Variable) Type() types.Type {
@@ -39,9 +40,10 @@ func (v *Variable) Type() types.Type {
 
 func NewVariable(name string, kind types.Type) *Variable {
 	return &Variable{
-		Name: name,
-		Kind: kind,
-		Init: false,
+		Name:      name,
+		Kind:      kind,
+		Immutable: false,
+		Init:      false,
 	}
 }
 
