@@ -14,12 +14,12 @@ func NewJmp(target Block) *Jmp {
 }
 
 type CondJmp struct {
-	Cond        value.Operand
+	Cond        value.Value
 	TrueTarget  Block
 	FalseTarget Block
 	instruction
 }
 
-func NewCondJmp(cond value.Operand, trueTarget Block, falseTarget Block) *CondJmp {
+func NewCondJmp(cond value.Value, trueTarget Block, falseTarget Block) *CondJmp {
 	return &CondJmp{Cond: cond, TrueTarget: trueTarget, FalseTarget: falseTarget}
 }

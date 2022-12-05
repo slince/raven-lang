@@ -36,7 +36,7 @@ func (c *Compiler) compileLiteral(node *ast.Literal) (*value.Const, error) {
 	return value.NewConst(node.Value, kind), err
 }
 
-func (c *Compiler) compileExpr(node ast.Expr) (value.Operand, error) {
+func (c *Compiler) compileExpr(node ast.Expr) (value.Value, error) {
 	switch expr := node.(type) {
 	case *ast.Literal:
 		return c.compileLiteral(expr)
@@ -52,11 +52,11 @@ func (c *Compiler) compileExpr(node ast.Expr) (value.Operand, error) {
 	return nil, nil
 }
 
-func (c *Compiler) compileArrayExpr(expr *ast.ArrayExpr) (value.Operand, error) {
+func (c *Compiler) compileArrayExpr(expr *ast.ArrayExpr) (value.Value, error) {
 	return nil, nil
 }
 
-func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Operand, error) {
+func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Value, error) {
 	var target, err = c.compileExpr(expr.Target)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Operand, error
 	return result, nil
 }
 
-func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (value.Operand, error) {
+func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (value.Value, error) {
 	var l, err = c.compileExpr(expr.Left)
 	if err != nil {
 		return nil, err
@@ -124,7 +124,7 @@ func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (value.Operand, error
 	return result, nil
 }
 
-func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (value.Operand, error) {
+func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (value.Value, error) {
 	var target, err = c.compileExpr(expr.Target)
 	if err != nil {
 		return nil, err
@@ -142,7 +142,7 @@ func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (value.Operand, error) 
 	return result, nil
 }
 
-func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) (value.Operand, error) {
+func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) (value.Value, error) {
 	var name = c.compileIdentifier(expr.Id)
 	var kind types.Type
 	var err error
@@ -152,7 +152,7 @@ func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType st
 			return nil, err
 		}
 	}
-	var init value.Operand
+	var init value.Value
 	if expr.Init != nil {
 		init, err = c.compileExpr(expr.Init)
 		if err != nil {
@@ -164,7 +164,7 @@ func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType st
 	return variable, err
 }
 
-func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) (value.Operand, error) {
+func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) (value.Value, error) {
 	var target, err = c.compileVariable(expr.Left)
 	if err != nil {
 		return target, err

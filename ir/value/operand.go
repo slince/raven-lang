@@ -7,7 +7,7 @@ var (
 	One  = NewConst(1, types.U4)
 )
 
-type Operand interface {
+type Value interface {
 	Type() types.Type
 }
 

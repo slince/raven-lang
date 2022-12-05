@@ -5,11 +5,11 @@ import (
 )
 
 type Arg struct {
-	Value value.Operand
+	Value value.Value
 	instruction
 }
 
-func NewArg(value value.Operand) *Arg {
+func NewArg(value value.Value) *Arg {
 	return &Arg{Value: value}
 }
 
@@ -24,10 +24,10 @@ func NewCall(callee *Function, argNum uint64) *Call {
 }
 
 type Ret struct {
-	Ope value.Operand
+	Ope value.Value
 	instruction
 }
 
-func NewRet(ope value.Operand) *Ret {
+func NewRet(ope value.Value) *Ret {
 	return &Ret{Ope: ope}
 }

@@ -16,7 +16,7 @@ func (c *Compiler) compileVarDecl(node *ast.VariableDeclaration) error {
 
 func (c *Compiler) compileVarDeclarator(node *ast.VariableDeclarator, immutable bool) error {
 	var name string
-	var init value.Operand
+	var init value.Value
 	var kind types.Type
 	var err error
 	if node.Init != nil {

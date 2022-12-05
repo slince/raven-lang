@@ -13,99 +13,99 @@ type logical struct {
 func (a logical) logical() {}
 
 type Gt struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type Geq struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type Lt struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type Leq struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type Eq struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type Neq struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type LogicalAnd struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type LogicalOr struct {
-	Result value.Operand
-	Lhs    value.Operand
-	Rhs    value.Operand
+	Result value.Value
+	Lhs    value.Value
+	Rhs    value.Value
 	logical
 }
 
 type LogicalNot struct {
-	Result value.Operand
-	Ope    value.Operand
+	Result value.Value
+	Ope    value.Value
 	logical
 }
 
-func NewGt(result value.Operand, lhs value.Operand, rhs value.Operand) *Gt {
+func NewGt(result value.Value, lhs value.Value, rhs value.Value) *Gt {
 	return &Gt{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewGeq(result value.Operand, lhs value.Operand, rhs value.Operand) *Geq {
+func NewGeq(result value.Value, lhs value.Value, rhs value.Value) *Geq {
 	return &Geq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLt(result value.Operand, lhs value.Operand, rhs value.Operand) *Lt {
+func NewLt(result value.Value, lhs value.Value, rhs value.Value) *Lt {
 	return &Lt{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLeq(result value.Operand, lhs value.Operand, rhs value.Operand) *Leq {
+func NewLeq(result value.Value, lhs value.Value, rhs value.Value) *Leq {
 	return &Leq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewEq(result value.Operand, lhs value.Operand, rhs value.Operand) *Eq {
+func NewEq(result value.Value, lhs value.Value, rhs value.Value) *Eq {
 	return &Eq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewNeq(result value.Operand, lhs value.Operand, rhs value.Operand) *Neq {
+func NewNeq(result value.Value, lhs value.Value, rhs value.Value) *Neq {
 	return &Neq{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLogicalAnd(result value.Operand, lhs value.Operand, rhs value.Operand) *LogicalAnd {
+func NewLogicalAnd(result value.Value, lhs value.Value, rhs value.Value) *LogicalAnd {
 	return &LogicalAnd{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLogicalOr(result value.Operand, lhs value.Operand, rhs value.Operand) *LogicalOr {
+func NewLogicalOr(result value.Value, lhs value.Value, rhs value.Value) *LogicalOr {
 	return &LogicalOr{Result: result, Lhs: lhs, Rhs: rhs}
 }
 
-func NewLogicalNot(result value.Operand, ope value.Operand) *LogicalNot {
+func NewLogicalNot(result value.Value, ope value.Value) *LogicalNot {
 	return &LogicalNot{Result: result, Ope: ope}
 }
