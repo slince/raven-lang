@@ -27,7 +27,7 @@ func NewProgram() *Program {
 type Module struct {
 	Name      string
 	Types     []types.Type
-	Globals   []*value.Variable
+	Globals   []*Global
 	Consts    []*Const
 	Functions []*Function
 }
@@ -36,6 +36,12 @@ func (m *Module) NewFunction(name string, retType types.Type, params ...*Functio
 	var fun = NewFunction(name, retType, params...)
 	m.Functions = append(m.Functions, fun)
 	return fun
+}
+
+func (m *Module) NewGlobal(name string, kind types.Type, init *value.Const) *Global {
+	var global = NewGlobal(name, kind, init)
+	m.Globals = append(m.Globals, global)
+	return global
 }
 
 func NewModule(name string) *Module {

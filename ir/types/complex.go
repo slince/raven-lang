@@ -186,7 +186,7 @@ type FuncType struct {
 	RetType Type
 	// function parameters.
 	Params []Type
-	// Variable number of function arguments.
+	// Name number of function arguments.
 	Variadic bool
 }
 

@@ -1,11 +1,14 @@
 package ir
 
-import "github.com/slince/php-plus/ir/value"
+import (
+	"github.com/slince/php-plus/ir/types"
+	"github.com/slince/php-plus/ir/value"
+)
 
 type Global struct {
-	Variable value.Operand
-	Value    value.Operand
-	Init     bool
+	Name string
+	Kind types.Type
+	Init *value.Const
 	instruction
 }
 
@@ -77,8 +80,8 @@ type Label struct {
 	Name string
 }
 
-func NewGlobal(variable value.Operand, value value.Operand) *Global {
-	return &Global{Variable: variable, Value: value}
+func NewGlobal(name string, kind types.Type, init *value.Const) *Global {
+	return &Global{Name: name, Kind: kind, Init: init}
 }
 
 func NewGetGlobal(variable value.Operand) *GetGlobal {
