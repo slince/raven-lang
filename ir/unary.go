@@ -11,11 +11,11 @@ type unary struct {
 }
 
 type Neg struct {
-	Result value.Value
-	Ope    value.Value
+	value.Variable
+	Ope value.Value
 	unary
 }
 
-func NewNeg(result value.Value, ope value.Value) *Neg {
-	return &Neg{Result: result, Ope: ope}
+func NewNeg(ope value.Value) *Neg {
+	return &Neg{Ope: ope}
 }

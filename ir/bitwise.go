@@ -2,77 +2,67 @@ package ir
 
 import "github.com/slince/php-plus/ir/value"
 
-type Bitwise interface {
-	bitwise()
-}
-
-type bitwise struct {
+type And struct {
+	value.Variable
+	Lhs value.Value
+	Rhs value.Value
 	instruction
 }
 
-func (a bitwise) bitwise() {}
-
-type And struct {
-	Result value.Value
-	Lhs    value.Value
-	Rhs    value.Value
-	bitwise
-}
-
 type Or struct {
-	Result value.Value
-	Lhs    value.Value
-	Rhs    value.Value
-	bitwise
+	value.Variable
+	Lhs value.Value
+	Rhs value.Value
+	instruction
 }
 
 type Xor struct {
-	Result value.Value
-	Lhs    value.Value
-	Rhs    value.Value
-	bitwise
+	value.Variable
+	Lhs value.Value
+	Rhs value.Value
+	instruction
 }
 
 type Not struct {
-	Result value.Value
-	Ope    value.Value
-	bitwise
+	value.Variable
+	Ope value.Value
+	instruction
 }
 
 type Shl struct {
-	Result value.Value
-	Lhs    value.Value
-	Rhs    value.Value
-	bitwise
+	value.Variable
+	Lhs value.Value
+	Rhs value.Value
+	instruction
 }
 
 type Shr struct {
-	Result value.Value
-	Lhs    value.Value
-	Rhs    value.Value
-	bitwise
+	value.Variable
+	Lhs value.Value
+	Rhs value.Value
+	instruction
 }
 
-func NewBitAnd(result value.Value, lhs value.Value, rhs value.Value) *And {
-	return &And{Result: result, Lhs: lhs, Rhs: rhs}
+func NewBitAnd(lhs value.Value, rhs value.Value) *And {
+	return &And{Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitOr(result value.Value, lhs value.Value, rhs value.Value) *Or {
-	return &Or{Result: result, Lhs: lhs, Rhs: rhs}
+func NewBitOr(lhs value.Value, rhs value.Value) *Or {
+	return &Or{Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitXor(result value.Value, lhs value.Value, rhs value.Value) *Xor {
-	return &Xor{Result: result, Lhs: lhs, Rhs: rhs}
+func NewBitXor(lhs value.Value, rhs value.Value) *Xor {
+	return &Xor{Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitNot(result value.Value, ope value.Value) *Not {
-	return &Not{Result: result, Ope: ope}
+func NewBitNot(ope value.Value) *Not {
+	return &Not{Ope: ope}
 }
 
-func NewBitShl(result value.Value, lhs value.Value, rhs value.Value) *Shl {
-	return &Shl{Result: result, Lhs: lhs, Rhs: rhs}
+func NewBitShl(lhs value.Value, rhs value.Value) *Shl {
+	return &Shl{Lhs: lhs, Rhs: rhs}
 }
 
-func NewBitShr(result value.Value, lhs value.Value, rhs value.Value) *Shr {
-	return &Shr{Result: result, Lhs: lhs, Rhs: rhs}
+func NewBitShr(lhs value.Value, rhs value.Value) *Shr {
+	return &Shr{Lhs: lhs, Rhs: rhs}
 }

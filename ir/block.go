@@ -60,127 +60,127 @@ func (b *BasicBlock) NewPtr(variable value.Value, target value.Value) *Ptr {
 	return inst
 }
 
-func (b *BasicBlock) NewAdd(result value.Value, lhs value.Value, rhs value.Value) *Add {
-	var inst = NewAdd(result, lhs, rhs)
+func (b *BasicBlock) NewAdd(lhs value.Value, rhs value.Value) *Add {
+	var inst = NewAdd(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewSub(result value.Value, lhs value.Value, rhs value.Value) *Sub {
-	var inst = NewSub(result, lhs, rhs)
+func (b *BasicBlock) NewSub(lhs value.Value, rhs value.Value) *Sub {
+	var inst = NewSub(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
-func (b *BasicBlock) NewMul(result value.Value, lhs value.Value, rhs value.Value) *Mul {
-	var inst = NewMul(result, lhs, rhs)
-	b.AddInstruction(inst)
-	return inst
-}
-
-func (b *BasicBlock) NewDiv(result value.Value, lhs value.Value, rhs value.Value) *Div {
-	var inst = NewDiv(result, lhs, rhs)
+func (b *BasicBlock) NewMul(lhs value.Value, rhs value.Value) *Mul {
+	var inst = NewMul(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewMod(result value.Value, lhs value.Value, rhs value.Value) *Mod {
-	var inst = NewMod(result, lhs, rhs)
+func (b *BasicBlock) NewDiv(lhs value.Value, rhs value.Value) *Div {
+	var inst = NewDiv(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewGt(result value.Value, lhs value.Value, rhs value.Value) *Gt {
-	var inst = NewGt(result, lhs, rhs)
+func (b *BasicBlock) NewMod(lhs value.Value, rhs value.Value) *Mod {
+	var inst = NewMod(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewGeq(result value.Value, lhs value.Value, rhs value.Value) *Geq {
-	var inst = NewGeq(result, lhs, rhs)
+func (b *BasicBlock) NewGt(lhs value.Value, rhs value.Value) *Gt {
+	var inst = NewGt(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLt(result value.Value, lhs value.Value, rhs value.Value) *Lt {
-	var inst = NewLt(result, lhs, rhs)
+func (b *BasicBlock) NewGeq(lhs value.Value, rhs value.Value) *Geq {
+	var inst = NewGeq(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLeq(result value.Value, lhs value.Value, rhs value.Value) *Leq {
-	var inst = NewLeq(result, lhs, rhs)
+func (b *BasicBlock) NewLt(lhs value.Value, rhs value.Value) *Lt {
+	var inst = NewLt(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewEq(result value.Value, lhs value.Value, rhs value.Value) *Eq {
-	var inst = NewEq(result, lhs, rhs)
+func (b *BasicBlock) NewLeq(lhs value.Value, rhs value.Value) *Leq {
+	var inst = NewLeq(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewNeq(result value.Value, lhs value.Value, rhs value.Value) *Neq {
-	var inst = NewNeq(result, lhs, rhs)
+func (b *BasicBlock) NewEq(lhs value.Value, rhs value.Value) *Eq {
+	var inst = NewEq(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLogicalAnd(result value.Value, lhs value.Value, rhs value.Value) *LogicalAnd {
-	var inst = NewLogicalAnd(result, lhs, rhs)
+func (b *BasicBlock) NewNeq(lhs value.Value, rhs value.Value) *Neq {
+	var inst = NewNeq(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLogicalOr(result value.Value, lhs value.Value, rhs value.Value) *LogicalOr {
-	var inst = NewLogicalOr(result, lhs, rhs)
+func (b *BasicBlock) NewLogicalAnd(lhs value.Value, rhs value.Value) *LogicalAnd {
+	var inst = NewLogicalAnd(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewLogicalNot(result value.Value, ope value.Value) *LogicalNot {
-	var inst = NewLogicalNot(result, ope)
+func (b *BasicBlock) NewLogicalOr(lhs value.Value, rhs value.Value) *LogicalOr {
+	var inst = NewLogicalOr(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewBitAnd(result value.Value, lhs value.Value, rhs value.Value) *And {
-	var inst = NewBitAnd(result, lhs, rhs)
+func (b *BasicBlock) NewLogicalNot(ope value.Value) *LogicalNot {
+	var inst = NewLogicalNot(ope)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewBitOr(result value.Value, lhs value.Value, rhs value.Value) *Or {
-	var inst = NewBitOr(result, lhs, rhs)
+func (b *BasicBlock) NewBitAnd(lhs value.Value, rhs value.Value) *And {
+	var inst = NewBitAnd(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewBitXor(result value.Value, lhs value.Value, rhs value.Value) *Xor {
-	var inst = NewBitXor(result, lhs, rhs)
+func (b *BasicBlock) NewBitOr(lhs value.Value, rhs value.Value) *Or {
+	var inst = NewBitOr(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewBitNot(result value.Value, ope value.Value) *Not {
-	var inst = NewBitNot(result, ope)
+func (b *BasicBlock) NewBitXor(lhs value.Value, rhs value.Value) *Xor {
+	var inst = NewBitXor(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewBitShl(result value.Value, lhs value.Value, rhs value.Value) *Shl {
-	var inst = NewBitShl(result, lhs, rhs)
+func (b *BasicBlock) NewBitNot(ope value.Value) *Not {
+	var inst = NewBitNot(ope)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewBitShr(result value.Value, lhs value.Value, rhs value.Value) *Shr {
-	var inst = NewBitShr(result, lhs, rhs)
+func (b *BasicBlock) NewBitShl(lhs value.Value, rhs value.Value) *Shl {
+	var inst = NewBitShl(lhs, rhs)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewNeg(result value.Value, ope value.Value) *Neg {
-	var inst = NewNeg(result, ope)
+func (b *BasicBlock) NewBitShr(lhs value.Value, rhs value.Value) *Shr {
+	var inst = NewBitShr(lhs, rhs)
+	b.AddInstruction(inst)
+	return inst
+}
+
+func (b *BasicBlock) NewNeg(ope value.Value) *Neg {
+	var inst = NewNeg(ope)
 	b.AddInstruction(inst)
 	return inst
 }
@@ -263,8 +263,8 @@ func (b *BasicBlock) NewSetArray(variable value.Variable, index value.Value, val
 	return inst
 }
 
-func (b *BasicBlock) NewGetArray(result value.Value, variable value.Variable, index value.Value) *GetArray {
-	var inst = NewGetArray(result, variable, index)
+func (b *BasicBlock) NewGetArray(variable value.Variable, index value.Value) *GetArray {
+	var inst = NewGetArray(variable, index)
 	b.AddInstruction(inst)
 	return inst
 }

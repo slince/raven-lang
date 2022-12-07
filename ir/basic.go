@@ -59,8 +59,8 @@ type Ptr struct {
 
 type Load struct {
 	instruction
-	Result value.Value
-	Addr   value.Value // PointType variable
+	value.Variable
+	Addr value.Value // PointType variable
 }
 
 type Store struct {

@@ -39,7 +39,7 @@ type GetArray struct {
 	Index    value.Value
 }
 
-func NewGetArray(result value.Value, variable value.Variable, index value.Value) *GetArray {
+func NewGetArray(variable value.Variable, index value.Value) *GetArray {
 	return &GetArray{
 		Result:   result,
 		Variable: variable,
