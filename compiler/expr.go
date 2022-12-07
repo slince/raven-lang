@@ -58,126 +58,101 @@ func (c *Compiler) compileArrayExpr(expr *ast.ArrayExpr) (value.Value, error) {
 
 func (c *Compiler) compileUpdateExpr(expr *ast.UpdateExpr) (value.Value, error) {
 	var target, err = c.compileExpr(expr.Target)
-	if err != nil {
-		return nil, err
+	var result value.Value
+	if err == nil {
+		switch expr.Operator {
+		case "++":
+			result = c.ctx.NewAdd(target, value.NewConst(1, target.Type()))
+		case "--":
+			result = c.ctx.NewSub(target, value.NewConst(1, target.Type()))
+		}
 	}
-	var result = value.NewTemporary(nil)
-	switch expr.Operator {
-	case "++":
-		c.ctx.NewAdd(result, target, value.NewConst(1, target.Type()))
-	case "--":
-		c.ctx.NewSub(result, target, value.NewConst(1, target.Type()))
-	}
-	return result, nil
+	return result, err
 }
 
 func (c *Compiler) compileBinaryExpr(expr *ast.BinaryExpr) (value.Value, error) {
-	var l, err = c.compileExpr(expr.Left)
-	if err != nil {
-		return nil, err
+	var l, err1 = c.compileExpr(expr.Left)
+	if err1 != nil {
+		return nil, err1
 	}
-	r, err := c.compileExpr(expr.Right)
-	if err != nil {
-		return nil, err
+	var r, err2 = c.compileExpr(expr.Right)
+	if err2 != nil {
+		return nil, err2
 	}
-	var result = value.NewTemporary(nil)
+	var result value.Value
 	switch expr.Operator {
 	case "+":
-		c.ctx.NewAdd(result, l, r)
+		result = c.ctx.NewAdd(l, r)
 	case "-":
-		c.ctx.NewAdd(result, l, r)
+		result = c.ctx.NewSub(l, r)
 	case "*":
-		c.ctx.NewAdd(result, l, r)
+		result = c.ctx.NewMul(l, r)
 	case "/":
-		c.ctx.NewAdd(result, l, r)
+		result = c.ctx.NewDiv(l, r)
 	case "%":
-		c.ctx.NewMod(result, l, r)
+		result = c.ctx.NewMod(l, r)
 
 	case "&":
-		c.ctx.NewBitAnd(result, l, r)
+		result = c.ctx.NewBitAnd(l, r)
 	case "|":
-		c.ctx.NewBitOr(result, l, r)
+		result = c.ctx.NewBitOr(l, r)
 	case "^":
-		c.ctx.NewBitXor(result, l, r)
+		result = c.ctx.NewBitXor(l, r)
 	case "<<":
-		c.ctx.NewBitShr(result, l, r)
+		result = c.ctx.NewBitShr(l, r)
 	case ">>":
-		c.ctx.NewBitShr(result, l, r)
+		result = c.ctx.NewBitShr(l, r)
 
 	case "&&":
-		c.ctx.NewLogicalAnd(result, l, r)
+		result = c.ctx.NewLogicalAnd(l, r)
 	case "||":
-		c.ctx.NewLogicalOr(result, l, r)
+		result = c.ctx.NewLogicalOr(l, r)
 	case "==":
-		c.ctx.NewEq(result, l, r)
+		result = c.ctx.NewEq(l, r)
 	case "!=":
-		c.ctx.NewNeq(result, l, r)
+		result = c.ctx.NewNeq(l, r)
 	case "<":
-		c.ctx.NewLt(result, l, r)
+		result = c.ctx.NewLt(l, r)
 	case "<=":
-		c.ctx.NewLeq(result, l, r)
+		result = c.ctx.NewLeq(l, r)
 	case ">":
-		c.ctx.NewGt(result, l, r)
+		result = c.ctx.NewGt(l, r)
 	case ">=":
-		c.ctx.NewGeq(result, l, r)
+		result = c.ctx.NewGeq(l, r)
 	}
 	return result, nil
 }
 
 func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (value.Value, error) {
 	var target, err = c.compileExpr(expr.Target)
-	if err != nil {
-		return nil, err
-	}
-	var result = value.NewTemporary(nil)
-	switch expr.Operator {
-	case "!":
-		c.ctx.NewLogicalNot(result, target)
-	case "~":
-		c.ctx.NewBitNot(result, target)
-	case "+":
-	case "-":
-		c.ctx.NewNeg(result, target)
-	}
-	return result, nil
-}
-
-func (c *Compiler) compileVariableDecl(expr *ast.VariableDeclarator, declType string) (value.Value, error) {
-	var name = c.compileIdentifier(expr.Id)
-	var kind types.Type
-	var err error
-	if expr.Kind != nil {
-		kind, err = c.compileType(expr.Kind)
-		if err != nil {
-			return nil, err
+	var result value.Value
+	if err == nil {
+		switch expr.Operator {
+		case "!":
+			result = c.ctx.NewLogicalNot(target)
+		case "~":
+			result = c.ctx.NewBitNot(target)
+		case "+":
+		case "-":
+			result = c.ctx.NewNeg(target)
 		}
 	}
-	var init value.Value
-	if expr.Init != nil {
-		init, err = c.compileExpr(expr.Init)
-		if err != nil {
-			return nil, err
-		}
-	}
-	var variable = value.NewVariable(name, kind)
-	c.ctx.NewLocal(variable, init)
-	return variable, err
+	return result, err
 }
 
 func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) (value.Value, error) {
 	var target, err = c.compileVariable(expr.Left)
-	if err != nil {
-		return target, err
+	var result value.Value
+	if err == nil {
+		switch expr.Operator {
+		case "!":
+			result = c.ctx.NewLogicalNot(target)
+		case "~":
+			result = c.ctx.NewBitNot(target)
+		case "+":
+		case "-":
+			result = c.ctx.NewNeg(target)
+		}
 	}
-	var result = value.NewTemporary(nil)
-	switch expr.Operator {
-	case "!":
-		c.ctx.NewLogicalNot(result, target)
-	case "~":
-		c.ctx.NewBitNot(result, target)
-	case "+":
-	case "-":
-		c.ctx.NewNeg(result, target)
-	}
-	return result, nil
+	return result, err
 }

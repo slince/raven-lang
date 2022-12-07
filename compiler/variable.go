@@ -6,15 +6,15 @@ import (
 	"github.com/slince/php-plus/ir/value"
 )
 
-func (c *Compiler) compileVarDecl(node *ast.VariableDeclaration) error {
+func (c *Compiler) compileVariableDecl(node *ast.VariableDeclaration) error {
 	var err error
 	for _, decl := range node.Declarators {
-		err = c.compileVarDeclarator(decl, node.Kind == "const")
+		err = c.compileVariableDeclarator(decl, node.Kind == "const")
 	}
 	return err
 }
 
-func (c *Compiler) compileVarDeclarator(node *ast.VariableDeclarator, immutable bool) error {
+func (c *Compiler) compileVariableDeclarator(node *ast.VariableDeclarator, immutable bool) error {
 	var name string
 	var init value.Value
 	var kind types.Type
@@ -39,9 +39,8 @@ func (c *Compiler) compileVarDeclarator(node *ast.VariableDeclarator, immutable 
 			c.module.NewGlobal(name, kind, init.(*value.Const))
 		}
 	} else {
-		var variable = value.NewVariable(name, kind)
+		var variable = c.ctx.NewLocal(name, kind, init)
 		variable.Immutable = immutable
-		c.ctx.NewLocal(variable, init)
 	}
 	return nil
 }

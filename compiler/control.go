@@ -76,12 +76,10 @@ func (c *Compiler) compileSwitchCaseDisc(disc value.Value, caseBody *ir.BasicBlo
 			c.ctx.NewJmp(caseBody)
 			return nil
 		}
-		var cond = value.NewTemporary(nil)
 		var test, err = c.compileExpr(node.Test)
 		if err != nil {
 			return err
 		}
-		c.ctx.NewEq(cond, disc, test)
 		var leaveTarget ir.Block
 		if last {
 			// jump to default case when not match the case, if the default case is present.
@@ -98,7 +96,7 @@ func (c *Compiler) compileSwitchCaseDisc(disc value.Value, caseBody *ir.BasicBlo
 				leaveTarget = ir.NewReference("switch.case.disc." + strconv.Itoa(idx+2))
 			}
 		}
-		c.ctx.NewCondJmp(cond, caseBody, leaveTarget)
+		c.ctx.NewCondJmp(c.ctx.NewEq(disc, test), caseBody, leaveTarget)
 		return nil
 	})
 	return discBlock, err
