@@ -45,9 +45,9 @@ func (m *Module) NewGlobal(name string, kind types.Type, init *value.Const) *Glo
 }
 
 func (m *Module) NewConst(name string, kind types.Type, init *value.Const) *Const {
-	var global = NewGlobal(name, kind, init)
-	m.Globals = append(m.Globals, global)
-	return global
+	var constant = NewConst(name, kind, init)
+	m.Consts = append(m.Consts, constant)
+	return constant
 }
 
 func NewModule(name string) *Module {

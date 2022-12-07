@@ -240,18 +240,6 @@ func (b *BasicBlock) NewCondJmp(cond value.Value, trueTarget Block, falseTarget 
 	return inst
 }
 
-func (b *BasicBlock) NewSetArray(variable value.Variable, index value.Value, value value.Value) *SetArray {
-	var inst = NewSetArray(variable, index, value)
-	b.AddInstruction(inst)
-	return inst
-}
-
-func (b *BasicBlock) NewGetArray(variable value.Variable, index value.Value) *GetArray {
-	var inst = NewGetArray(variable, index)
-	b.AddInstruction(inst)
-	return inst
-}
-
 func NewBlock(name string) *BasicBlock {
 	return &BasicBlock{Name: name, Instructions: []Instruction{}}
 }

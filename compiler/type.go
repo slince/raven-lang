@@ -8,57 +8,57 @@ import (
 )
 
 func (c *Compiler) compileType(node *ast.Identifier) (types.Type, error) {
-	var _type types.Type
+	var kind types.Type
 	var err error
 	switch node.Value {
 	case "int4":
-		_type = types.I4
+		kind = types.I4
 	case "int8":
-		_type = types.I8
+		kind = types.I8
 	case "int16":
-		_type = types.I16
+		kind = types.I16
 	case "int32":
-		_type = types.I32
+		kind = types.I32
 	case "int64":
-		_type = types.I64
+		kind = types.I64
 	case "int128":
-		_type = types.I128
+		kind = types.I128
 	case "int256":
-		_type = types.I256
+		kind = types.I256
 	case "int512":
-		_type = types.I512
+		kind = types.I512
 	case "int1024":
-		_type = types.I1024
+		kind = types.I1024
 	case "uint4":
-		_type = types.U4
+		kind = types.U4
 	case "uint8":
-		_type = types.U8
+		kind = types.U8
 	case "uint16":
-		_type = types.U16
+		kind = types.U16
 	case "uint32":
-		_type = types.U32
+		kind = types.U32
 	case "uint64":
-		_type = types.U64
+		kind = types.U64
 	case "uint128":
-		_type = types.U128
+		kind = types.U128
 	case "uint256":
-		_type = types.U256
+		kind = types.U256
 	case "uint512":
-		_type = types.U512
+		kind = types.U512
 	case "uint1024":
-		_type = types.U1024
+		kind = types.U1024
 	case "float32":
-		_type = types.F32
+		kind = types.F32
 	case "float64":
-		_type = types.F64
+		kind = types.F64
 	case "string":
-		_type = types.String
+		kind = types.String
 	case "bool":
-		_type = types.Bool
+		kind = types.Bool
 	case "void":
-		_type = types.Void
+		kind = types.Void
 	default:
 		err = token.NewSyntaxError(fmt.Sprintf("unknown identifier %s", node.Value), node.Position())
 	}
-	return _type, err
+	return kind, err
 }

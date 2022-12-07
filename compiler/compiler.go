@@ -84,7 +84,7 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 	case *ast.FunctionDeclaration:
 		err = c.compileFunctionDecl(node.(*ast.FunctionDeclaration))
 	case *ast.VariableDeclaration:
-		err = c.compileVarDecl(node.(*ast.VariableDeclaration))
+		err = c.compileVariableDecl(node.(*ast.VariableDeclaration))
 	case *ast.BlockStmt:
 		_, err = c.compileBlockStmt(node.(*ast.BlockStmt), "")
 	case *ast.ExpressionStmt:

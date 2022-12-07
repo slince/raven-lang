@@ -3,14 +3,21 @@ package compiler
 import (
 	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/ir"
+	"github.com/slince/php-plus/ir/types"
 )
 
 func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) error {
-	var name = c.compileIdentifier(node.Function.Id)
-	var retType, err = c.compileType(node.Function.Kind)
-	if err != nil {
-		return err
+	var retType types.Type
+	var err error
+	if node.Function.Kind != nil {
+		retType, err = c.compileType(node.Function.Kind)
+		if err != nil {
+			return err
+		}
+	} else {
+		retType = types.Void
 	}
+	var name = c.compileIdentifier(node.Function.Id)
 	// function arguments
 	var args = make([]*ir.FunctionArgument, 0)
 	for _, arg := range node.Function.Args {
