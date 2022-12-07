@@ -28,6 +28,7 @@ func main() {
 
 	//globalG := m.NewGlobalDef("g", constant.NewInt(types.I32, 2))
 
+	m.NewGlobal()
 	funcAdd := m.NewFunc("add", types.I32,
 		ir.NewParam("x", types.I32),
 		ir.NewParam("y", types.I32),

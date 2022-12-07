@@ -1,6 +1,7 @@
 package ir
 
 import (
+	"github.com/slince/php-plus/ir/types"
 	"github.com/slince/php-plus/ir/value"
 )
 
@@ -48,14 +49,14 @@ func (b *BasicBlock) AddInstruction(instruction Instruction) {
 	b.Instructions = append(b.Instructions, instruction)
 }
 
-func (b *BasicBlock) NewLea(variable value.Value, target value.Value) *Lea {
-	var inst = NewLea(variable, target)
+func (b *BasicBlock) NewLea(target value.Value) *Lea {
+	var inst = NewLea(target)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewPtr(variable value.Value, target value.Value) *Ptr {
-	var inst = NewPtr(variable, target)
+func (b *BasicBlock) NewPtr(target value.Value) *Ptr {
+	var inst = NewPtr(target)
 	b.AddInstruction(inst)
 	return inst
 }
@@ -185,43 +186,25 @@ func (b *BasicBlock) NewNeg(ope value.Value) *Neg {
 	return inst
 }
 
-func (b *BasicBlock) NewGlobal(variable value.Value, value value.Value) *Global {
-	var inst = NewGlobal(variable, value)
+func (b *BasicBlock) NewGlobal(name string, kind types.Type, init *value.Const) *Global {
+	var inst = NewGlobal(name, kind, init)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewGetGlobal(variable value.Value) *GetGlobal {
-	var inst = NewGetGlobal(variable)
+func (b *BasicBlock) NewConst(name string, kind types.Type, init *value.Const) *Const {
+	var inst = NewConst(name, kind, init)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewConst(variable value.Value, value value.Value) *Const {
-	var inst = NewConst(variable, value)
+func (b *BasicBlock) NewLocal(name string, kind types.Type, init value.Value) *Local {
+	var inst = NewLocal(name, kind, init)
 	b.AddInstruction(inst)
 	return inst
 }
 
-func (b *BasicBlock) NewGetConst(variable value.Value) *GetConst {
-	var inst = NewGetConst(variable)
-	b.AddInstruction(inst)
-	return inst
-}
-
-func (b *BasicBlock) NewLocal(variable value.Value, value value.Value) *Local {
-	var inst = NewLocal(variable, value)
-	b.AddInstruction(inst)
-	return inst
-}
-
-func (b *BasicBlock) NewGetLocal(variable value.Value) *GetLocal {
-	var inst = NewGetLocal(variable)
-	b.AddInstruction(inst)
-	return inst
-}
-
-func (b *BasicBlock) NewAssign(variable value.Value, value value.Value) *Assign {
+func (b *BasicBlock) NewAssign(variable *value.Variable, value value.Value) *Assign {
 	var inst = NewAssign(variable, value)
 	b.AddInstruction(inst)
 	return inst

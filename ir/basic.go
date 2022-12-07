@@ -6,73 +6,57 @@ import (
 )
 
 type Global struct {
-	Name string
-	Kind types.Type
+	value.Variable
 	Init *value.Const
 	instruction
 }
 
-type GetGlobal struct {
-	Variable value.Value
-	instruction
-}
-
 type Const struct {
-	Variable value.Value
-	Value    value.Value
-	instruction
-}
-
-type GetConst struct {
-	Variable value.Value
+	value.Variable
+	Init *value.Const
 	instruction
 }
 
 type Local struct {
-	Variable value.Value
-	Value    value.Value
-	instruction
-}
-
-type GetLocal struct {
-	Variable value.Value
+	value.Variable
+	Init value.Value
 	instruction
 }
 
 type Assign struct {
-	Variable value.Value
+	Variable *value.Variable
 	Value    value.Value
 	instruction
 }
 
 type Lea struct {
+	value.Variable
+	Target value.Value
 	instruction
-	Variable value.Value
-	Target   value.Value
 }
 
 type Ptr struct {
+	value.Variable
+	Target value.Value
 	instruction
-	Variable value.Value
-	Target   value.Value
 }
 
 type Load struct {
-	instruction
 	value.Variable
 	Addr value.Value // PointType variable
+	instruction
 }
 
 type Store struct {
+	Addr  value.Value // PointType variable
+	Value value.Value
 	instruction
-	Addr  value.Value
-	Value value.Value // PointType variable
 }
 
 type PtrStride struct {
-	instruction
 	Addr   value.Value
 	Stride int64
+	instruction
 }
 
 type Label struct {
@@ -81,37 +65,25 @@ type Label struct {
 }
 
 func NewGlobal(name string, kind types.Type, init *value.Const) *Global {
-	return &Global{Name: name, Kind: kind, Init: init}
+	return &Global{Variable: *value.NewVariable(name, kind), Init: init}
 }
 
-func NewGetGlobal(variable value.Value) *GetGlobal {
-	return &GetGlobal{Variable: variable}
+func NewConst(name string, kind types.Type, init *value.Const) *Const {
+	return &Const{Variable: *value.NewVariable(name, kind), Init: init}
 }
 
-func NewConst(variable value.Value, value value.Value) *Const {
-	return &Const{Variable: variable, Value: value}
+func NewLocal(name string, kind types.Type, init value.Value) *Local {
+	return &Local{Variable: *value.NewVariable(name, kind), Init: init}
 }
 
-func NewGetConst(variable value.Value) *GetConst {
-	return &GetConst{Variable: variable}
-}
-
-func NewGetLocal(variable value.Value) *GetLocal {
-	return &GetLocal{Variable: variable}
-}
-
-func NewLocal(variable value.Value, value value.Value) *Local {
-	return &Local{Variable: variable, Value: value}
-}
-
-func NewAssign(variable value.Value, value value.Value) *Assign {
+func NewAssign(variable *value.Variable, value value.Value) *Assign {
 	return &Assign{Variable: variable, Value: value}
 }
 
-func NewLea(variable value.Value, target value.Value) *Lea {
-	return &Lea{Variable: variable, Target: target}
+func NewLea(target value.Value) *Lea {
+	return &Lea{Target: target}
 }
 
-func NewPtr(variable value.Value, target value.Value) *Ptr {
-	return &Ptr{Variable: variable, Target: target}
+func NewPtr(target value.Value) *Ptr {
+	return &Ptr{Target: target}
 }
