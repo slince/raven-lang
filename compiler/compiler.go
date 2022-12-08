@@ -80,25 +80,27 @@ func (c *Compiler) compileModule(node *ast.Module) error {
 
 func (c *Compiler) compileStmt(node ast.Stmt) error {
 	var err error
-	switch node.(type) {
+	switch node := node.(type) {
 	case *ast.FunctionDeclaration:
-		err = c.compileFunctionDecl(node.(*ast.FunctionDeclaration))
+		err = c.compileFunctionDecl(node)
 	case *ast.VariableDeclaration:
-		err = c.compileVariableDecl(node.(*ast.VariableDeclaration))
+		err = c.compileVariableDecl(node)
 	case *ast.BlockStmt:
-		_, err = c.compileBlockStmt(node.(*ast.BlockStmt), "")
+		_, err = c.compileBlockStmt(node, "")
 	case *ast.ExpressionStmt:
-		err = c.compileExprStmt(node.(*ast.ExpressionStmt))
+		err = c.compileExprStmt(node)
+	case *ast.IfStmt:
+		_, err = c.compileIfStmt(node)
 	case *ast.WhileStmt:
-		c.compileWhileStmt(node.(*ast.WhileStmt))
+		c.compileWhileStmt(node)
 	case *ast.DoWhileStmt:
-		c.compileDoWhileStmt(node.(*ast.DoWhileStmt))
+		c.compileDoWhileStmt(node)
 	case *ast.SwitchStmt:
-		c.compileSwitchStmt(node.(*ast.SwitchStmt))
+		c.compileSwitchStmt(node)
 	case *ast.ReturnStmt:
-		err = c.compileReturnStmt(node.(*ast.ReturnStmt))
+		err = c.compileReturnStmt(node)
 	case *ast.BreakStmt:
-		c.compileBreakStmt(node.(*ast.BreakStmt))
+		c.compileBreakStmt(node)
 	}
 	c.enterBlock(c.ctx.LeaveBlock, nil)
 	return err
