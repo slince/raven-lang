@@ -29,6 +29,7 @@ func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) error {
 	}
 	var fun = c.module.NewFunction(name, retType, args...)
 	c.function = fun
+	c.enterBlock(c.function.NewBlock("enter"), c.function.NewBlock("leave"))
 	_, err = c.compileBlockStmt(node.Function.Body, "")
 	return err
 }

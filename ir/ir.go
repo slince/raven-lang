@@ -51,5 +51,11 @@ func (m *Module) NewConst(name string, kind types.Type, init *value.Const) *Cons
 }
 
 func NewModule(name string) *Module {
-	return &Module{Name: name, Functions: []*Function{}}
+	return &Module{
+		Name:      name,
+		Types:     []types.Type{},
+		Globals:   []*Global{},
+		Consts:    []*Const{},
+		Functions: []*Function{},
+	}
 }
