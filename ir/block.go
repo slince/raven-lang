@@ -230,12 +230,14 @@ func (b *BasicBlock) NewRet(ope value.Value) *Ret {
 
 func (b *BasicBlock) NewJmp(target Block) *Jmp {
 	var inst = NewJmp(target)
+	b.AddInstruction(inst)
 	b.Terminator = inst
 	return inst
 }
 
 func (b *BasicBlock) NewCondJmp(cond value.Value, trueTarget Block, falseTarget Block) *CondJmp {
 	var inst = NewCondJmp(cond, trueTarget, falseTarget)
+	b.AddInstruction(inst)
 	b.Terminator = inst
 	return inst
 }
