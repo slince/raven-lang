@@ -14,9 +14,6 @@ func (c *Compiler) compileIfStmt(node *ast.IfStmt) (*ir.BasicBlock, error) {
 	if err != nil {
 		return nil, err
 	}
-	if consequent.Terminator == nil {
-		consequent.NewJmp(c.ctx.LeaveBlock)
-	}
 	// Compile if else body
 	var ifElse ir.Block = c.ctx.LeaveBlock
 	if node.Alternate != nil {

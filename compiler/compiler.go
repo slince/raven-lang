@@ -106,6 +106,11 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 	return err
 }
 
+func (c *Compiler) compileExprStmt(node *ast.ExpressionStmt) error {
+	_, err := c.compileExpr(node.Expr)
+	return err
+}
+
 func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) (*ir.BasicBlock, error) {
 	c.enterScope()
 	var block = c.function.NewBlock(label)
@@ -118,13 +123,11 @@ func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) (*ir.Basi
 		}
 		return nil
 	})
+	if block.Terminator == nil {
+		block.NewJmp(c.ctx.LeaveBlock)
+	}
 	c.leaveScope()
 	return block, err
-}
-
-func (c *Compiler) compileExprStmt(node *ast.ExpressionStmt) error {
-	_, err := c.compileExpr(node.Expr)
-	return err
 }
 
 func (c *Compiler) compileBlock(block *ir.BasicBlock, executor func() error) error {
