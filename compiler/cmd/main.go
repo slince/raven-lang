@@ -6,6 +6,7 @@ import (
 	"github.com/slince/php-plus/compiler/ast"
 	"github.com/slince/php-plus/compiler/lexer"
 	"github.com/slince/php-plus/compiler/parser"
+	"github.com/slince/php-plus/ir/graph"
 	"io"
 	"os"
 )
@@ -33,6 +34,10 @@ func main() {
 
 	var c = compiler.NewCompiler()
 	var program, err = c.Compile(source("./examples/lang/simple.x"))
+
+	var canvas = graph.NewCanvas(program)
+	err = canvas.Draw()
+	err = canvas.SaveTo("./graph.png")
 	fmt.Println(program)
 	if err != nil {
 		panic(err)
