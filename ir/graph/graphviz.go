@@ -91,6 +91,8 @@ func (c *Canvas) createNode(block *ir.BasicBlock) (*cgraph.Node, error) {
 	}
 	node, err := c.graph.CreateNode(block.Name)
 	if err == nil {
+		node.SetShape("box")
+		node.SetLabel(block.Name)
 		c.nodes[block] = node
 	}
 	return node, err

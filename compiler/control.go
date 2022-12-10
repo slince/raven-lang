@@ -35,6 +35,7 @@ func (c *Compiler) compileIfStmt(node *ast.IfStmt) (*ir.BasicBlock, error) {
 		}
 		return err
 	})
+	c.ctx.NewJmp(test)
 	return test, err
 }
 

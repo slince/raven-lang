@@ -102,7 +102,6 @@ func (c *Compiler) compileStmt(node ast.Stmt) error {
 	case *ast.BreakStmt:
 		c.compileBreakStmt(node)
 	}
-	c.enterBlock(c.ctx.LeaveBlock, nil)
 	return err
 }
 
@@ -130,17 +129,21 @@ func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) (*ir.Basi
 	return block, err
 }
 
-func (c *Compiler) compileBlock(block *ir.BasicBlock, executor func() error) error {
-	c.enterBlock(block, c.ctx.LeaveBlock)
-	var err = executor()
-	c.leaveBlock()
-	return err
-}
-
 func (c *Compiler) createBlock(label string, executor func() error) (ir.Block, error) {
 	var block = c.function.NewBlock(label)
 	var err = c.compileBlock(block, executor)
 	return block, err
+}
+
+func (c *Compiler) compileBlock(block *ir.BasicBlock, executor func() error) error {
+	var leave *ir.BasicBlock
+	if c.ctx != nil {
+		leave = c.ctx.LeaveBlock
+	}
+	c.enterBlock(block, leave)
+	var err = executor()
+	c.leaveBlock()
+	return err
 }
 
 func NewCompiler() *Compiler {
