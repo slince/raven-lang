@@ -1,8 +1,10 @@
 package ir
 
+import "github.com/slince/php-plus/ir/value"
+
 type If struct {
 	instruction
-	Cond        Block
+	Test        value.Value
 	Body        Block
 	Alternative Block
 }
@@ -26,9 +28,9 @@ type Switch struct {
 	Cases []*SwitchCase
 }
 
-func NewIf(cond Block, body Block, alternative Block) *If {
+func NewIf(test value.Value, body Block, alternative Block) *If {
 	return &If{
-		Cond:        cond,
+		Test:        test,
 		Body:        body,
 		Alternative: alternative,
 	}

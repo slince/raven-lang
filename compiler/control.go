@@ -16,15 +16,13 @@ func (c *Compiler) compileIfStmt(node *ast.IfStmt) (*ir.BasicBlock, error) {
 	}
 	// Compile if else body
 	var ifElse ir.Block = c.ctx.LeaveBlock
-	if node.Alternate != nil {
-		if alternate, ok := node.Alternate.(*ast.BlockStmt); ok {
-			ifElse, err = c.compileBlockStmt(alternate, "if.else")
-		} else if alternate, ok := node.Alternate.(*ast.IfStmt); ok {
-			ifElse, err = c.compileIfStmt(alternate)
-		}
-		if err != nil {
-			return nil, err
-		}
+	if alternate, ok := node.Alternate.(*ast.BlockStmt); ok {
+		ifElse, err = c.compileBlockStmt(alternate, "if.else")
+	} else if alternate, ok := node.Alternate.(*ast.IfStmt); ok {
+		ifElse, err = c.compileIfStmt(alternate)
+	}
+	if err != nil {
+		return nil, err
 	}
 	// Compile if head
 	var test = c.function.NewBlock("if.test")
