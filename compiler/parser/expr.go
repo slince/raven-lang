@@ -205,3 +205,17 @@ func (p *Parser) parseFunctionExpr() *ast.FunctionExpr {
 func (p *Parser) parseClassExpr() *ast.ClassExpr {
 	return ast.NewClassExpr(p.parseClass())
 }
+
+func (p *Parser) parseArguments() []ast.Expr {
+	// the_foo_func(1, "foo")
+	var args = make([]ast.Expr, 0)
+	p.tokens.Expect(token.LPAREN)
+	for !p.tokens.Test(token.RPAREN) {
+		if len(args) > 0 {
+			p.tokens.Expect(token.COMMA)
+		}
+		args = append(args, p.parseExpr(0))
+	}
+	p.tokens.Expect(token.RPAREN)
+	return args
+}
