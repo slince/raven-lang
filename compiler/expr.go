@@ -7,6 +7,7 @@ import (
 	"github.com/slince/php-plus/ir/types"
 	"github.com/slince/php-plus/ir/value"
 	"math"
+	"strings"
 )
 
 func (c *Compiler) compileLiteral(node *ast.Literal) (*value.Const, error) {
@@ -40,6 +41,8 @@ func (c *Compiler) compileExpr(node ast.Expr) (value.Value, error) {
 	switch expr := node.(type) {
 	case *ast.Literal:
 		return c.compileLiteral(expr)
+	case *ast.Identifier:
+		return c.compileVariable(expr)
 	case *ast.BinaryExpr:
 		return c.compileBinaryExpr(expr)
 	case *ast.UnaryExpr:
@@ -144,17 +147,19 @@ func (c *Compiler) compileUnaryExpr(expr *ast.UnaryExpr) (value.Value, error) {
 
 func (c *Compiler) compileAssignmentExpr(expr *ast.AssignmentExpr) (value.Value, error) {
 	var target, err = c.compileVariable(expr.Left)
-	var result value.Value
-	if err == nil {
-		switch expr.Operator {
-		case "!":
-			result = c.ctx.NewLogicalNot(target)
-		case "~":
-			result = c.ctx.NewBitNot(target)
-		case "+":
-		case "-":
-			result = c.ctx.NewNeg(target)
-		}
+	if err != nil {
+		return target, err
 	}
-	return result, err
+	var rhs value.Value
+	if expr.Operator != "=" {
+		var operator = strings.TrimSuffix(expr.Operator, "=")
+		var bin = ast.NewBinaryExpr(operator, expr.Left, expr.Right, expr.Position())
+		rhs, err = c.compileBinaryExpr(bin)
+	} else {
+		rhs, err = c.compileExpr(expr.Right)
+	}
+	if err == nil {
+		c.ctx.NewAssign(target, rhs)
+	}
+	return target, err
 }

@@ -13,7 +13,7 @@ func (p *Parser) parseExpr(precedence int) ast.Expr {
 		var op = getBinaryPrecedence(p.tokens.Current().Literal)
 		p.tokens.Next()
 		var expr2 = p.parseExpr(op.precedence)
-		expr = ast.NewBinaryExpr(expr, cur.Literal, expr2, expr.Position())
+		expr = ast.NewBinaryExpr(cur.Literal, expr, expr2, expr.Position())
 		cur = p.tokens.Current()
 	}
 	return expr

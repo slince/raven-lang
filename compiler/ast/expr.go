@@ -138,7 +138,7 @@ func NewAssignmentExpr(left *Identifier, operator string, right Expr, pos *token
 	return exp
 }
 
-func NewBinaryExpr(left Expr, operator string, right Expr, pos *token.Position) *BinaryExpr {
+func NewBinaryExpr(operator string, left Expr, right Expr, pos *token.Position) *BinaryExpr {
 	var exp = &BinaryExpr{
 		Left:     left,
 		Operator: operator,
