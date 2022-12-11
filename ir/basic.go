@@ -87,3 +87,7 @@ func NewLea(target value.Value) *Lea {
 func NewPtr(target value.Value) *Ptr {
 	return &Ptr{Target: target}
 }
+
+func NewLabel(name string) *Label {
+	return &Label{Name: name}
+}
