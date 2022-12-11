@@ -86,13 +86,27 @@ func (l *Lexer) lexPunctuation() *token.Token {
 		}
 	case '<':
 		kind = token.LT
-		if next == '=' {
+		if next == '<' {
+			kind = token.SHL
+			l.next()
+			if l.look() == '=' {
+				kind = token.SHL_ASSIGN
+				l.next()
+			}
+		} else if next == '=' {
 			kind = token.LEQ
 			l.next()
 		}
 	case '>':
 		kind = token.GT
-		if next == '=' {
+		if next == '>' {
+			kind = token.SHR
+			l.next()
+			if l.look() == '=' {
+				kind = token.SHR_ASSIGN
+				l.next()
+			}
+		} else if next == '=' {
 			kind = token.GEQ
 			l.next()
 		}
@@ -108,10 +122,21 @@ func (l *Lexer) lexPunctuation() *token.Token {
 			kind = token.LOGIC_OR
 			l.next()
 		}
+	case '^':
+		kind = token.XOR
+		if next == '=' {
+			kind = token.XOR_ASSIGN
+			l.next()
+		}
+	case '~':
+		kind = token.NOT
 	case '+':
 		kind = token.ADD
 		if next == '+' {
 			kind = token.INC
+			l.next()
+		} else if next == '=' {
+			kind = token.ADD_ASSIGN
 			l.next()
 		}
 	case '-':
@@ -119,13 +144,28 @@ func (l *Lexer) lexPunctuation() *token.Token {
 		if next == '-' {
 			kind = token.DEC
 			l.next()
+		} else if next == '=' {
+			kind = token.SUB_ASSIGN
+			l.next()
 		}
 	case '*':
 		kind = token.MUL
+		if next == '=' {
+			kind = token.MUL_ASSIGN
+			l.next()
+		}
 	case '/':
 		kind = token.DIV
+		if next == '=' {
+			kind = token.DIV_ASSIGN
+			l.next()
+		}
 	case '%':
 		kind = token.MOD
+		if next == '=' {
+			kind = token.MOD_ASSIGN
+			l.next()
+		}
 	case '(':
 		kind = token.LPAREN
 	case '[':
