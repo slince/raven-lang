@@ -48,6 +48,8 @@ func (c *Compiler) compileExpr(node ast.Expr) (value.Value, error) {
 		return c.compileUpdateExpr(expr)
 	case *ast.ArrayExpr:
 		return c.compileArrayExpr(expr)
+	case *ast.AssignmentExpr:
+		return c.compileAssignmentExpr(expr)
 	}
 	return nil, nil
 }

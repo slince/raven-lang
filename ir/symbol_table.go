@@ -19,6 +19,10 @@ func (s *SymbolTable) GetVariable(name string) (*value.Variable, error) {
 	return nil, errors.Errorf("unresolved reference '%s'", name)
 }
 
+func (s *SymbolTable) AddVariable(variable *value.Variable) {
+	s.vars[variable.Name] = variable
+}
+
 func NewSymbolTable(outer *SymbolTable) *SymbolTable {
 	return &SymbolTable{
 		Outer: outer,

@@ -122,7 +122,7 @@ func (c *Compiler) compileBlockStmt(node *ast.BlockStmt, label string) (*ir.Basi
 		}
 		return nil
 	})
-	if block.Terminator == nil {
+	if err == nil && block.Terminator == nil {
 		block.NewJmp(c.ctx.LeaveBlock)
 	}
 	c.leaveScope()

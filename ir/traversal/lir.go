@@ -12,5 +12,5 @@ func (m *MirToLir) EnterNode(inst ir.Instruction) {
 }
 
 func (m *MirToLir) convertIfInst(inst *ir.If) {
-	ir.NewCondJmp(inst.Test, )
+	ir.NewCondJmp(inst.Test)
 }

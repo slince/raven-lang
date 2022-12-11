@@ -34,13 +34,16 @@ func (c *Compiler) compileVariableDeclarator(node *ast.VariableDeclarator, immut
 	name = c.compileIdentifier(node.Id)
 	if c.function == nil {
 		if immutable {
-			c.module.NewConst(name, kind, init.(*value.Const))
+			var constant = c.module.NewConst(name, kind, init.(*value.Const))
+			c.symbolTable.AddVariable(&constant.Variable)
 		} else {
-			c.module.NewGlobal(name, kind, init.(*value.Const))
+			var global = c.module.NewGlobal(name, kind, init.(*value.Const))
+			c.symbolTable.AddVariable(&global.Variable)
 		}
 	} else {
-		var variable = c.ctx.NewLocal(name, kind, init)
-		variable.Immutable = immutable
+		var local = c.ctx.NewLocal(name, kind, init)
+		local.Immutable = immutable
+		c.symbolTable.AddVariable(&local.Variable)
 	}
 	return nil
 }
