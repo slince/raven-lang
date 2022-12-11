@@ -11,21 +11,13 @@ type Canvas struct {
 	program  *ir.Program
 	graphviz *graphviz.Graphviz
 	graph    *cgraph.Graph
-	nodes    map[*ir.BasicBlock]*cgraph.Node
+	graphs   map[*ir.Module]*SubGraph
+	current  *SubGraph
 }
 
-func (c *Canvas) Draw() error {
-	var err = c.create()
-	if err != nil {
-		return err
-	}
-	for _, fun := range c.program.Modules[0].Functions {
-		err = c.drawFunction(fun)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+type SubGraph struct {
+	graph *cgraph.Graph
+	nodes map[*ir.BasicBlock]*cgraph.Node
 }
 
 func (c *Canvas) create() error {
@@ -42,8 +34,31 @@ func (c *Canvas) SaveTo(file string) error {
 		}
 		_ = c.graphviz.Close()
 	}()
-	// 3. write to file directly
 	return c.graphviz.RenderFilename(c.graph, graphviz.PNG, file)
+}
+
+func (c *Canvas) Draw() error {
+	var err = c.create()
+	if err == nil {
+		for _, module := range c.program.Modules {
+			err = c.drawModule(module)
+		}
+	}
+	return err
+}
+
+func (c *Canvas) drawModule(module *ir.Module) error {
+	var err error
+	c.current, err = c.createSubGraph(module)
+	if err == nil {
+		for _, fun := range module.Functions {
+			err = c.drawFunction(fun)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (c *Canvas) drawFunction(fun *ir.Function) error {
@@ -84,16 +99,35 @@ func (c *Canvas) drawBlock(block *ir.BasicBlock) error {
 	return err
 }
 
+func (c *Canvas) createSubGraph(module *ir.Module) (*SubGraph, error) {
+	var graph = c.graph.SubGraph(module.Name, 0)
+	var err error
+	var subGraph *SubGraph
+	subGraph = &SubGraph{
+		graph: graph,
+		nodes: map[*ir.BasicBlock]*cgraph.Node{},
+	}
+	c.graphs[module] = subGraph
+	return subGraph, err
+}
+
 func (c *Canvas) createNode(block *ir.BasicBlock) (*cgraph.Node, error) {
-	var node, ok = c.nodes[block]
+	var node, ok = c.current.nodes[block]
 	if ok {
 		return node, nil
 	}
 	node, err := c.graph.CreateNode(block.Name)
 	if err == nil {
 		node.SetShape("box")
-		node.SetLabel(block.Name)
-		c.nodes[block] = node
+		//var builder strings.Builder
+		//builder.WriteString("<B>")
+		//builder.WriteString(block.Name)
+		//builder.WriteString("</B><BR/>")
+		//for _, _ = range block.Instructions {
+		//	builder.WriteString("hehe")
+		//}
+		//node.SetLabel(builder.String())
+		c.current.nodes[block] = node
 	}
 	return node, err
 }
@@ -101,6 +135,6 @@ func (c *Canvas) createNode(block *ir.BasicBlock) (*cgraph.Node, error) {
 func NewCanvas(program *ir.Program) *Canvas {
 	return &Canvas{
 		program: program,
-		nodes:   map[*ir.BasicBlock]*cgraph.Node{},
+		graphs:  map[*ir.Module]*SubGraph{},
 	}
 }
