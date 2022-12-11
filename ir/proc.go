@@ -14,12 +14,12 @@ func NewArg(value value.Value) *Arg {
 }
 
 type Call struct {
-	Callee *Function
+	Callee *Func
 	ArgNum uint64
 	instruction
 }
 
-func NewCall(callee *Function, argNum uint64) *Call {
+func NewCall(callee *Func, argNum uint64) *Call {
 	return &Call{Callee: callee, ArgNum: argNum}
 }
 

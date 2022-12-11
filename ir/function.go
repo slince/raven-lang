@@ -7,8 +7,8 @@ import (
 
 // ___ [ function argument ] __________________________________________________
 
-// FunctionArgument is a function argument.
-type FunctionArgument struct {
+// FuncArg is a function argument.
+type FuncArg struct {
 	// Parameter name.
 	Name string
 	// Parameter type.
@@ -17,47 +17,47 @@ type FunctionArgument struct {
 
 // String returns the LLVM syntax representation of the function argument as a
 // type-value pair.
-func (p *FunctionArgument) String() string {
+func (p *FuncArg) String() string {
 	return fmt.Sprintf("%s %s", p.Kind, p.Name)
 }
 
-// NewFuncParam returns a new function argument based on the given name and type.
-func NewFuncParam(name string, kind types.Type) *FunctionArgument {
-	return &FunctionArgument{
+// NewFuncArg returns a new function argument based on the given name and type.
+func NewFuncArg(name string, kind types.Type) *FuncArg {
+	return &FuncArg{
 		Name: name,
 		Kind: kind,
 	}
 }
 
-type Function struct {
+type Func struct {
 	Name string
-	// Function signature.
+	// Func signature.
 	Signature *types.FuncType
-	// Function arguments.
-	Arguments []*FunctionArgument
+	// Func arguments.
+	Arguments []*FuncArg
 	Blocks    []*BasicBlock
 	Alias     map[string]string
 }
 
-func (f *Function) NewBlock(name string) *BasicBlock {
+func (f *Func) NewBlock(name string) *BasicBlock {
 	var block = NewBlock(name)
 	f.Blocks = append(f.Blocks, block)
 	return block
 }
 
-func (f *Function) SetBlockAlias(source string, alias string) {
+func (f *Func) SetBlockAlias(source string, alias string) {
 	f.Alias[alias] = source
 }
 
-// NewFunction returns a new function based on the given function name, return type
+// NewFunc returns a new function based on the given function name, return type
 // and function arguments.
-func NewFunction(name string, retType types.Type, arguments ...*FunctionArgument) *Function {
+func NewFunc(name string, retType types.Type, arguments ...*FuncArg) *Func {
 	paramTypes := make([]types.Type, len(arguments))
 	for i, param := range arguments {
 		paramTypes[i] = param.Kind
 	}
 	var sig = types.NewFunc(retType, paramTypes...)
-	return &Function{
+	return &Func{
 		Name:      name,
 		Signature: sig,
 		Arguments: arguments,

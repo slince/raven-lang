@@ -153,11 +153,11 @@ func (c *Compiler) compileSwitchStmt(node ast.SwitchStmt) {
 	c.ctx.NewSwitch(c.compileExpr(node.Discriminant), defaultBlock, cases...)
 }
 
-func (c *Compiler) compileVarDecl(node ast.VariableDeclarator){
+func (c *Compiler) compileVarDecl(node ast.VarSpec){
 
 }
 
-func (c *Compiler) compileFuncDecl(node ast.FunctionDeclaration){
+func (c *Compiler) compileFuncDecl(node ast.FuncDecl){
 	var fn = ir.NewFunc(node.)
 }
 
@@ -176,7 +176,7 @@ func (c *Compiler) compileType(node ast.Identifier) types.Type {
 	return _type
 }
 
-func (c *Compiler) compileFunc(node ast.Function) *ir.Func{
+func (c *Compiler) compileFunc(node ast.Func) *ir.Func{
 	var id = c.compileIdentifier(node.Id.(ast.Identifier))
 
 	var kind types.Type = types.Void
@@ -199,7 +199,7 @@ func (c *Compiler) compileFunc(node ast.Function) *ir.Func{
 	return fn
 }
 
-func (c *Compiler) compileFuncArg(node ast.FunctionArgument) *ir.Param {
+func (c *Compiler) compileFuncArg(node ast.FuncArg) *ir.Param {
 	return ir.NewParam(c.compileIdentifier(node.Id), c.compileType(node.Kind))
 }
 

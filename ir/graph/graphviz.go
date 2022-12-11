@@ -61,7 +61,7 @@ func (c *Canvas) drawModule(module *ir.Module) error {
 	return nil
 }
 
-func (c *Canvas) drawFunction(fun *ir.Function) error {
+func (c *Canvas) drawFunction(fun *ir.Func) error {
 	for _, block := range fun.Blocks {
 		var err = c.drawBlock(block)
 		if err != nil {

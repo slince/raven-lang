@@ -43,7 +43,7 @@ type ExpressionStmt struct {
 }
 
 type ForStmt struct {
-	Init   Node // VariableDeclaration | Expr
+	Init   Node // VarDecl | Expr
 	Test   Expr
 	Update Expr
 	Body   Stmt

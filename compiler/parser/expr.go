@@ -199,7 +199,7 @@ func (p *Parser) parseUpdateExpr(prefix bool, argument ast.Expr) *ast.UpdateExpr
 }
 
 func (p *Parser) parseFunctionExpr() *ast.FunctionExpr {
-	return ast.NewFunctionExpr(p.parseFunction())
+	return ast.NewFunctionExpr(p.parseFunc())
 }
 
 func (p *Parser) parseClassExpr() *ast.ClassExpr {

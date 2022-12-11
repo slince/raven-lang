@@ -5,22 +5,22 @@ import (
 	"github.com/slince/php-plus/compiler/token"
 )
 
-func (p *Parser) parseVariableDeclaration() *ast.VariableDeclaration {
+func (p *Parser) parseVarDecl() *ast.VarDecl {
 	var tok = p.tokens.Expect(token.LET, token.CONST)
-	var declarators = make([]*ast.VariableDeclarator, 0)
+	var specs = make([]*ast.VarSpec, 0)
 
 	for {
-		declarators = append(declarators, p.parseVariableDeclarator())
+		specs = append(specs, p.parseVarSpec())
 		if p.tokens.Test(token.COMMA) { // if comma and go on
 			p.tokens.Next()
 			continue
 		}
 		break
 	}
-	return ast.NewVariableDeclaration(tok.Literal, declarators, tok.Position)
+	return ast.NewVarDecl(tok.Literal, specs, tok.Position)
 }
 
-func (p *Parser) parseVariableDeclarator() *ast.VariableDeclarator {
+func (p *Parser) parseVarSpec() *ast.VarSpec {
 	var id = p.parseIdentifier()
 	var kind *ast.Identifier
 	var init ast.Expr
@@ -38,26 +38,26 @@ func (p *Parser) parseVariableDeclarator() *ast.VariableDeclarator {
 		p.tokens.Expect(token.ASSIGN)
 		init = p.parseExpr(0)
 	}
-	return ast.NewVariableDeclarator(id, kind, init, id.Position())
+	return ast.NewVarSpec(id, kind, init, id.Position())
 }
 
-func (p *Parser) parseFunctionDeclaration() *ast.FunctionDeclaration {
-	return ast.NewFunctionDeclaration(p.parseFunction())
+func (p *Parser) parseFuncDecl() *ast.FuncDecl {
+	return ast.NewFuncDecl(p.parseFunc())
 }
 
-func (p *Parser) parseFunction() *ast.Function {
+func (p *Parser) parseFunc() *ast.Func {
 	var tok = p.tokens.Expect(token.FUNCTION)
 	var id *ast.Identifier // optional
 	if p.tokens.Test(token.ID) {
 		id = p.parseIdentifier()
 	}
-	var args = make([]*ast.FunctionArgument, 0)
+	var args = make([]*ast.FuncArg, 0)
 	p.tokens.Expect(token.LPAREN)
 	for !p.tokens.Test(token.RPAREN) {
 		if len(args) > 0 {
 			p.tokens.Expect(token.COMMA)
 		}
-		args = append(args, p.parseFunctionArgument())
+		args = append(args, p.parseFuncArg())
 	}
 	p.tokens.Expect(token.RPAREN)
 	// function return type is optional.
@@ -67,18 +67,18 @@ func (p *Parser) parseFunction() *ast.Function {
 		kind = p.parseIdentifier()
 	}
 	var body = p.parseBlockStmt()
-	return ast.NewFunction(id, args, kind, body, tok.Position)
+	return ast.NewFunc(id, args, kind, body, tok.Position)
 }
 
-func (p *Parser) parseFunctionArgument() *ast.FunctionArgument {
+func (p *Parser) parseFuncArg() *ast.FuncArg {
 	var id = p.parseIdentifier()
 	p.tokens.Expect(token.COLON)
 	var kind = p.parseIdentifier()
-	return ast.NewFunctionArgument(id, kind, id.Position())
+	return ast.NewFuncArg(id, kind, id.Position())
 }
 
-func (p *Parser) parseClassDeclaration() *ast.ClassDeclaration {
-	return ast.NewClassDeclaration(p.parseClass())
+func (p *Parser) parseClassDecl() *ast.ClassDecl {
+	return ast.NewClassDecl(p.parseClass())
 }
 
 func (p *Parser) parseClass() *ast.Class {
@@ -133,15 +133,15 @@ func (p *Parser) parseClassBody() *ast.ClassBody {
 				err = context.setAbstract(p.parseClassMemberModifier())
 			case token.CONST:
 				p.tokens.Next()
-				var variable = p.parseVariableDeclarator()
+				var variable = p.parseVarSpec()
 				prop = ast.NewPropertyDefinition(context.visibility, context.static, cur.Literal, variable, tok.Position)
 				end = true
 			case token.ID:
-				var variable = p.parseVariableDeclarator()
+				var variable = p.parseVarSpec()
 				prop = ast.NewPropertyDefinition(context.visibility, context.static, "", variable, tok.Position)
 				end = true
 			case token.FUNCTION:
-				var function = p.parseFunction()
+				var function = p.parseFunc()
 				method = ast.NewMethodDefinition(context.final, context.abstract, context.visibility, context.static, function, tok.Position)
 				end = true
 			default:

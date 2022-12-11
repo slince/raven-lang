@@ -12,7 +12,7 @@ type Compiler struct {
 	ctx         *ir.BlockContext
 	symbolTable *ir.SymbolTable
 	module      *ir.Module
-	function    *ir.Function
+	function    *ir.Func
 	program     *ir.Program
 }
 
@@ -81,10 +81,10 @@ func (c *Compiler) compileModule(node *ast.Module) error {
 func (c *Compiler) compileStmt(node ast.Stmt) error {
 	var err error
 	switch node := node.(type) {
-	case *ast.FunctionDeclaration:
-		err = c.compileFunctionDecl(node)
-	case *ast.VariableDeclaration:
-		err = c.compileVariableDecl(node)
+	case *ast.FuncDecl:
+		err = c.compileFuncDecl(node)
+	case *ast.VarDecl:
+		err = c.compileVarDecl(node)
 	case *ast.BlockStmt:
 		_, err = c.compileBlockStmt(node, "")
 	case *ast.ExpressionStmt:

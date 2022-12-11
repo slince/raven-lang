@@ -2,21 +2,21 @@ package ast
 
 import "github.com/slince/php-plus/compiler/token"
 
-type VariableDeclarator struct {
+type VarSpec struct {
 	Id   *Identifier
 	Kind *Identifier
 	Init Expr
 	node
 }
 
-type VariableDeclaration struct {
-	Kind        string
-	Declarators []*VariableDeclarator
+type VarDecl struct {
+	Kind  string
+	Specs []*VarSpec
 	decl
 }
 
-func NewVariableDeclarator(id *Identifier, kind *Identifier, init Expr, pos *token.Position) *VariableDeclarator {
-	var dec = &VariableDeclarator{
+func NewVarSpec(id *Identifier, kind *Identifier, init Expr, pos *token.Position) *VarSpec {
+	var dec = &VarSpec{
 		Id:   id,
 		Kind: kind,
 		Init: init,
@@ -25,40 +25,40 @@ func NewVariableDeclarator(id *Identifier, kind *Identifier, init Expr, pos *tok
 	return dec
 }
 
-func NewVariableDeclaration(kind string, declarators []*VariableDeclarator, pos *token.Position) *VariableDeclaration {
-	var dec = &VariableDeclaration{
-		Kind:        kind,
-		Declarators: declarators,
+func NewVarDecl(kind string, specs []*VarSpec, pos *token.Position) *VarDecl {
+	var dec = &VarDecl{
+		Kind:  kind,
+		Specs: specs,
 	}
 	dec.pos = pos
 	return dec
 }
 
-type FunctionArgument struct {
+type FuncArg struct {
 	Id   *Identifier
 	Kind *Identifier
 	node
 }
 
-type Function struct {
+type Func struct {
 	Id   *Identifier // Identifier or nil
-	Args []*FunctionArgument
+	Args []*FuncArg
 	Kind *Identifier // Identifier or nil
 	Body *BlockStmt
 	node
 }
 
-type FunctionDeclaration struct {
-	Function *Function
+type FuncDecl struct {
+	Func *Func
 	decl
 }
 
-func (dec *FunctionDeclaration) Position() *token.Position {
-	return dec.Function.Position()
+func (dec *FuncDecl) Position() *token.Position {
+	return dec.Func.Position()
 }
 
-func NewFunctionArgument(id *Identifier, kind *Identifier, pos *token.Position) *FunctionArgument {
-	var arg = &FunctionArgument{
+func NewFuncArg(id *Identifier, kind *Identifier, pos *token.Position) *FuncArg {
+	var arg = &FuncArg{
 		Id:   id,
 		Kind: kind,
 	}
@@ -66,8 +66,8 @@ func NewFunctionArgument(id *Identifier, kind *Identifier, pos *token.Position) 
 	return arg
 }
 
-func NewFunction(id *Identifier, args []*FunctionArgument, kind *Identifier, body *BlockStmt, pos *token.Position) *Function {
-	var fn = &Function{
+func NewFunc(id *Identifier, args []*FuncArg, kind *Identifier, body *BlockStmt, pos *token.Position) *Func {
+	var fn = &Func{
 		Id:   id,
 		Args: args,
 		Kind: kind,
@@ -77,9 +77,9 @@ func NewFunction(id *Identifier, args []*FunctionArgument, kind *Identifier, bod
 	return fn
 }
 
-func NewFunctionDeclaration(function *Function) *FunctionDeclaration {
-	return &FunctionDeclaration{
-		Function: function,
+func NewFuncDecl(function *Func) *FuncDecl {
+	return &FuncDecl{
+		Func: function,
 	}
 }
 
@@ -92,7 +92,7 @@ type PropertyDefinition struct {
 	Visibility *MemberModifier
 	Static     *MemberModifier
 	Kind       string // const or generic
-	Value      *VariableDeclarator
+	Value      *VarSpec
 	node
 }
 
@@ -101,7 +101,7 @@ type MethodDefinition struct {
 	Abstract   *MemberModifier
 	Visibility *MemberModifier
 	Static     *MemberModifier
-	Value      *Function
+	Value      *Func
 	node
 }
 
@@ -119,12 +119,12 @@ type Class struct {
 	node
 }
 
-type ClassDeclaration struct {
+type ClassDecl struct {
 	Class *Class
 	decl
 }
 
-func (dec *ClassDeclaration) Position() *token.Position {
+func (dec *ClassDecl) Position() *token.Position {
 	return dec.Class.Position()
 }
 
@@ -136,7 +136,7 @@ func NewModifier(value string, pos *token.Position) *MemberModifier {
 	return mod
 }
 
-func NewPropertyDefinition(visibility *MemberModifier, static *MemberModifier, kind string, value *VariableDeclarator, pos *token.Position) *PropertyDefinition {
+func NewPropertyDefinition(visibility *MemberModifier, static *MemberModifier, kind string, value *VarSpec, pos *token.Position) *PropertyDefinition {
 	var def = &PropertyDefinition{
 		Visibility: visibility,
 		Static:     static,
@@ -147,7 +147,7 @@ func NewPropertyDefinition(visibility *MemberModifier, static *MemberModifier, k
 	return def
 }
 
-func NewMethodDefinition(final *MemberModifier, abstract *MemberModifier, visibility *MemberModifier, static *MemberModifier, value *Function, pos *token.Position) *MethodDefinition {
+func NewMethodDefinition(final *MemberModifier, abstract *MemberModifier, visibility *MemberModifier, static *MemberModifier, value *Func, pos *token.Position) *MethodDefinition {
 	var def = &MethodDefinition{
 		Final:      final,
 		Abstract:   abstract,
@@ -179,8 +179,8 @@ func NewClass(id *Identifier, extends *Identifier, implements []*Identifier, bod
 	return cls
 }
 
-func NewClassDeclaration(class *Class) *ClassDeclaration {
-	return &ClassDeclaration{
+func NewClassDecl(class *Class) *ClassDecl {
+	return &ClassDecl{
 		Class: class,
 	}
 }

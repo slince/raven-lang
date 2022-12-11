@@ -74,7 +74,7 @@ func (p *Parser) parseForStmt() *ast.ForStmt {
 	// parse init
 	var init ast.Node
 	if cur := p.tokens.Current(); cur.Test(token.LET, token.CONST) { // variable declaration
-		init = p.parseVariableDeclaration()
+		init = p.parseVarDecl()
 	} else if !cur.Test(token.SEMICOLON) {
 		init = p.parseExpr(0)
 	}

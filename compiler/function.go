@@ -6,22 +6,22 @@ import (
 	"github.com/slince/php-plus/ir/types"
 )
 
-func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) error {
+func (c *Compiler) compileFuncDecl(node *ast.FuncDecl) error {
 	var retType types.Type
 	var err error
-	if node.Function.Kind != nil {
-		retType, err = c.compileType(node.Function.Kind)
+	if node.Func.Kind != nil {
+		retType, err = c.compileType(node.Func.Kind)
 		if err != nil {
 			return err
 		}
 	} else {
 		retType = types.Void
 	}
-	var name = c.compileIdentifier(node.Function.Id)
+	var name = c.compileIdentifier(node.Func.Id)
 	// function arguments
-	var args = make([]*ir.FunctionArgument, 0)
-	for _, arg := range node.Function.Args {
-		var compiled, err = c.compileFunctionArgument(arg)
+	var args = make([]*ir.FuncArg, 0)
+	for _, arg := range node.Func.Args {
+		var compiled, err = c.compileFuncArg(arg)
 		if err != nil {
 			return err
 		}
@@ -29,16 +29,16 @@ func (c *Compiler) compileFunctionDecl(node *ast.FunctionDeclaration) error {
 	}
 	c.function = c.module.NewFunction(name, retType, args...)
 	//c.enterBlock(c.function.NewBlock("entry"), c.function.NewBlock("leave"))
-	_, err = c.compileBlockStmt(node.Function.Body, "entry")
+	_, err = c.compileBlockStmt(node.Func.Body, "entry")
 	return err
 }
 
-func (c *Compiler) compileFunctionArgument(node *ast.FunctionArgument) (*ir.FunctionArgument, error) {
+func (c *Compiler) compileFuncArg(node *ast.FuncArg) (*ir.FuncArg, error) {
 	var kind, err = c.compileType(node.Kind)
 	if err != nil {
 		return nil, err
 	}
-	return ir.NewFuncParam(c.compileIdentifier(node.Id), kind), err
+	return ir.NewFuncArg(c.compileIdentifier(node.Id), kind), err
 }
 
 func (c *Compiler) compileReturnStmt(node *ast.ReturnStmt) error {

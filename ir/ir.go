@@ -29,11 +29,11 @@ type Module struct {
 	Types     []types.Type
 	Globals   []*Global
 	Consts    []*Const
-	Functions []*Function
+	Functions []*Func
 }
 
-func (m *Module) NewFunction(name string, retType types.Type, params ...*FunctionArgument) *Function {
-	var fun = NewFunction(name, retType, params...)
+func (m *Module) NewFunction(name string, retType types.Type, params ...*FuncArg) *Func {
+	var fun = NewFunc(name, retType, params...)
 	m.Functions = append(m.Functions, fun)
 	return fun
 }
@@ -56,6 +56,6 @@ func NewModule(name string) *Module {
 		Types:     []types.Type{},
 		Globals:   []*Global{},
 		Consts:    []*Const{},
-		Functions: []*Function{},
+		Functions: []*Func{},
 	}
 }

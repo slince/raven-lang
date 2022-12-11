@@ -35,9 +35,9 @@ func (p *Parser) parseStmt() ast.Stmt {
 	switch tok.Kind {
 	// variable declaration
 	case token.LET, token.CONST:
-		smt = p.parseVariableDeclaration()
+		smt = p.parseVarDecl()
 	case token.FUNCTION:
-		smt = p.parseFunctionDeclaration()
+		smt = p.parseFuncDecl()
 	// choice statement
 	case token.IF:
 		smt = p.parseIfStmt()
@@ -70,7 +70,7 @@ func (p *Parser) parseStmt() ast.Stmt {
 		smt = p.parseTryStmt()
 	// class
 	case token.CLASS:
-		smt = p.parseClassDeclaration()
+		smt = p.parseClassDecl()
 		break
 	// block statement
 	case token.LBRACE:

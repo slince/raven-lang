@@ -216,7 +216,7 @@ func (b *BasicBlock) NewArg(value value.Value) *Arg {
 	return inst
 }
 
-func (b *BasicBlock) NewCall(callee *Function, argNum uint64) *Call {
+func (b *BasicBlock) NewCall(callee *Func, argNum uint64) *Call {
 	var inst = NewCall(callee, argNum)
 	b.AddInstruction(inst)
 	return inst

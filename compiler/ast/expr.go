@@ -61,11 +61,11 @@ func (exp ClassExpr) Position() *token.Position {
 func (exp ClassExpr) Expr() {}
 
 type FunctionExpr struct {
-	*Function
+	*Func
 }
 
 func (exp FunctionExpr) Position() *token.Position {
-	return exp.Function.Position()
+	return exp.Func.Position()
 }
 func (exp FunctionExpr) Expr() {}
 
@@ -163,9 +163,9 @@ func NewClassExpr(class *Class) *ClassExpr {
 	}
 }
 
-func NewFunctionExpr(function *Function) *FunctionExpr {
+func NewFunctionExpr(function *Func) *FunctionExpr {
 	return &FunctionExpr{
-		Function: function,
+		Func: function,
 	}
 }
 
