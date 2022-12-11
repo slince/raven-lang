@@ -43,6 +43,8 @@ func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) error {
 	if err != nil {
 		return err
 	}
+	// jmp first case discriminant
+	c.ctx.NewJmp(ir.NewReference("switch.case.disc.0"))
 	c.ctx.LeaveBlock = c.function.NewBlock("switch.done")
 	c.enterScope()
 	var caseNum = len(node.Cases)
@@ -51,17 +53,14 @@ func (c *Compiler) compileSwitchStmt(node *ast.SwitchStmt) error {
 	})
 	for idx, clause := range node.Cases {
 		var caseBody, err = c.compileSwitchCaseBody(clause, idx, idx == caseNum-1)
-		if err != nil {
-			return err
+		if err == nil {
+			_, err = c.compileSwitchCaseDisc(disc, caseBody, clause, idx, idx == caseNum-1, defaultIdx)
 		}
-		_, err = c.compileSwitchCaseDisc(disc, caseBody, clause, idx, idx == caseNum-1, defaultIdx)
 		if err != nil {
 			return err
 		}
 	}
 	c.leaveScope()
-	// jmp first case discriminant
-	c.ctx.NewJmp(ir.NewReference("switch.case.disc.0"))
 	return nil
 }
 
