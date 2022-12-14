@@ -28,7 +28,6 @@ func main() {
 
 	//globalG := m.NewGlobalDef("g", constant.NewInt(types.I32, 2))
 
-	m.NewGlobal()
 	funcAdd := m.NewFunc("add", types.I32,
 		ir.NewParam("x", types.I32),
 		ir.NewParam("y", types.I32),
@@ -39,7 +38,7 @@ func main() {
 	funcMain := m.NewFunc(
 		"main",
 		types.I32,
-	)                           // omit parameters
+	) // omit parameters
 	mb := funcMain.NewBlock("") // llir/llvm would give correct default name for block without name
 	//var ld = mb.NewLoad(types.I32, globalG)
 	//fmt.Println(ld)
@@ -47,8 +46,8 @@ func main() {
 	//mb.NewStore(constant.NewInt(types.I32, 100), ld)
 
 	var loc = mb.NewAlloca(types.I32)
-
-	mb.NewRet(mb.NewCall(funcAdd, constant.NewInt(types.I32, 1), mb.NewLoad(types.I32, loc)))
+	var loc2 = mb.NewLoad(types.I32, loc)
+	mb.NewRet(mb.NewCall(funcAdd, constant.NewInt(types.I32, 1), loc2))
 
 	println(m.String())
 }

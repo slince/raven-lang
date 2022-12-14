@@ -5,6 +5,7 @@ import (
 	"github.com/goccy/go-graphviz/cgraph"
 	"github.com/slince/php-plus/ir"
 	"log"
+	"strings"
 )
 
 type Canvas struct {
@@ -118,15 +119,15 @@ func (c *Canvas) createNode(block *ir.BasicBlock) (*cgraph.Node, error) {
 	}
 	node, err := c.graph.CreateNode(block.Name)
 	if err == nil {
-		node.SetShape("box")
-		//var builder strings.Builder
-		//builder.WriteString("<B>")
-		//builder.WriteString(block.Name)
-		//builder.WriteString("</B><BR/>")
-		//for _, _ = range block.Instructions {
-		//	builder.WriteString("hehe")
-		//}
-		//node.SetLabel(builder.String())
+		node.SetShape("rect")
+		var builder strings.Builder
+		builder.WriteString("<B>")
+		builder.WriteString(block.Name)
+		builder.WriteString("</B><BR/><BR/>")
+		for _, _ = range block.Instructions {
+			builder.WriteString("hehe<BR/>")
+		}
+		node.SetLabel(c.graph.StrdupHTML(builder.String()))
 		c.current.nodes[block] = node
 	}
 	return node, err

@@ -1,6 +1,9 @@
 package value
 
-import "github.com/slince/php-plus/ir/types"
+import (
+	"fmt"
+	"github.com/slince/php-plus/ir/types"
+)
 
 var (
 	Zero = NewConst(0, types.U4)
@@ -8,6 +11,7 @@ var (
 )
 
 type Value interface {
+	fmt.Stringer
 	Type() types.Type
 }
 
@@ -18,6 +22,13 @@ type Const struct {
 
 func (c *Const) Type() types.Type {
 	return c.Kind
+}
+
+func (c *Const) String() string {
+	switch(c.Kind){
+	case types.I4, types.I8, types.I32, types.I64:
+		
+	}
 }
 
 func NewConst(value interface{}, kind types.Type) *Const {
