@@ -6,6 +6,7 @@ import (
 )
 
 type Block interface {
+	value.Value
 	block()
 }
 
@@ -49,8 +50,8 @@ func (b *BasicBlock) AddInstruction(instruction Instruction) {
 	b.Instructions = append(b.Instructions, instruction)
 }
 
-func (b *BasicBlock) NewLea(target value.Value) *Lea {
-	var inst = NewLea(target)
+func (b *BasicBlock) NewLea(value value.Value) *Lea {
+	var inst = NewLea(value)
 	b.AddInstruction(inst)
 	return inst
 }
