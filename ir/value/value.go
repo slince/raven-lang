@@ -3,20 +3,16 @@ package value
 import (
 	"fmt"
 	"github.com/slince/php-plus/ir/types"
-)
-
-var (
-	Zero = NewConst(0, types.U4)
-	One  = NewConst(1, types.U4)
+	"strconv"
 )
 
 type Value interface {
-	fmt.Stringer
+	String() string
 	Type() types.Type
 }
 
 type Const struct {
-	Value interface{}
+	Value any
 	Kind  types.Type
 }
 
@@ -25,10 +21,20 @@ func (c *Const) Type() types.Type {
 }
 
 func (c *Const) String() string {
-	switch(c.Kind){
+	var value string
+	switch c.Kind {
 	case types.I4, types.I8, types.I32, types.I64:
-		
+		value = strconv.FormatInt(c.Value.(int64), 10)
+	case types.U4, types.U8, types.U32, types.U64:
+		value = strconv.FormatUint(c.Value.(uint64), 10)
+	case types.F32, types.F64:
+		value = strconv.FormatFloat(c.Value.(float64), 'g', -1, 64)
+	case types.Bool:
+		value = strconv.FormatBool(c.Value.(bool))
+	case types.String:
+		value = c.Value.(string)
 	}
+	return value
 }
 
 func NewConst(value interface{}, kind types.Type) *Const {
@@ -49,6 +55,10 @@ func (v *Variable) Type() types.Type {
 	return v.Kind
 }
 
+func (v *Variable) String() string {
+	return fmt.Sprintf("%s: %s", v.Name, v.Kind.String())
+}
+
 func NewVariable(name string, kind types.Type) *Variable {
 	return &Variable{
 		Name:      name,
@@ -56,31 +66,4 @@ func NewVariable(name string, kind types.Type) *Variable {
 		Immutable: false,
 		Init:      false,
 	}
-}
-
-type Temporary struct {
-	Original *Variable
-}
-
-func (v *Temporary) Type() types.Type {
-	if v.Original != nil {
-		return v.Original.Type()
-	}
-	return nil
-}
-
-func NewTemporary(variable *Variable) *Temporary {
-	return &Temporary{Original: variable}
-}
-
-type Label struct {
-	Name string
-}
-
-func (v *Label) Type() types.Type {
-	return nil
-}
-
-func NewLabel(name string) *Label {
-	return &Label{Name: name}
 }

@@ -30,10 +30,10 @@ var (
 
 	Bool = &BoolType{}
 
-	Void = &VoidType{}
-
 	String = &StringType{}
 
+	Void = &VoidType{}
+	
 	Nop = &NopType{}
 )
 

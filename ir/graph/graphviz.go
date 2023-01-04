@@ -118,6 +118,7 @@ func (c *Canvas) createNode(block *ir.BasicBlock) (*cgraph.Node, error) {
 		return node, nil
 	}
 	node, err := c.graph.CreateNode(block.Name)
+
 	if err == nil {
 		node.SetShape("rect")
 		var builder strings.Builder

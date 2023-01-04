@@ -1,12 +1,19 @@
 package ir
 
-import "github.com/slince/php-plus/ir/value"
+import (
+	"fmt"
+	"github.com/slince/php-plus/ir/value"
+)
 
 type And struct {
 	value.Variable
 	Lhs value.Value
 	Rhs value.Value
 	instruction
+}
+
+func (inst *And) String() string {
+	return fmt.Sprintf("and %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
 }
 
 type Or struct {
@@ -16,6 +23,10 @@ type Or struct {
 	instruction
 }
 
+func (inst *Or) String() string {
+	return fmt.Sprintf("or %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
+}
+
 type Xor struct {
 	value.Variable
 	Lhs value.Value
@@ -23,10 +34,18 @@ type Xor struct {
 	instruction
 }
 
+func (inst *Xor) String() string {
+	return fmt.Sprintf("xor %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
+}
+
 type Not struct {
 	value.Variable
 	Ope value.Value
 	instruction
+}
+
+func (inst *Not) String() string {
+	return fmt.Sprintf("not %s %s", inst.Variable.String(), inst.Ope.String())
 }
 
 type Shl struct {
@@ -36,11 +55,19 @@ type Shl struct {
 	instruction
 }
 
+func (inst *Shl) String() string {
+	return fmt.Sprintf("shl %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
+}
+
 type Shr struct {
 	value.Variable
 	Lhs value.Value
 	Rhs value.Value
 	instruction
+}
+
+func (inst *Shr) String() string {
+	return fmt.Sprintf("shr %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
 }
 
 func NewBitAnd(lhs value.Value, rhs value.Value) *And {

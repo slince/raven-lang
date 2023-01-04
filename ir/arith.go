@@ -1,12 +1,19 @@
 package ir
 
-import "github.com/slince/php-plus/ir/value"
+import (
+	"fmt"
+	"github.com/slince/php-plus/ir/value"
+)
 
 type Add struct {
 	value.Variable
 	Lhs value.Value
 	Rhs value.Value
 	instruction
+}
+
+func (inst *Add) String() string {
+	return fmt.Sprintf("add %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
 }
 
 type Sub struct {
@@ -16,11 +23,19 @@ type Sub struct {
 	instruction
 }
 
+func (inst *Sub) String() string {
+	return fmt.Sprintf("sub %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
+}
+
 type Mul struct {
 	value.Variable
 	Lhs value.Value
 	Rhs value.Value
 	instruction
+}
+
+func (inst *Mul) String() string {
+	return fmt.Sprintf("mul %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
 }
 
 type Div struct {
@@ -30,11 +45,19 @@ type Div struct {
 	instruction
 }
 
+func (inst *Div) String() string {
+	return fmt.Sprintf("div %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
+}
+
 type Mod struct {
 	value.Variable
 	Lhs value.Value
 	Rhs value.Value
 	instruction
+}
+
+func (inst *Mod) String() string {
+	return fmt.Sprintf("mod %s %s %s", inst.Variable.String(), inst.Lhs.String(), inst.Rhs.String())
 }
 
 func NewAdd(lhs value.Value, rhs value.Value) *Add {
