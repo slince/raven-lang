@@ -1,4 +1,4 @@
-module github.com/slince/php-plus
+module github.com/slince/raven-lang
 
 go 1.19
 
