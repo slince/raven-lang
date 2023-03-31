@@ -6,11 +6,11 @@ class FooClass extends ParentClass implements InterfaceA, InterfaceB{
 
 	abstract public function hello(): string{
 		return "hello" + "world";
-    }
+    	}
 
 	final public static function world(): void{
-        return 1 + 2
-    }
+        	return 1 + 2
+    	}
 }
 
 
@@ -20,9 +20,9 @@ let cls = class FooClass extends ParentClass implements InterfaceA, InterfaceB{
 
 	public function hello(): string{
 		return "hello" + "world";
-    }
+    	}
 
 	final public static function world(): void{
-        return 1 + 2
-    }
+        	return 1 + 2
+    	}
 }
